@@ -47,6 +47,12 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        complie: {
+          primary: "hsl(var(--complie-primary))",
+          accent: "hsl(var(--complie-accent))",
+          success: "hsl(var(--complie-success))",
+          warning: "hsl(var(--complie-warning))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
