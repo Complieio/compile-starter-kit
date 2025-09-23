@@ -17,7 +17,7 @@ export default function FeaturesPage(): JSX.Element {
   const loginFormRef = useRef<HTMLFormElement | null>(null);
 
   const supabaseProjectUrl = "https://gaogwkgdkdwitbfwmsmu.supabase.co";
-  const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/dashboard.html` : "/dashboard.html";
+  const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/dashboard` : "/dashboard";
 
   function openModal() {
     setModalOpen(true);
@@ -121,7 +121,7 @@ export default function FeaturesPage(): JSX.Element {
       <nav className="navbar">
         <div className="logo" onClick={() => (window.location.href = "/")}>COMPLIE</div>
         <div className="nav-links">
-          <a href="/features">Features</a>
+          <a href="/pre-login/features">Features</a>
           <a href="/pricing">Pricing</a>
           <a href="/faq">FAQ</a>
         </div>
@@ -161,9 +161,9 @@ export default function FeaturesPage(): JSX.Element {
       </section>
 
       <footer>
-        <a href="privacypolicy.html">Privacy Policy</a>
-        <a href="refundpolicy.html">Refund Policy</a>
-        <a href="termsofservice.html">Terms of Service</a>
+        <a href="/privacypolicy">Privacy Policy</a>
+        <a href="/refundpolicy">Refund Policy</a>
+        <a href="/termsofservice">Terms of Service</a>
       </footer>
 
       <div ref={modalRef} className={`popup ${modalOpen ? "show" : ""}`} id="authModal" onClick={onOverlayClick} role="presentation">
@@ -218,7 +218,7 @@ export default function FeaturesPage(): JSX.Element {
               <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="google-logo" alt="Google logo" />
               Continue with Google
             </div>
-            <div className="legal">By creating an account you agree to our <a href="termsofservice.html">Terms</a> and <a href="privacypolicy.html">Privacy Policy</a>.</div>
+            <div className="legal">By creating an account you agree to our <a href="/termsofservice">Terms</a> and <a href="/privacypolicy">Privacy Policy</a>.</div>
           </form>
 
           <form ref={loginFormRef} id="loginForm" className="form" autoComplete="on" noValidate style={{ display: activeTab === "login" ? "flex" : "none" }}>
