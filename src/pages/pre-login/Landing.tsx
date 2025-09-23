@@ -144,9 +144,9 @@ export default function CompliePage(): JSX.Element {
       <nav className="navbar">
   <div className="logo" onClick={() => (window.location.href = "/")}>COMPLIE</div>
   <div className="nav-links">
-    <a href="src/pages/pre-login/Features">Features</a>
-    <a href="/pre-login/Pricing">Pricing</a>
-    <a href="/pre-login/FAQ">FAQ</a>
+    <a href="/Features">Features</a>
+    <a href="/Pricing">Pricing</a>
+    <a href="/Faq">FAQ</a>
   </div>
   <button className="cta" onClick={(e) => { e.preventDefault(); openModal(); }}>Try Complie Now</button>
 </nav>
