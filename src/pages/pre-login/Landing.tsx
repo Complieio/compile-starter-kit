@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 
-export default function Landing(): JSX.Element {
+export default function CompliePage(): JSX.Element {
   const [modalOpen, setModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"signup" | "login">("signup");
   const [name, setName] = useState("");
@@ -18,7 +17,7 @@ export default function Landing(): JSX.Element {
   const loginFormRef = useRef<HTMLFormElement | null>(null);
 
   const supabaseProjectUrl = "https://gaogwkgdkdwitbfwmsmu.supabase.co";
-  const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/dashboard` : "/dashboard";
+  const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/dashboard.tsx` : "/dashboard.tsx";
 
   function openModal() {
     setModalOpen(true);
@@ -142,12 +141,13 @@ export default function Landing(): JSX.Element {
     .legal{font-size:12px;color:#888;text-align:center;margin-top:6px}
     @media (max-width:640px){.popup-content{padding:36px 20px;border-radius:12px}.popup-icon svg{width:40px;height:40px}}`}</style>
 
-      <div className="nav-links">
-  <Link to="/features">Features</Link>
-  <Link to="/pricing">Pricing</Link>
-  <Link to="/faq">FAQ</Link>
-  <Link to="/" className="logo">COMPLIE</Link>
-</div> 
+      <nav className="navbar">
+  <div className="logo" onClick={() => (window.location.href = "/")}>COMPLIE</div>
+  <div className="nav-links">
+    <a href="/pre-login/features">Features</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/faq">FAQ</a>
+  </div>
   <button className="cta" onClick={(e) => { e.preventDefault(); openModal(); }}>Try Complie Now</button>
 </nav>
 
@@ -164,10 +164,10 @@ export default function Landing(): JSX.Element {
       </section>
 
       <footer>
-  <Link to="/privacypolicy">Privacy Policy</Link>
-  <Link to="/refundpolicy">Refund Policy</Link>
-  <Link to="/termsofservice">Terms of Service</Link>
-</footer>
+        <a href="privacypolicy.tsx">Privacy Policy</a>
+        <a href="refundpolicy.tsx">Refund Policy</a>
+        <a href="termsofservice.tsx">Terms of Service</a>
+      </footer>
 
       <div ref={modalRef} className={`popup ${modalOpen ? "show" : ""}`} id="authModal" onClick={onOverlayClick} role="presentation">
         <div className="popup-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -221,7 +221,7 @@ export default function Landing(): JSX.Element {
               <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="google-logo" alt="Google logo" />
               Continue with Google
             </div>
-            <div className="legal">By creating an account you agree to our <a href="/termsofservice">Terms</a> and <a href="/privacypolicy">Privacy Policy</a>.</div>
+            <div className="legal">By creating an account you agree to our <a href="termsofservice.tsx">Terms</a> and <a href="privacypolicy.tsx">Privacy Policy</a>.</div>
           </form>
 
           <form ref={loginFormRef} id="loginForm" className="form" autoComplete="on" noValidate style={{ display: activeTab === "login" ? "flex" : "none" }}>
