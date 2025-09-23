@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-export default function CompliePage(): JSX.Element {
+export default function Index(): JSX.Element {
   const [modalOpen, setModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"signup" | "login">("signup");
   const [name, setName] = useState("");
