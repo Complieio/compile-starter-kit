@@ -144,7 +144,7 @@ export default function CompliePage(): JSX.Element {
       <nav className="navbar">
   <div className="logo" onClick={() => (window.location.href = "/")}>COMPLIE</div>
   <div className="nav-links">
-    <a href="/pre-login/Features">Features</a>
+    <a href="src/pages/pre-login/Features">Features</a>
     <a href="/pre-login/Pricing">Pricing</a>
     <a href="/pre-login/FAQ">FAQ</a>
   </div>
