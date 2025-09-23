@@ -143,7 +143,7 @@ export default function Landing(): JSX.Element {
     @media (max-width:640px){.popup-content{padding:36px 20px;border-radius:12px}.popup-icon svg{width:40px;height:40px}}`}</style>
 
       <div className="nav-links">
-  <Link to="/pre-login/features">Features</Link>
+  <Link to="/features">Features</Link>
   <Link to="/pricing">Pricing</Link>
   <Link to="/faq">FAQ</Link>
   <Link to="/" className="logo">COMPLIE</Link>
