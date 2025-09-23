@@ -99,7 +99,7 @@ export default function CompliePage(): JSX.Element {
     .nav-links a{text-decoration:none;color:#000}
     .cta{background:var(--accent-grad);color:#fff;padding:12px 28px;border-radius:50px;font-weight:600;font-size:16px;text-decoration:none;cursor:pointer;border:none}
     .hero{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:110px 20px;background:var(--surface)}
-    .hero h1{font-size:40px;line-height:1.12;margin:0 0 14px 0;font-weight:900 !important}
+    .hero h1{font-size:40px;line-height:1.12;margin:0 0 14px 0;font-weight:800}
     .hero p{font-size:15px;opacity:0.82;margin:0 0 32px 0;max-width:760px}
     .cta-btn{background:var(--accent-grad);color:#fff;font-weight:700;font-size:17px;padding:14px 24px;border-radius:999px;text-decoration:none;cursor:pointer;border:none;transition:opacity .12s ease}
     .cta-btn:hover{opacity:0.88}
