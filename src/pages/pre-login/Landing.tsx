@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 
 export default function CompliePage(): JSX.Element {
   const [modalOpen, setModalOpen] = useState(false);
@@ -18,7 +17,7 @@ export default function CompliePage(): JSX.Element {
   const loginFormRef = useRef<HTMLFormElement | null>(null);
 
   const supabaseProjectUrl = "https://gaogwkgdkdwitbfwmsmu.supabase.co";
-  const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/dashboard` : "/dashboard";
+  const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/dashboard.tsx` : "/dashboard.tsx";
 
   function openModal() {
     setModalOpen(true);
@@ -142,15 +141,13 @@ export default function CompliePage(): JSX.Element {
     .legal{font-size:12px;color:#888;text-align:center;margin-top:6px}
     @media (max-width:640px){.popup-content{padding:36px 20px;border-radius:12px}.popup-icon svg{width:40px;height:40px}}`}</style>
 
-      <nav className="navbar">
-        <Link to="/" className="logo">COMPLIE</Link>
-        <div className="nav-links">
-          <Link to="/pre-login/features">Features</Link>
-          <Link to="/pricing">Pricing</Link>
-          <Link to="/faq">FAQ</Link>
-        </div>
-        <button className="cta" onClick={(e) => { e.preventDefault(); openModal(); }}>Try Complie Now</button>
-      </nav>
+      <div className="nav-links">
+  <Link to="/pre-login/features">Features</Link>
+  <Link to="/pricing">Pricing</Link>
+  <Link to="/faq">FAQ</Link>
+</div>
+  <button className="cta" onClick={(e) => { e.preventDefault(); openModal(); }}>Try Complie Now</button>
+</nav>
 
       <section className="hero">
         <h1>Stay on top of your freelance<br />projects effortlessly</h1>
@@ -165,10 +162,10 @@ export default function CompliePage(): JSX.Element {
       </section>
 
       <footer>
-        <Link to="/privacypolicy">Privacy Policy</Link>
-        <Link to="/refundpolicy">Refund Policy</Link>
-        <Link to="/termsofservice">Terms of Service</Link>
-      </footer>
+  <Link to="/privacypolicy">Privacy Policy</Link>
+  <Link to="/refundpolicy">Refund Policy</Link>
+  <Link to="/termsofservice">Terms of Service</Link>
+</footer>
 
       <div ref={modalRef} className={`popup ${modalOpen ? "show" : ""}`} id="authModal" onClick={onOverlayClick} role="presentation">
         <div className="popup-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -222,7 +219,7 @@ export default function CompliePage(): JSX.Element {
               <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="google-logo" alt="Google logo" />
               Continue with Google
             </div>
-            <div className="legal">By creating an account you agree to our <Link to="/termsofservice">Terms</Link> and <Link to="/privacypolicy">Privacy Policy</Link>.</div>
+            <div className="legal">By creating an account you agree to our <a href="termsofservice.tsx">Terms</a> and <a href="privacypolicy.tsx">Privacy Policy</a>.</div>
           </form>
 
           <form ref={loginFormRef} id="loginForm" className="form" autoComplete="on" noValidate style={{ display: activeTab === "login" ? "flex" : "none" }}>
