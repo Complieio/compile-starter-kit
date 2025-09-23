@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-export default function CompliePage(): JSX.Element {
+export default function Landing(): JSX.Element {
   const [modalOpen, setModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"signup" | "login">("signup");
   const [name, setName] = useState("");
@@ -17,7 +17,7 @@ export default function CompliePage(): JSX.Element {
   const loginFormRef = useRef<HTMLFormElement | null>(null);
 
   const supabaseProjectUrl = "https://gaogwkgdkdwitbfwmsmu.supabase.co";
-  const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/dashboard.tsx` : "/dashboard.tsx";
+  const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/dashboard` : "/dashboard";
 
   function openModal() {
     setModalOpen(true);
@@ -164,9 +164,9 @@ export default function CompliePage(): JSX.Element {
       </section>
 
       <footer>
-        <a href="privacypolicy.tsx">Privacy Policy</a>
-        <a href="refundpolicy.tsx">Refund Policy</a>
-        <a href="termsofservice.tsx">Terms of Service</a>
+        <a href="/privacypolicy">Privacy Policy</a>
+        <a href="/refundpolicy">Refund Policy</a>
+        <a href="/termsofservice">Terms of Service</a>
       </footer>
 
       <div ref={modalRef} className={`popup ${modalOpen ? "show" : ""}`} id="authModal" onClick={onOverlayClick} role="presentation">
@@ -221,7 +221,7 @@ export default function CompliePage(): JSX.Element {
               <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="google-logo" alt="Google logo" />
               Continue with Google
             </div>
-            <div className="legal">By creating an account you agree to our <a href="termsofservice.tsx">Terms</a> and <a href="privacypolicy.tsx">Privacy Policy</a>.</div>
+            <div className="legal">By creating an account you agree to our <a href="/termsofservice">Terms</a> and <a href="/privacypolicy">Privacy Policy</a>.</div>
           </form>
 
           <form ref={loginFormRef} id="loginForm" className="form" autoComplete="on" noValidate style={{ display: activeTab === "login" ? "flex" : "none" }}>
