@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 
 export default function TermsOfService(): JSX.Element {
   useEffect(() => {
-    // FAQ / modal helper logic adapted from original scripts (keeps original behavior)
     const authModal = document.getElementById("authModal");
     const openBtns = Array.from(document.querySelectorAll(".cta"));
     const closeAuth = document.getElementById("closeAuth");
@@ -219,7 +218,6 @@ a.contact-link{background:none;color:var(--accent-start);background:var(--accent
 footer{background:var(--surface);text-align:center;padding:24px;font-size:14px;opacity:0.8;display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
 footer a{text-decoration:none;color:#000;font-weight:500}
 
-/* popup styles */
 .popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.28);backdrop-filter:blur(1.5px);justify-content:center;align-items:center;z-index:1200;padding:20px}
 .popup-content{background:#fff;border-radius:16px;box-shadow:0 28px 80px rgba(8,20,12,0.18);max-width:560px;width:100%;padding:56px 40px;display:flex;flex-direction:column;gap:12px;position:relative;min-width:320px}
 .popup-icon{display:flex;justify-content:center;align-items:center;width:48px;height:48px;margin-bottom:2px;align-self:center;opacity:0.55;background:transparent;box-shadow:none}
