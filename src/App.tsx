@@ -6,11 +6,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/index";
 import NotFound from "./pages/NotFound";
 import FeaturesPage from './pages/pre-login/features';
-import PricingPage from './pages/pre-login/pricing';
-import FaqPage from './pages/pre-login/faq';
-import PrivacyPolicyPage from './pages/pre-login/privacypolicy';
-import RefundPolicyPage from './pages/pre-login/refundpolicy';
-import TermsOfServicePage from './pages/pre-login/termsofservice';
+import PricingPage from './pages/pre-login/Pricing';
+import FaqPage from './pages/pre-login/Faq';
+import PrivacyPolicyPage from './pages/pre-login/Privacypolicy';
+import RefundPolicyPage from './pages/pre-login/Refundpolicy';
+import TermsOfServicePage from './pages/pre-login/Termsofservice';
 
 
 const queryClient = new QueryClient();

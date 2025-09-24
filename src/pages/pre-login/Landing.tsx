@@ -144,13 +144,15 @@ export default function CompliePage(): JSX.Element {
     .legal{font-size:12px;color:#888;text-align:center;margin-top:6px}
     @media (max-width:640px){.popup-content{padding:36px 20px;border-radius:12px}.popup-icon svg{width:40px;height:40px}}`}</style>
 
-      <div className="nav-links">
-  <Link to="/pre-login/features">Features</Link>
-  <Link to="/pricing">Pricing</Link>
-  <Link to="/faq">FAQ</Link>
-</div>
-  <button className="cta" onClick={(e) => { e.preventDefault(); openModal(); }}>Try Complie Now</button>
-</nav>
+      <nav className="navbar">
+        <Link to="/" className="logo">COMPLIE</Link>
+        <div className="nav-links">
+          <Link to="/pre-login/features">Features</Link>
+          <Link to="/pricing">Pricing</Link>
+          <Link to="/faq">FAQ</Link>
+        </div>
+        <button className="cta" onClick={(e) => { e.preventDefault(); openModal(); }}>Try Complie Now</button>
+      </nav>
 
       <section className="hero">
         <h1>Stay on top of your freelance<br />projects effortlessly</h1>
