@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import FeaturesPage from './pages/pre-login/features';
 import PricingPage from './pages/pre-login/pricing';
 import FaqPage from './pages/pre-login/faq';
+import PrivacyPolicyPage from './pages/pre-login/privacypolicy';
 
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/features" element={<FeaturesPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/faq" element={<FaqPage />} />
+          <Route path="/privacypolicy" element={<PrivacyPolicyPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
