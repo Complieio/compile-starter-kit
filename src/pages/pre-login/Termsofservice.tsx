@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function TermsOfService(): JSX.Element {
   useEffect(() => {
@@ -255,9 +256,9 @@ footer a{text-decoration:none;color:#000;font-weight:500}
           COMPLIE
         </div>
         <div className="nav-links">
-          <a href="/features">Features</a>
-          <a href="/pricing">Pricing</a>
-          <a href="/faq">FAQ</a>
+          <Link to="/features">Features</Link>
+          <Link to="/pricing">Pricing</Link>
+          <Link to="/faq">FAQ</Link>
         </div>
         <button className="cta" id="openModal">
           Try Complie Now
