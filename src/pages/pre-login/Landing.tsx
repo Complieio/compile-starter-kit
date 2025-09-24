@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function CompliePage(): JSX.Element {
   const [modalOpen, setModalOpen] = useState(false);
@@ -10,6 +11,8 @@ export default function CompliePage(): JSX.Element {
   const [loginPassword, setLoginPassword] = useState("");
   const [loadingSignup, setLoadingSignup] = useState(false);
   const [loadingLogin, setLoadingLogin] = useState(false);
+
+  const navigate = useNavigate();
 
   const modalRef = useRef<HTMLDivElement | null>(null);
   const nameRef = useRef<HTMLInputElement | null>(null);
