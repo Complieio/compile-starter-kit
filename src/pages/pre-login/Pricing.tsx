@@ -63,9 +63,9 @@ const PricingPage: React.FC = () => {
       <nav className="navbar">
         <div className="logo" onClick={() => window.location.href='/'}>COMPLIE</div>
         <div className="nav-links">
-          <a href="/features">Features</a>
-          <a href="/pricing">Pricing</a>
-          <a href="/faq">FAQ</a>
+          <Link to="/features">Features</Link>
+          <Link to="/pricing">Pricing</Link>
+          <Link to="/faq">FAQ</Link>
         </div>
         <button className="cta" onClick={() => setAuthOpen(true)}>Try Complie Now</button>
       </nav>
