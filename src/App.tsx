@@ -10,6 +10,7 @@ import PricingPage from './pages/pre-login/pricing';
 import FaqPage from './pages/pre-login/faq';
 import PrivacyPolicyPage from './pages/pre-login/privacypolicy';
 import RefundPolicyPage from './pages/pre-login/refundpolicy';
+import TermsOfServicePage from './pages/pre-login/termsofservice';
 
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/privacypolicy" element={<PrivacyPolicyPage />} />
           <Route path="/refundpolicy" element={<RefundPolicyPage />} />
+          <Route path="/termsofservice" element={<TermsOfServicePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
