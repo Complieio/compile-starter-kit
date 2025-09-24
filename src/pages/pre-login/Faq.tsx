@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function FAQPage(): JSX.Element {
   const [openItems, setOpenItems] = useState<Record<number, boolean>>({});
@@ -83,9 +84,9 @@ export default function FAQPage(): JSX.Element {
       <nav className="navbar">
         <div className="logo" onClick={() => (window.location.href = "/")}>COMPLIE</div>
         <div className="nav-links">
-          <a href="/features">Features</a>
-          <a href="/pricing">Pricing</a>
-          <a href="/faq">FAQ</a>
+          <Link to="/features">Features</Link>
+          <Link to="/pricing">Pricing</Link>
+          <Link to="/faq">FAQ</Link>
         </div>
         <a className="cta" href="/signup" onClick={(e) => { e.preventDefault(); setAuthOpen(true); }}>Try Complie Now</a>
       </nav>
