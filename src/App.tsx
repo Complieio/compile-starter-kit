@@ -11,6 +11,8 @@ import AuthPage from "./pages/auth/Auth";
 import AppLayout from "./components/layout/AppLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Projects from "./pages/projects/Projects";
+import NewProject from "./pages/projects/NewProject";
+import ProjectDetail from "./pages/projects/ProjectDetail";
 import Clients from "./pages/clients/Clients";
 import Checklists from "./pages/checklists/Checklists";
 import Notes from "./pages/notes/Notes";
@@ -55,9 +57,13 @@ const App = () => (
             </Route>
             <Route path="/projects" element={<AppLayout />}>
               <Route index element={<Projects />} />
+              <Route path="new" element={<NewProject />} />
+              <Route path=":id" element={<ProjectDetail />} />
+              <Route path=":id/edit" element={<NewProject />} />
             </Route>
             <Route path="/clients" element={<AppLayout />}>
               <Route index element={<Clients />} />
+              <Route path="new" element={<Clients />} />
             </Route>
             <Route path="/checklists" element={<AppLayout />}>
               <Route index element={<Checklists />} />

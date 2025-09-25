@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +18,8 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 const NewProject = () => {
+  const { id } = useParams<{ id: string }>();
+  const isEditing = !!id;
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -31,6 +33,39 @@ const NewProject = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+
+  // Fetch existing project data if editing
+  const { data: existingProject } = useQuery({
+    queryKey: ['project', id],
+    queryFn: async () => {
+      if (!user || !id) return null;
+      
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user && !!id && isEditing,
+  });
+
+  // Update form data when existing project loads
+  useEffect(() => {
+    if (existingProject && isEditing) {
+      setFormData({
+        name: existingProject.name || '',
+        description: existingProject.description || '',
+        client_id: existingProject.client_id || '',
+        status: existingProject.status || 'active',
+        due_date: existingProject.due_date ? new Date(existingProject.due_date) : undefined,
+        tags: existingProject.tags || [],
+      });
+    }
+  }, [existingProject, isEditing]);
 
   // Fetch clients for dropdown
   const { data: clients = [] } = useQuery({
@@ -128,9 +163,11 @@ const NewProject = () => {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-complie-primary">New Project</h1>
+          <h1 className="text-3xl font-bold text-complie-primary">
+            {isEditing ? 'Edit Project' : 'New Project'}
+          </h1>
           <p className="text-muted-foreground mt-1">
-            Create a new project to organize your work
+            {isEditing ? 'Update your project information' : 'Create a new project to organize your work'}
           </p>
         </div>
       </div>
@@ -139,7 +176,7 @@ const NewProject = () => {
         <CardHeader>
           <CardTitle>Project Details</CardTitle>
           <CardDescription>
-            Fill in the information below to create your new project
+            {isEditing ? 'Update the project information below' : 'Fill in the information below to create your new project'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -290,7 +327,7 @@ const NewProject = () => {
                 className="btn-complie-primary flex-1"
                 disabled={loading}
               >
-                {loading ? "Creating..." : "Create Project"}
+                {loading ? (isEditing ? "Updating..." : "Creating...") : (isEditing ? "Update Project" : "Create Project")}
               </Button>
             </div>
           </form>

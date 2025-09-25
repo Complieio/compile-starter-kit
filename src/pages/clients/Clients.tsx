@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +28,7 @@ interface Client {
 }
 
 const Clients = () => {
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
@@ -42,6 +44,15 @@ const Clients = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Auto-open dialog when navigating to /clients/new
+  useEffect(() => {
+    if (location.pathname === '/clients/new') {
+      resetForm();
+      setEditingClient(null);
+      setIsDialogOpen(true);
+    }
+  }, [location.pathname]);
 
   const { data: clients = [], isLoading } = useQuery({
     queryKey: ['clients'],
