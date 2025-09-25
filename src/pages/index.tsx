@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Index(): JSX.Element {
   const [modalOpen, setModalOpen] = useState(false);
@@ -144,9 +145,9 @@ export default function Index(): JSX.Element {
       <nav className="navbar">
         <div className="logo" onClick={() => (window.location.href = "/")}>COMPLIE</div>
         <div className="nav-links">
-          <a href="/features">Features</a>
-          <a href="/pricing">Pricing</a>
-          <a href="/faq">FAQ</a>
+          <Link to="/features">Features</Link>
+          <Link to="/pricing">Pricing</Link>
+          <Link to="/faq">FAQ</Link>
         </div>
         <button className="cta" onClick={(e) => { e.preventDefault(); openModal(); }}>Try Complie Now</button>
       </nav>
@@ -164,9 +165,9 @@ export default function Index(): JSX.Element {
       </section>
 
       <footer>
-        <a href="privacypolicy.tsx">Privacy Policy</a>
-        <a href="refundpolicy.tsx">Refund Policy</a>
-        <a href="termsofservice.tsx">Terms of Service</a>
+        <Link to="/privacypolicy">Privacy Policy</Link>
+        <Link to="/refundpolicy">Refund Policy</Link>
+        <Link to="/termsofservice">Terms of Service</Link>
       </footer>
 
       <div ref={modalRef} className={`popup ${modalOpen ? "show" : ""}`} id="authModal" onClick={onOverlayClick} role="presentation">
@@ -221,7 +222,7 @@ export default function Index(): JSX.Element {
               <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="google-logo" alt="Google logo" />
               Continue with Google
             </div>
-            <div className="legal">By creating an account you agree to our <a href="termsofservice.tsx">Terms</a> and <a href="privacypolicy.tsx">Privacy Policy</a>.</div>
+            <div className="legal">By creating an account you agree to our <Link to="/termsofservice">Terms</Link> and <Link to="/privacypolicy">Privacy Policy</Link>.</div>
           </form>
 
           <form ref={loginFormRef} id="loginForm" className="form" autoComplete="on" noValidate style={{ display: activeTab === "login" ? "flex" : "none" }}>
