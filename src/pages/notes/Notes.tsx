@@ -4,9 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Search, FileText, Edit, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -26,13 +23,6 @@ interface Note {
 
 const Notes = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingNote, setEditingNote] = useState<Note | null>(null);
-  const [formData, setFormData] = useState({
-    content: '',
-    project_id: '',
-    client_id: ''
-  });
 
   const { user } = useAuth();
   const { toast } = useToast();
@@ -54,110 +44,6 @@ const Notes = () => {
       return data as Note[];
     },
     enabled: !!user,
-  });
-
-  const { data: projects = [] } = useQuery({
-    queryKey: ['projects-for-notes'],
-    queryFn: async () => {
-      if (!user) return [];
-      
-      const { data, error } = await supabase
-        .from('projects')
-        .select('id, name')
-        .eq('user_id', user.id)
-        .order('name');
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user,
-  });
-
-  const { data: clients = [] } = useQuery({
-    queryKey: ['clients-for-notes'],
-    queryFn: async () => {
-      if (!user) return [];
-      
-      const { data, error } = await supabase
-        .from('clients')
-        .select('id, name')
-        .eq('user_id', user.id)
-        .order('name');
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user,
-  });
-
-  const createMutation = useMutation({
-    mutationFn: async (noteData: any) => {
-      const { data, error } = await supabase
-        .from('notes')
-        .insert([{ 
-          ...noteData, 
-          user_id: user?.id,
-          project_id: noteData.project_id || null,
-          client_id: noteData.client_id || null
-        }])
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
-      setIsDialogOpen(false);
-      resetForm();
-      toast({
-        title: "Note created",
-        description: "The note has been successfully created.",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async ({ id, ...noteData }: any) => {
-      const { data, error } = await supabase
-        .from('notes')
-        .update({
-          ...noteData,
-          project_id: noteData.project_id || null,
-          client_id: noteData.client_id || null
-        })
-        .eq('id', id)
-        .eq('user_id', user?.id)
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
-      setIsDialogOpen(false);
-      setEditingNote(null);
-      resetForm();
-      toast({
-        title: "Note updated",
-        description: "The note has been successfully updated.",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
   });
 
   const deleteMutation = useMutation({
@@ -189,41 +75,6 @@ const Notes = () => {
   const filteredNotes = notes.filter(note =>
     note.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const resetForm = () => {
-    setFormData({
-      content: '',
-      project_id: '',
-      client_id: ''
-    });
-  };
-
-  const handleEdit = (note: Note) => {
-    setEditingNote(note);
-    setFormData({
-      content: note.content || '',
-      project_id: note.project_id || '',
-      client_id: note.client_id || ''
-    });
-    setIsDialogOpen(true);
-  };
-
-  const handleSubmit = () => {
-    if (!formData.content.trim()) {
-      toast({
-        title: "Validation Error",
-        description: "Please provide note content.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (editingNote) {
-      updateMutation.mutate({ id: editingNote.id, ...formData });
-    } else {
-      createMutation.mutate(formData);
-    }
-  };
 
   const handleDelete = (noteId: string) => {
     if (confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
@@ -270,77 +121,6 @@ const Notes = () => {
           <Plus className="h-4 w-4 mr-2" />
           New Note
         </Button>
-          <DialogContent className="sm:max-w-[500px]">
-            <DialogHeader>
-              <DialogTitle>{editingNote ? 'Edit Note' : 'Create New Note'}</DialogTitle>
-              <DialogDescription>
-                {editingNote ? 'Update the note below.' : 'Add a new note to your collection.'}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Content *</label>
-                <Textarea
-                  placeholder="Write your note here..."
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  rows={6}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Project</label>
-                  <Select 
-                    value={formData.project_id} 
-                    onValueChange={(value) => setFormData({ ...formData, project_id: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select project" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">No project</SelectItem>
-                      {projects.map((project) => (
-                        <SelectItem key={project.id} value={project.id}>
-                          {project.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Client</label>
-                  <Select 
-                    value={formData.client_id} 
-                    onValueChange={(value) => setFormData({ ...formData, client_id: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select client" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">No client</SelectItem>
-                      {clients.map((client) => (
-                        <SelectItem key={client.id} value={client.id}>
-                          {client.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleSubmit}
-                disabled={createMutation.isPending || updateMutation.isPending}
-              >
-                {createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingNote ? 'Update' : 'Create')}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
 
       {/* Search */}
