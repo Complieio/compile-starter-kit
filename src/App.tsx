@@ -9,6 +9,13 @@ import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/auth/Auth";
 import AppLayout from "./components/layout/AppLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
+import Projects from "./pages/projects/Projects";
+import Clients from "./pages/clients/Clients";
+import Checklists from "./pages/checklists/Checklists";
+import Notes from "./pages/notes/Notes";
+import Chatbot from "./pages/chatbot/Chatbot";
+import Exports from "./pages/exports/Exports";
+import Settings from "./pages/settings/Settings";
 import FeaturesPage from './pages/pre-login/features';
 import PricingPage from './pages/pre-login/Pricing';
 import FaqPage from './pages/pre-login/Faq';
@@ -41,25 +48,25 @@ const App = () => (
               <Route index element={<Dashboard />} />
             </Route>
             <Route path="/projects" element={<AppLayout />}>
-              <Route index element={<div className="p-6">Projects - Coming Soon</div>} />
+              <Route index element={<Projects />} />
             </Route>
             <Route path="/clients" element={<AppLayout />}>
-              <Route index element={<div className="p-6">Clients - Coming Soon</div>} />
+              <Route index element={<Clients />} />
             </Route>
             <Route path="/checklists" element={<AppLayout />}>
-              <Route index element={<div className="p-6">Checklists - Coming Soon</div>} />
+              <Route index element={<Checklists />} />
             </Route>
             <Route path="/notes" element={<AppLayout />}>
-              <Route index element={<div className="p-6">Notes - Coming Soon</div>} />
+              <Route index element={<Notes />} />
             </Route>
             <Route path="/chatbot" element={<AppLayout />}>
-              <Route index element={<div className="p-6">Chatbot - Coming Soon</div>} />
+              <Route index element={<Chatbot />} />
             </Route>
             <Route path="/exports" element={<AppLayout />}>
-              <Route index element={<div className="p-6">Exports - Coming Soon</div>} />
+              <Route index element={<Exports />} />
             </Route>
             <Route path="/settings" element={<AppLayout />}>
-              <Route index element={<div className="p-6">Settings - Coming Soon</div>} />
+              <Route index element={<Settings />} />
             </Route>
             <Route path="/help" element={<AppLayout />}>
               <Route index element={<div className="p-6">Help - Coming Soon</div>} />
