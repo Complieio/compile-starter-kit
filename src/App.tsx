@@ -22,6 +22,7 @@ import FaqPage from './pages/pre-login/Faq';
 import PrivacyPolicyPage from './pages/pre-login/Privacypolicy';
 import RefundPolicyPage from './pages/pre-login/Refundpolicy';
 import TermsOfServicePage from './pages/pre-login/Termsofservice';
+import OnboardingCustomize from './pages/onboarding/OnboardingCustomize';
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,9 @@ const App = () => (
             <Route path="/privacypolicy" element={<PrivacyPolicyPage />} />
             <Route path="/refundpolicy" element={<RefundPolicyPage />} />
             <Route path="/termsofservice" element={<TermsOfServicePage />} />
+            
+            {/* Onboarding routes */}
+            <Route path="/onboarding/customize" element={<OnboardingCustomize />} />
             
             {/* Protected routes */}
             <Route path="/dashboard" element={<AppLayout />}>

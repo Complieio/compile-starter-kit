@@ -163,7 +163,7 @@ const Checklists = () => {
 
       const { error } = await supabase
         .from('checklists')
-        .update({ items: updatedItems })
+        .update({ items: updatedItems as any })
         .eq('id', checklistId)
         .eq('user_id', user?.id);
       

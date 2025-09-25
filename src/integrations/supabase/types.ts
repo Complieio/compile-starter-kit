@@ -254,28 +254,43 @@ export type Database = {
       }
       profiles: {
         Row: {
+          country_code: string | null
           created_at: string
           email: string
           full_name: string
           id: string
+          nickname: string | null
+          onboarded: boolean | null
           plan: string
+          short_description: string | null
           trial_start: string
+          username: string | null
         }
         Insert: {
+          country_code?: string | null
           created_at?: string
           email: string
           full_name?: string
           id: string
+          nickname?: string | null
+          onboarded?: boolean | null
           plan?: string
+          short_description?: string | null
           trial_start: string
+          username?: string | null
         }
         Update: {
+          country_code?: string | null
           created_at?: string
           email?: string
           full_name?: string
           id?: string
+          nickname?: string | null
+          onboarded?: boolean | null
           plan?: string
+          short_description?: string | null
           trial_start?: string
+          username?: string | null
         }
         Relationships: []
       }
