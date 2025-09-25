@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function FAQPage(): JSX.Element {
   const [openItems, setOpenItems] = useState<Record<number, boolean>>({});
@@ -7,12 +8,23 @@ export default function FAQPage(): JSX.Element {
   const [activeTab, setActiveTab] = useState<"signup" | "login">("signup");
   const [signupData, setSignupData] = useState({ name: "", email: "", password: "" });
   const [loginData, setLoginData] = useState({ email: "", password: "" });
+  const [loadingSignup, setLoadingSignup] = useState(false);
+  const [loadingLogin, setLoadingLogin] = useState(false);
+  
+  const { signIn, signUp, signInWithGoogle, user } = useAuth();
+  const navigate = useNavigate();
+  
   const modalRef = useRef<HTMLDivElement | null>(null);
   const nameRef = useRef<HTMLInputElement | null>(null);
   const signupFormRef = useRef<HTMLFormElement | null>(null);
   const loginFormRef = useRef<HTMLFormElement | null>(null);
-  const supabaseProjectUrl = "https://gaogwkgdkdwitbfwmsmu.supabase.co";
-  const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/dashboard.html` : "/dashboard.html";
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const faqList = [
     { q: "Can I cancel my subscription anytime?", a: "Yes, you can cancel at any time. Your account will remain active until the end of your billing cycle and you won’t be charged again." },
@@ -36,20 +48,20 @@ export default function FAQPage(): JSX.Element {
       if (e.key === "Escape") setAuthOpen(false);
       if (e.key === "Enter") {
         const active = document.activeElement as Element | null;
-        if (signupFormRef.current?.contains(active) && isSignupValid()) handleSignup();
-        if (loginFormRef.current?.contains(active) && isLoginValid()) handleLogin();
+        if (signupFormRef.current?.contains(active) && isSignupValid() && !loadingSignup) handleSignup();
+        if (loginFormRef.current?.contains(active) && isLoginValid() && !loadingLogin) handleLogin();
       }
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [signupData, loginData]);
+  }, [signupData, loginData, loadingSignup, loadingLogin]);
 
   function toggleItem(i: number) {
     setOpenItems(prev => ({ ...prev, [i]: !prev[i] }));
   }
 
-  function handleGoogleAuth() {
-    window.location.href = `${supabaseProjectUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectUrl)}`;
+  async function handleGoogleAuth() {
+    await signInWithGoogle();
   }
 
   function isSignupValid() {
@@ -60,17 +72,30 @@ export default function FAQPage(): JSX.Element {
     return loginData.email.includes("@") && loginData.password.length >= 6;
   }
 
-  function showLoading(buttonCallback: () => void) {
-    buttonCallback();
-    setTimeout(() => { setAuthOpen(false); }, 900);
+  async function handleSignup() {  
+    if (!isSignupValid()) return;
+    
+    setLoadingSignup(true);
+    const { error } = await signUp(signupData.email, signupData.password, { full_name: signupData.name });
+    setLoadingSignup(false);
+    
+    if (!error) {
+      setAuthOpen(false);
+      // User will be redirected after email verification
+    }
   }
 
-  function handleSignup() {
-    showLoading(() => {});
-  }
-
-  function handleLogin() {
-    showLoading(() => {});
+  async function handleLogin() {
+    if (!isLoginValid()) return;
+    
+    setLoadingLogin(true);
+    const { error } = await signIn(loginData.email, loginData.password);
+    setLoadingLogin(false);
+    
+    if (!error) {
+      setAuthOpen(false);
+      navigate('/dashboard');
+    }
   }
 
   function onOverlayClick(e: React.MouseEvent) {
@@ -174,8 +199,8 @@ export default function FAQPage(): JSX.Element {
                 </svg>
                 <input id="password" name="password" type="password" placeholder="Create password" aria-label="Create password" required value={signupData.password} onChange={(e) => setSignupData(prev => ({ ...prev, password: e.target.value }))} />
               </div>
-              <button type="button" id="signupBtn" className="submit" disabled={!isSignupValid()} onClick={() => handleSignup()}>
-                {"Create account"}
+              <button type="button" id="signupBtn" className="submit" disabled={!isSignupValid() || loadingSignup} onClick={() => handleSignup()}>
+                {loadingSignup ? <span className="spinner" /> : "Create account"}
               </button>
               <div className="divider"><span className="or-pill">OR</span></div>
               <div className="social-btn" id="googleSignup" onClick={handleGoogleAuth}>
@@ -202,8 +227,8 @@ export default function FAQPage(): JSX.Element {
                 </svg>
                 <input id="loginPassword" name="loginPassword" type="password" placeholder="Password" aria-label="Password" required value={loginData.password} onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))} />
               </div>
-              <button type="button" id="loginBtn" className="submit" disabled={!isLoginValid()} onClick={() => handleLogin()}>
-                {"Log in"}
+              <button type="button" id="loginBtn" className="submit" disabled={!isLoginValid() || loadingLogin} onClick={() => handleLogin()}>
+                {loadingLogin ? <span className="spinner" /> : "Log in"}
               </button>
               <div className="divider"><span className="or-pill">OR</span></div>
               <div className="social-btn" id="googleLogin" onClick={handleGoogleAuth}>

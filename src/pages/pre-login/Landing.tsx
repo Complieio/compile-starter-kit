@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function CompliePage(): JSX.Element {
   const [modalOpen, setModalOpen] = useState(false);
@@ -12,6 +13,7 @@ export default function CompliePage(): JSX.Element {
   const [loadingSignup, setLoadingSignup] = useState(false);
   const [loadingLogin, setLoadingLogin] = useState(false);
 
+  const { signIn, signUp, signInWithGoogle, user } = useAuth();
   const navigate = useNavigate();
 
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -19,8 +21,12 @@ export default function CompliePage(): JSX.Element {
   const signupFormRef = useRef<HTMLFormElement | null>(null);
   const loginFormRef = useRef<HTMLFormElement | null>(null);
 
-  const supabaseProjectUrl = "https://gaogwkgdkdwitbfwmsmu.supabase.co";
-  const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/dashboard.tsx` : "/dashboard.tsx";
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   function openModal() {
     setModalOpen(true);
@@ -70,20 +76,34 @@ export default function CompliePage(): JSX.Element {
     return !(loginEmail.includes("@") && loginPassword.length >= 6) || loadingLogin;
   }
 
-  function handleSignupClick() {
+  async function handleSignupClick() {
+    if (!name.trim() || !email || !password) return;
+    
     setLoadingSignup(true);
-    setTimeout(() => {
-      setLoadingSignup(false);
+    const { error } = await signUp(email, password, { full_name: name });
+    setLoadingSignup(false);
+    
+    if (!error) {
       closeModal();
-    }, 900);
+      // User will be redirected after email verification
+    }
   }
 
-  function handleLoginClick() {
+  async function handleLoginClick() {
+    if (!loginEmail || !loginPassword) return;
+    
     setLoadingLogin(true);
-    setTimeout(() => {
-      setLoadingLogin(false);
+    const { error } = await signIn(loginEmail, loginPassword);
+    setLoadingLogin(false);
+    
+    if (!error) {
       closeModal();
-    }, 900);
+      navigate('/dashboard');
+    }
+  }
+
+  async function handleGoogleAuth() {
+    await signInWithGoogle();
   }
 
   function onOverlayClick(e: React.MouseEvent) {
@@ -220,7 +240,7 @@ export default function CompliePage(): JSX.Element {
               {loadingSignup ? <span className="spinner" aria-hidden="true" /> : <span id="signupLabel">Create account</span>}
             </button>
             <div className="divider"><span className="or-pill">OR</span></div>
-            <div className="social-btn" id="googleSignup" onClick={() => { window.location.href = `${supabaseProjectUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectUrl)}`; }}>
+            <div className="social-btn" id="googleSignup" onClick={handleGoogleAuth}>
               <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="google-logo" alt="Google logo" />
               Continue with Google
             </div>
@@ -246,7 +266,7 @@ export default function CompliePage(): JSX.Element {
               {loadingLogin ? <span className="spinner" aria-hidden="true" /> : <span id="loginLabel">Log in</span>}
             </button>
             <div className="divider"><span className="or-pill">OR</span></div>
-            <div className="social-btn" id="googleLogin" onClick={() => { window.location.href = `${supabaseProjectUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectUrl)}`; }}>
+            <div className="social-btn" id="googleLogin" onClick={handleGoogleAuth}>
               <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="google-logo" alt="Google logo" />
               Continue with Google
             </div>

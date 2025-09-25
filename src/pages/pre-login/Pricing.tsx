@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from "@/contexts/AuthContext";
 
 const plansData = [
   {
@@ -45,9 +46,18 @@ export default function PricingPage() {
   const [signupLoading, setSignupLoading] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const [billing, setBilling] = useState<'monthly'|'annual'>('monthly');
-  const supabaseProjectUrl = 'https://gaogwkgdkdwitbfwmsmu.supabase.co';
-  const redirectUrl = window.location.origin + '/dashboard.html';
+  
+  const { signIn, signUp, signInWithGoogle, user } = useAuth();
+  const navigate = useNavigate();
+  
   const modalRef = useRef<HTMLDivElement | null>(null);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     const shown = localStorage.getItem('complieModalShown');
@@ -61,13 +71,13 @@ export default function PricingPage() {
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') setModalOpen(false);
       if (e.key === 'Enter') {
-        if (modalOpen && activeTab === 'signup' && !isSignupDisabled()) handleSignup();
-        if (modalOpen && activeTab === 'login' && !isLoginDisabled()) handleLogin();
+        if (modalOpen && activeTab === 'signup' && !isSignupDisabled() && !signupLoading) handleSignup();
+        if (modalOpen && activeTab === 'login' && !isLoginDisabled() && !loginLoading) handleLogin();
       }
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [modalOpen, activeTab, signupName, signupEmail, signupPw, loginEmail, loginPw]);
+  }, [modalOpen, activeTab, signupName, signupEmail, signupPw, loginEmail, loginPw, signupLoading, loginLoading]);
 
   function isSignupDisabled() {
     return !(signupName.trim().length > 1 && signupEmail.includes('@') && signupPw.length >= 6);
@@ -76,22 +86,39 @@ export default function PricingPage() {
     return !(loginEmail.includes('@') && loginPw.length >= 6);
   }
 
-  function handleSignup() {
+  async function handleSignup() {
+    if (isSignupDisabled()) return;
+    
     setSignupLoading(true);
-    setTimeout(() => { setSignupLoading(false); setModalOpen(false); }, 900);
+    const { error } = await signUp(signupEmail, signupPw, { full_name: signupName });
+    setSignupLoading(false);
+    
+    if (!error) {
+      setModalOpen(false);
+      // User will be redirected after email verification
+    }
   }
-  function handleLogin() {
+  
+  async function handleLogin() {
+    if (isLoginDisabled()) return;
+    
     setLoginLoading(true);
-    setTimeout(() => { setLoginLoading(false); setModalOpen(false); }, 900);
+    const { error } = await signIn(loginEmail, loginPw);
+    setLoginLoading(false);
+    
+    if (!error) {
+      setModalOpen(false);
+      navigate('/dashboard');
+    }
+  }
+
+  async function redirectToGoogle() {
+    await signInWithGoogle();
   }
 
   function openAuthModal(tab: 'signup'|'login' = 'signup') {
     setActiveTab(tab);
     setModalOpen(true);
-  }
-
-  function redirectToGoogle() {
-    window.location.href = `${supabaseProjectUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectUrl)}`;
   }
 
   return (
