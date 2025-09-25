@@ -87,6 +87,7 @@ export type Database = {
           created_at: string
           id: string
           items: Json | null
+          private: boolean | null
           title: string | null
           user_id: string | null
         }
@@ -94,6 +95,7 @@ export type Database = {
           created_at?: string
           id?: string
           items?: Json | null
+          private?: boolean | null
           title?: string | null
           user_id?: string | null
         }
@@ -101,6 +103,7 @@ export type Database = {
           created_at?: string
           id?: string
           items?: Json | null
+          private?: boolean | null
           title?: string | null
           user_id?: string | null
         }
@@ -115,6 +118,7 @@ export type Database = {
           description: string | null
           id: string
           name: string | null
+          private: boolean | null
           status: string | null
           updated_at: string | null
           user_id: string | null
@@ -127,6 +131,7 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string | null
+          private?: boolean | null
           status?: string | null
           updated_at?: string | null
           user_id?: string | null
@@ -139,6 +144,7 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string | null
+          private?: boolean | null
           status?: string | null
           updated_at?: string | null
           user_id?: string | null
@@ -153,6 +159,7 @@ export type Database = {
           id: string
           name: string
           ocr_status: string | null
+          private: boolean | null
           project_id: string | null
           uploaded_at: string
           user_id: string
@@ -164,6 +171,7 @@ export type Database = {
           id?: string
           name: string
           ocr_status?: string | null
+          private?: boolean | null
           project_id?: string | null
           uploaded_at?: string
           user_id: string
@@ -175,6 +183,7 @@ export type Database = {
           id?: string
           name?: string
           ocr_status?: string | null
+          private?: boolean | null
           project_id?: string | null
           uploaded_at?: string
           user_id?: string
@@ -195,6 +204,7 @@ export type Database = {
           content: string | null
           created_at: string
           id: string
+          private: boolean | null
           project_id: string | null
           updated_at: string
           user_id: string | null
@@ -204,6 +214,7 @@ export type Database = {
           content?: string | null
           created_at?: string
           id?: string
+          private?: boolean | null
           project_id?: string | null
           updated_at?: string
           user_id?: string | null
@@ -213,6 +224,7 @@ export type Database = {
           content?: string | null
           created_at?: string
           id?: string
+          private?: boolean | null
           project_id?: string | null
           updated_at?: string
           user_id?: string | null
@@ -302,6 +314,7 @@ export type Database = {
           due_date: string | null
           id: string
           name: string
+          private: boolean | null
           status: string | null
           tags: string[] | null
           updated_at: string
@@ -314,6 +327,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           name: string
+          private?: boolean | null
           status?: string | null
           tags?: string[] | null
           updated_at?: string
@@ -326,6 +340,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           name?: string
+          private?: boolean | null
           status?: string | null
           tags?: string[] | null
           updated_at?: string

@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import Index from "./pages/index";
 import NotFound from "./pages/NotFound";
+import PageNotFound from "./pages/PageNotFound";
 import AuthPage from "./pages/auth/Auth";
 import AppLayout from "./components/layout/AppLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -23,6 +24,7 @@ import PrivacyPolicyPage from './pages/pre-login/Privacypolicy';
 import RefundPolicyPage from './pages/pre-login/Refundpolicy';
 import TermsOfServicePage from './pages/pre-login/Termsofservice';
 import OnboardingCustomize from './pages/onboarding/OnboardingCustomize';
+import Profile from './pages/profile/Profile';
 
 const queryClient = new QueryClient();
 
@@ -72,11 +74,14 @@ const App = () => (
             <Route path="/settings" element={<AppLayout />}>
               <Route index element={<Settings />} />
             </Route>
+            <Route path="/profile" element={<AppLayout />}>
+              <Route index element={<Profile />} />
+            </Route>
             <Route path="/help" element={<AppLayout />}>
               <Route index element={<div className="p-6">Help - Coming Soon</div>} />
             </Route>
             
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

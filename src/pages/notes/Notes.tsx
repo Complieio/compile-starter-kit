@@ -20,8 +20,7 @@ interface Note {
   project_id: string | null;
   client_id: string | null;
   user_id: string;
-  projects: { name: string } | null;
-  clients: { name: string } | null;
+  private: boolean;
 }
 
 const Notes = () => {
@@ -186,9 +185,7 @@ const Notes = () => {
   });
 
   const filteredNotes = notes.filter(note =>
-    note.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    note.projects?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    note.clients?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+    note.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const resetForm = () => {
@@ -380,18 +377,6 @@ const Notes = () => {
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      {note.projects && (
-                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
-                          {note.projects.name}
-                        </span>
-                      )}
-                      {note.clients && (
-                        <span className="text-xs bg-secondary/10 text-secondary-foreground px-2 py-1 rounded">
-                          {note.clients.name}
-                        </span>
-                      )}
-                    </div>
                     <CardDescription className="text-sm">
                       {format(new Date(note.updated_at), 'MMM d, yyyy at h:mm a')}
                     </CardDescription>
