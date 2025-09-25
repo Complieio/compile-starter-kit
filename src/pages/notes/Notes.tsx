@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -35,6 +36,7 @@ const Notes = () => {
 
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { data: notes = [], isLoading } = useQuery({
@@ -264,13 +266,10 @@ const Notes = () => {
             Keep track of important information and ideas
           </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="btn-complie-primary" onClick={() => { resetForm(); setEditingNote(null); }}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Note
-            </Button>
-          </DialogTrigger>
+        <Button className="btn-complie-primary" onClick={() => navigate('/notes/new')}>
+          <Plus className="h-4 w-4 mr-2" />
+          New Note
+        </Button>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle>{editingNote ? 'Edit Note' : 'Create New Note'}</DialogTitle>
@@ -364,7 +363,7 @@ const Notes = () => {
             <p className="text-muted-foreground text-center mb-6 max-w-md">
               Start capturing your thoughts and important information. Notes can be linked to projects and clients.
             </p>
-            <Button className="btn-complie-primary" onClick={() => { resetForm(); setEditingNote(null); setIsDialogOpen(true); }}>
+            <Button className="btn-complie-primary" onClick={() => navigate('/notes/new')}>
               <Plus className="h-4 w-4 mr-2" />
               Write Your First Note
             </Button>
@@ -385,7 +384,7 @@ const Notes = () => {
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => handleEdit(note)}
+                      onClick={() => navigate(`/notes/${note.id}/edit`)}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>

@@ -16,6 +16,7 @@ import ProjectDetail from "./pages/projects/ProjectDetail";
 import Clients from "./pages/clients/Clients";
 import Checklists from "./pages/checklists/Checklists";
 import Notes from "./pages/notes/Notes";
+import NoteEditor from "./pages/notes/NoteEditor";
 import Chatbot from "./pages/chatbot/Chatbot";
 import Exports from "./pages/exports/Exports";
 import Settings from "./pages/settings/Settings";
@@ -70,6 +71,8 @@ const App = () => (
             </Route>
             <Route path="/notes" element={<AppLayout />}>
               <Route index element={<Notes />} />
+              <Route path="new" element={<NoteEditor />} />
+              <Route path=":id/edit" element={<NoteEditor />} />
             </Route>
             <Route path="/chatbot" element={<AppLayout />}>
               <Route index element={<Chatbot />} />
