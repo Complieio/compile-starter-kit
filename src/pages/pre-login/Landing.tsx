@@ -21,6 +21,7 @@ export default function CompliePage(): JSX.Element {
   const signupFormRef = useRef<HTMLFormElement | null>(null);
   const loginFormRef = useRef<HTMLFormElement | null>(null);
 
+
   useEffect(() => {
     if (user) {
       navigate('/dashboard');
@@ -84,7 +85,6 @@ export default function CompliePage(): JSX.Element {
     
     if (!error) {
       closeModal();
-      // User will be redirected after email verification
     }
   }
 
@@ -111,7 +111,7 @@ export default function CompliePage(): JSX.Element {
 
   return (
     <div>
-      <style>{`:root{--primary:#ffffff;--complie-accent:217.2 91.2% 59.8%;--accent-grad:linear-gradient(90deg,hsl(var(--complie-accent)),hsl(var(--complie-accent)));--surface:#ffffff;--muted:#f5f5f5;--text:#1a1a1a;--muted-border:#e6e6e6}
+      <style>{`:root{--complie-accent:217.2 91.2% 59.8%;--accent-grad:linear-gradient(90deg,hsl(var(--complie-accent)),hsl(var(--complie-accent)));--surface:#ffffff;--muted:#f5f5f5;--text:#1a1a1a;--muted-border:#e6e6e6}
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background-color:var(--muted);color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
