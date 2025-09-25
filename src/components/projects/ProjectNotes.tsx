@@ -21,6 +21,8 @@ interface Note {
   content: string;
   created_at: string;
   updated_at: string;
+  project_id: string;
+  user_id: string;
 }
 
 export function ProjectNotes({ projectId }: ProjectNotesProps) {

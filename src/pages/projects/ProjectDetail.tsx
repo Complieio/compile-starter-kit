@@ -42,7 +42,7 @@ const ProjectDetail = () => {
           clients (id, name, contact_email),
           tasks (id, title, status, priority, due_date, completed_at),
           documents (id, name, file_size, file_type, uploaded_at),
-          notes (id, content, created_at)
+          notes (id, content, created_at, updated_at)
         `)
         .eq('id', id)
         .eq('user_id', user.id)
@@ -244,8 +244,8 @@ const ProjectDetail = () => {
           <CardContent>
             <div className="text-2xl font-bold text-complie-primary">{project.notes?.length || 0}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Last updated {project.notes?.length ? 
-                format(new Date(project.notes[0].created_at), 'MMM d') : 'Never'
+              Last updated {(project.notes as any)?.length ? 
+                format(new Date((project.notes as any)[0].created_at), 'MMM d') : 'Never'
               }
             </p>
           </CardContent>
