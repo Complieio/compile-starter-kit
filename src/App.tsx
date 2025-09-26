@@ -53,6 +53,9 @@ const App = () => (
             {/* Onboarding routes */}
             <Route path="/onboarding/customize" element={<OnboardingCustomize />} />
             
+            {/* Help page - publicly accessible */}
+            <Route path="/help" element={<Help />} />
+            
             {/* Protected routes */}
             <Route path="/dashboard" element={<AppLayout />}>
               <Route index element={<Dashboard />} />
@@ -86,9 +89,6 @@ const App = () => (
             </Route>
             <Route path="/profile" element={<AppLayout />}>
               <Route index element={<Profile />} />
-            </Route>
-            <Route path="/help" element={<AppLayout />}>
-              <Route index element={<Help />} />
             </Route>
             
             <Route path="*" element={<PageNotFound />} />
