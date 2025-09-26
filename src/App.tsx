@@ -49,6 +49,7 @@ const App = () => (
             <Route path="/privacypolicy" element={<PrivacyPolicyPage />} />
             <Route path="/refundpolicy" element={<RefundPolicyPage />} />
             <Route path="/termsofservice" element={<TermsOfServicePage />} />
+            <Route path="/help" element={<Help />} />
             
             {/* Onboarding routes */}
             <Route path="/onboarding/customize" element={<OnboardingCustomize />} />
@@ -86,9 +87,6 @@ const App = () => (
             </Route>
             <Route path="/profile" element={<AppLayout />}>
               <Route index element={<Profile />} />
-            </Route>
-            <Route path="/help" element={<AppLayout />}>
-              <Route index element={<Help />} />
             </Route>
             
             <Route path="*" element={<PageNotFound />} />
