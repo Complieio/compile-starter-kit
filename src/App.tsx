@@ -28,6 +28,7 @@ import RefundPolicyPage from './pages/pre-login/Refundpolicy';
 import TermsOfServicePage from './pages/pre-login/Termsofservice';
 import OnboardingCustomize from './pages/onboarding/OnboardingCustomize';
 import Profile from './pages/profile/Profile';
+import Help from './pages/help/Help';
 
 const queryClient = new QueryClient();
 
@@ -87,7 +88,7 @@ const App = () => (
               <Route index element={<Profile />} />
             </Route>
             <Route path="/help" element={<AppLayout />}>
-              <Route index element={<div className="p-6">Help - Coming Soon</div>} />
+              <Route index element={<Help />} />
             </Route>
             
             <Route path="*" element={<PageNotFound />} />
