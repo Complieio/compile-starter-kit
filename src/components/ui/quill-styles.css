@@ -1,0 +1,74 @@
+/* Quill Rich Text Editor Styles */
+.ql-toolbar {
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 8px 8px 0 0 !important;
+  background-color: hsl(var(--background)) !important;
+}
+
+.ql-container {
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 0 0 8px 8px !important;
+  font-family: inherit !important;
+  background-color: hsl(var(--background)) !important;
+}
+
+.ql-editor {
+  min-height: 400px !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.ql-editor.ql-blank::before {
+  color: hsl(var(--muted-foreground)) !important;
+  font-style: italic !important;
+}
+
+.ql-toolbar .ql-stroke {
+  stroke: hsl(var(--foreground)) !important;
+}
+
+.ql-toolbar .ql-fill {
+  fill: hsl(var(--foreground)) !important;
+}
+
+.ql-toolbar .ql-picker-label {
+  color: hsl(var(--foreground)) !important;
+}
+
+.ql-snow .ql-picker.ql-expanded .ql-picker-label {
+  border-color: hsl(var(--border)) !important;
+}
+
+.ql-snow .ql-picker-options {
+  background-color: hsl(var(--background)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+
+.ql-snow .ql-picker-item:hover {
+  background-color: hsl(var(--accent)) !important;
+}
+
+.ql-snow .ql-tooltip {
+  background-color: hsl(var(--background)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.ql-snow .ql-tooltip input[type=text] {
+  background-color: hsl(var(--background)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.ql-toolbar button:hover .ql-stroke,
+.ql-toolbar button:focus .ql-stroke,
+.ql-toolbar button.ql-active .ql-stroke {
+  stroke: hsl(var(--primary)) !important;
+}
+
+.ql-toolbar button:hover .ql-fill,
+.ql-toolbar button:focus .ql-fill,
+.ql-toolbar button.ql-active .ql-fill {
+  fill: hsl(var(--primary)) !important;
+}

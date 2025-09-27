@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Save, Clock } from 'lucide-react';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
+import { ArrowLeft, Save, Clock, FileText } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 const NoteEditor = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const isEditing = !!id;
+  const template = location.state?.template;
+  
   const [formData, setFormData] = useState({
-    content: '',
+    content: template?.content || '',
     project_id: '',
     client_id: ''
   });
@@ -213,117 +216,128 @@ const NoteEditor = () => {
   }, [autoSaveTimer]);
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/notes')}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold text-complie-primary">
-            {isEditing ? 'Edit Note' : 'New Note'}
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            {isEditing ? 'Update your note content' : 'Capture your thoughts and important information'}
-          </p>
-        </div>
-        {lastSaved && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Clock className="h-4 w-4" />
-            Draft saved {lastSaved.toLocaleTimeString()}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
+      <div className="container mx-auto px-6 py-8 max-w-6xl">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-8">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => navigate('/notes')}
+            className="hover:bg-complie-accent hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold text-complie-primary flex items-center gap-3">
+              <FileText className="h-8 w-8 text-complie-accent" />
+              {isEditing ? 'Edit Note' : (template ? `New ${template.title}` : 'New Note')}
+            </h1>
+            <p className="text-lg text-muted-foreground mt-1">
+              {isEditing ? 'Update your note content with rich formatting' : 'Create a professional note with rich text formatting'}
+            </p>
           </div>
-        )}
+          {lastSaved && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-green-50 px-3 py-2 rounded-lg border border-green-200">
+              <Clock className="h-4 w-4 text-green-600" />
+              <span className="text-green-700 font-medium">
+                Draft saved {lastSaved.toLocaleTimeString()}
+              </span>
+            </div>
+          )}
+        </div>
+
+        <Card className="card-complie border-2 shadow-xl">
+          <CardHeader className="bg-gradient-to-r from-complie-primary/5 to-complie-accent/5">
+            <CardTitle className="text-xl text-complie-primary">Rich Text Editor</CardTitle>
+            <CardDescription>
+              {isEditing ? 'Update your note with full formatting capabilities' : 'Create your note with rich text formatting, links, images, and more'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Content */}
+              <div className="space-y-4">
+                <Label htmlFor="content" className="text-base font-semibold text-complie-primary">
+                  Content *
+                </Label>
+                <RichTextEditor
+                  value={formData.content}
+                  onChange={(value) => handleInputChange('content', value)}
+                  placeholder="Start writing your note... Use the toolbar above for formatting options."
+                  className="w-full"
+                />
+              </div>
+
+              {/* Project and Client Selection */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-slate-50 rounded-lg border-2 border-dashed border-muted-foreground/20">
+                <div className="space-y-3">
+                  <Label className="text-base font-semibold text-complie-primary">Project</Label>
+                  <Select
+                    value={formData.project_id}
+                    onValueChange={(value) => handleInputChange('project_id', value)}
+                  >
+                    <SelectTrigger className="h-12 border-2 focus:border-complie-accent">
+                      <SelectValue placeholder="Link to a project (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">No project</SelectItem>
+                      {projects.map((project) => (
+                        <SelectItem key={project.id} value={project.id}>
+                          {project.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-base font-semibold text-complie-primary">Client</Label>
+                  <Select
+                    value={formData.client_id}
+                    onValueChange={(value) => handleInputChange('client_id', value)}
+                  >
+                    <SelectTrigger className="h-12 border-2 focus:border-complie-accent">
+                      <SelectValue placeholder="Link to a client (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">No client</SelectItem>
+                      {clients.map((client) => (
+                        <SelectItem key={client.id} value={client.id}>
+                          {client.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="flex gap-4 pt-8 border-t-2 border-muted-foreground/10">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  onClick={() => navigate('/notes')}
+                  disabled={loading}
+                  className="border-2 hover:border-complie-accent"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="btn-complie-primary flex-1 h-12"
+                  disabled={loading}
+                >
+                  <Save className="h-5 w-5 mr-2" />
+                  {loading ? (isEditing ? "Updating..." : "Creating...") : (isEditing ? "Update Note" : "Save Note")}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
-
-      <Card className="card-complie">
-        <CardHeader>
-          <CardTitle>Note Content</CardTitle>
-          <CardDescription>
-            {isEditing ? 'Update your note below' : 'Write your note content below'}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Content */}
-            <div className="space-y-2">
-              <Label htmlFor="content">Content *</Label>
-              <Textarea
-                id="content"
-                placeholder="Write your note here..."
-                value={formData.content}
-                onChange={(e) => handleInputChange('content', e.target.value)}
-                rows={12}
-                className="resize-none"
-                required
-              />
-            </div>
-
-            {/* Project Selection */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>Project</Label>
-                <Select
-                  value={formData.project_id}
-                  onValueChange={(value) => handleInputChange('project_id', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a project (optional)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">No project</SelectItem>
-                    {projects.map((project) => (
-                      <SelectItem key={project.id} value={project.id}>
-                        {project.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Client Selection */}
-              <div className="space-y-2">
-                <Label>Client</Label>
-                <Select
-                  value={formData.client_id}
-                  onValueChange={(value) => handleInputChange('client_id', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a client (optional)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">No client</SelectItem>
-                    {clients.map((client) => (
-                      <SelectItem key={client.id} value={client.id}>
-                        {client.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Submit Buttons */}
-            <div className="flex gap-4 pt-6">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate('/notes')}
-                disabled={loading}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                className="btn-complie-primary flex-1"
-                disabled={loading}
-              >
-                <Save className="h-4 w-4 mr-2" />
-                {loading ? (isEditing ? "Updating..." : "Creating...") : (isEditing ? "Update Note" : "Save Note")}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
     </div>
   );
 };
