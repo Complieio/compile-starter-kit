@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -61,6 +61,19 @@ const NOTE_TEMPLATES: NoteTemplate[] = [
 const Notes = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isTemplateDialogOpen, setIsTemplateDialogOpen] = useState(false);
+
+  // SEO
+  useEffect(() => {
+    document.title = 'Notes | Complie';
+    const desc = 'Create, search, and manage notes with rich text formatting and templates.';
+    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = 'description';
+      document.head.appendChild(meta);
+    }
+    meta.content = desc;
+  }, []);
 
   const { user } = useAuth();
   const { toast } = useToast();
