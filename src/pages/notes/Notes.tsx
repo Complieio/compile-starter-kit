@@ -70,7 +70,21 @@ const Notes = () => {
   const { data: notes = [], isLoading } = useQuery({
     queryKey: ['notes'],
     queryFn: async () => {
-      if (!user) return [];
+      if (!user) {
+        // Return demo notes for preview
+        return [
+          {
+            id: 'demo-1',
+            content: '<h2><strong>Welcome to Notes!</strong></h2><p>This is a demo note showing the rich text capabilities. You can format text with <strong>bold</strong>, <em>italic</em>, and <u>underline</u>.</p><ul><li>Create bulleted lists</li><li>Add numbered lists</li><li>Insert links and images</li></ul><p>Sign in to create your own notes!</p>',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            project_id: null,
+            client_id: null,
+            user_id: 'demo',
+            private: true
+          }
+        ] as Note[];
+      }
       
       const { data, error } = await supabase
         .from('notes')
@@ -81,16 +95,20 @@ const Notes = () => {
       if (error) throw error;
       return data as Note[];
     },
-    enabled: !!user,
+    enabled: true, // Always enabled now
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (noteId: string) => {
+      if (!user) {
+        throw new Error("Please sign in to delete notes");
+      }
+      
       const { error } = await supabase
         .from('notes')
         .delete()
         .eq('id', noteId)
-        .eq('user_id', user?.id);
+        .eq('user_id', user.id);
       
       if (error) throw error;
     },
@@ -115,6 +133,15 @@ const Notes = () => {
   );
 
   const handleDelete = (noteId: string) => {
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to delete notes.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     if (confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
       deleteMutation.mutate(noteId);
     }
@@ -153,6 +180,15 @@ const Notes = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
+      {!user && (
+        <div className="bg-blue-50 border-b border-blue-200 px-6 py-3">
+          <div className="container mx-auto max-w-7xl">
+            <p className="text-blue-800 text-center">
+              <strong>Preview Mode:</strong> You're viewing a demo. <a href="/auth" className="underline hover:no-underline">Sign in</a> to create and manage your own notes.
+            </p>
+          </div>
+        </div>
+      )}
       <div className="container mx-auto px-6 py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-8">

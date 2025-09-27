@@ -70,11 +70,12 @@ const App = () => (
             <Route path="/checklists" element={<AppLayout />}>
               <Route index element={<Checklists />} />
             </Route>
-            <Route path="/notes" element={<AppLayout />}>
-              <Route index element={<Notes />} />
-              <Route path="new" element={<NoteEditor />} />
-              <Route path=":id/edit" element={<NoteEditor />} />
-            </Route>
+            
+            {/* Temporarily public Notes routes for preview */}
+            <Route path="/notes" element={<Notes />} />
+            <Route path="/notes/new" element={<NoteEditor />} />
+            <Route path="/notes/:id/edit" element={<NoteEditor />} />
+            
             <Route path="/chatbot" element={<AppLayout />}>
               <Route index element={<Chatbot />} />
             </Route>

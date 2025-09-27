@@ -138,7 +138,15 @@ const NoteEditor = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to save notes.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (!formData.content.trim()) {
       toast({
@@ -217,6 +225,15 @@ const NoteEditor = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
+      {!user && (
+        <div className="bg-blue-50 border-b border-blue-200 px-6 py-3">
+          <div className="container mx-auto max-w-6xl">
+            <p className="text-blue-800 text-center">
+              <strong>Preview Mode:</strong> You're viewing the note editor demo. <a href="/auth" className="underline hover:no-underline">Sign in</a> to save your notes.
+            </p>
+          </div>
+        </div>
+      )}
       <div className="container mx-auto px-6 py-8 max-w-6xl">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
