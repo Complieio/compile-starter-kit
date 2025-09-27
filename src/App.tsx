@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import PageNotFound from "./pages/PageNotFound";
 import AuthPage from "./pages/auth/Auth";
 import AppLayout from "./components/layout/AppLayout";
+import PublicAppLayout from "./components/layout/PublicAppLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Projects from "./pages/projects/Projects";
 import NewProject from "./pages/projects/NewProject";
@@ -71,11 +72,12 @@ const App = () => (
               <Route index element={<Checklists />} />
             </Route>
             
-            {/* Temporarily public Notes routes for preview */}
-            <Route path="/notes" element={<Notes />} />
-            <Route path="/notes/new" element={<NoteEditor />} />
-            <Route path="/notes/:id/edit" element={<NoteEditor />} />
-            
+            {/* Notes routes with public app layout for preview */}
+            <Route path="/notes" element={<PublicAppLayout />}>
+              <Route index element={<Notes />} />
+              <Route path="new" element={<NoteEditor />} />
+              <Route path=":id/edit" element={<NoteEditor />} />
+            </Route>
             <Route path="/chatbot" element={<AppLayout />}>
               <Route index element={<Chatbot />} />
             </Route>
