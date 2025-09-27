@@ -54,43 +54,41 @@ const App = () => (
             {/* Onboarding routes */}
             <Route path="/onboarding/customize" element={<OnboardingCustomize />} />
             
-            {/* Protected routes */}
-            <Route path="/dashboard" element={<AppLayout />}>
+            {/* All routes now use PublicAppLayout for preview without auth */}
+            <Route path="/dashboard" element={<PublicAppLayout />}>
               <Route index element={<Dashboard />} />
             </Route>
-            <Route path="/projects" element={<AppLayout />}>
+            <Route path="/projects" element={<PublicAppLayout />}>
               <Route index element={<Projects />} />
               <Route path="new" element={<NewProject />} />
               <Route path=":id" element={<ProjectDetail />} />
               <Route path=":id/edit" element={<NewProject />} />
             </Route>
-            <Route path="/clients" element={<AppLayout />}>
+            <Route path="/clients" element={<PublicAppLayout />}>
               <Route index element={<Clients />} />
               <Route path="new" element={<Clients />} />
             </Route>
-            <Route path="/checklists" element={<AppLayout />}>
+            <Route path="/checklists" element={<PublicAppLayout />}>
               <Route index element={<Checklists />} />
             </Route>
-            
-            {/* Notes routes with public app layout for preview */}
             <Route path="/notes" element={<PublicAppLayout />}>
               <Route index element={<Notes />} />
               <Route path="new" element={<NoteEditor />} />
               <Route path=":id/edit" element={<NoteEditor />} />
             </Route>
-            <Route path="/chatbot" element={<AppLayout />}>
+            <Route path="/chatbot" element={<PublicAppLayout />}>
               <Route index element={<Chatbot />} />
             </Route>
-            <Route path="/exports" element={<AppLayout />}>
+            <Route path="/exports" element={<PublicAppLayout />}>
               <Route index element={<Exports />} />
             </Route>
-            <Route path="/settings" element={<AppLayout />}>
+            <Route path="/settings" element={<PublicAppLayout />}>
               <Route index element={<Settings />} />
             </Route>
-            <Route path="/profile" element={<AppLayout />}>
+            <Route path="/profile" element={<PublicAppLayout />}>
               <Route index element={<Profile />} />
             </Route>
-            <Route path="/help" element={<AppLayout />}>
+            <Route path="/help" element={<PublicAppLayout />}>
               <Route index element={<Help />} />
             </Route>
             
