@@ -25,25 +25,9 @@ const NoteEditor = () => {
   const [loading, setLoading] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [autoSaveTimer, setAutoSaveTimer] = useState<NodeJS.Timeout | null>(null);
-const navigate = useNavigate();
-const { user } = useAuth();
-const { toast } = useToast();
-
-// SEO
-useEffect(() => {
-  const pageTitle = isEditing ? 'Edit Note | Complie' : 'New Note | Complie';
-  document.title = pageTitle;
-  const desc = isEditing
-    ? 'Edit your note with a full-featured rich text editor and link it to projects or clients.'
-    : 'Create a new note with Google Docs-like rich text formatting, templates, and links.';
-  let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-  if (!meta) {
-    meta = document.createElement('meta');
-    meta.name = 'description';
-    document.head.appendChild(meta);
-  }
-  meta.content = desc;
-}, [isEditing]);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   // Fetch existing note data if editing
   const { data: existingNote } = useQuery({
