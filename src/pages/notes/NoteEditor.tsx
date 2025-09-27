@@ -24,7 +24,7 @@ const NoteEditor = () => {
   });
   const [loading, setLoading] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [autoSaveTimer, setAutoSaveTimer] = useState<NodeJS.Timeout | null>(null);
+  const [autoSaveTimer, setAutoSaveTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
