@@ -31,7 +31,7 @@ import OnboardingCustomize from './pages/onboarding/OnboardingCustomize';
 import Profile from './pages/profile/Profile';
 import Help from './pages/help/Help';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient(); // Force refresh for localhost
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
