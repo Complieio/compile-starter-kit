@@ -135,7 +135,7 @@ export default function CompliePage(): JSX.Element {
           Your all-in-one tool for staying organized, managing clients and projects, tracking deadlines, and generating reports in a simple platform.
         </p>
         <button 
-          className="bg-gradient-to-r from-complie-primary to-complie-accent text-white px-8 py-4 rounded-full font-semibold text-lg hover:opacity-90 transition-all duration-200 shadow-lg hover:shadow-xl"
+          className="bg-gradient-to-r from-complie-accent to-complie-primary text-white px-8 py-4 rounded-full font-semibold text-lg hover:opacity-90 transition-all duration-200 shadow-lg hover:shadow-xl"
           onClick={(e) => { e.preventDefault(); openModal(); }}
         >
           Start Tracking Today
