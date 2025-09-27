@@ -281,7 +281,17 @@ const NoteEditor = () => {
                 <RichTextEditor
                   value={formData.content}
                   onChange={(value) => handleInputChange('content', value)}
-                  placeholder="Start writing your note... Use the toolbar above for formatting options."
+                  placeholder="Start writing your note... 
+
+📝 Use the toolbar above for rich formatting:
+• Bold, italic, underline text
+• Headers and font sizes
+• Text colors and highlighting
+• Bulleted and numbered lists
+• Insert links, images, and tables
+• Add quotes and code blocks
+
+💡 Tip: Your note autosaves every 5 seconds while editing!"
                   className="w-full"
                 />
               </div>
