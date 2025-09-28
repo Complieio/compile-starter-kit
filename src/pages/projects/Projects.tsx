@@ -321,13 +321,6 @@ const Projects = () => {
                         {template.estimatedDays} days
                       </Badge>
                     </div>
-                    <div className="flex flex-wrap gap-1 mb-4">
-                      {template.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs bg-white/60">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
                     <Button 
                       size="sm" 
                       variant="ghost" 
