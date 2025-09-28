@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -34,6 +34,7 @@ const NewProject = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // Fetch existing project data if editing
   const { data: existingProject } = useQuery({
@@ -149,6 +150,8 @@ const NewProject = () => {
           description: `${formData.name} has been updated successfully.`,
         });
 
+        // Invalidate queries to refresh the project list
+        queryClient.invalidateQueries({ queryKey: ['projects'] });
         navigate(`/projects/${data.id}`);
       } else {
         // Create new project
@@ -174,6 +177,8 @@ const NewProject = () => {
           description: `${formData.name} has been created successfully.`,
         });
 
+        // Invalidate queries to refresh the project list
+        queryClient.invalidateQueries({ queryKey: ['projects'] });
         navigate(`/projects/${data.id}`);
       }
     } catch (error: any) {
@@ -188,9 +193,10 @@ const NewProject = () => {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-gradient-to-br from-complie-accent/5 via-background to-complie-primary/5">
+      <div className="p-6 max-w-2xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate('/projects')}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
@@ -204,13 +210,13 @@ const NewProject = () => {
         </div>
       </div>
 
-      <Card className="card-complie">
-        <CardHeader>
-          <CardTitle>Project Details</CardTitle>
-          <CardDescription>
-            {isEditing ? 'Update the project information below' : 'Fill in the information below to create your new project'}
-          </CardDescription>
-        </CardHeader>
+        <Card className="card-complie border-complie-accent/20 shadow-lg bg-white/70 backdrop-blur-sm">
+          <CardHeader className="bg-gradient-to-r from-complie-accent/10 to-complie-primary/10 -m-6 mb-6 p-6 rounded-t-xl">
+            <CardTitle className="text-complie-primary">Project Details</CardTitle>
+            <CardDescription>
+              {isEditing ? 'Update the project information below' : 'Fill in the information below to create your new project'}
+            </CardDescription>
+          </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Project Name */}
@@ -392,7 +398,8 @@ const NewProject = () => {
             </div>
           </form>
         </CardContent>
-      </Card>
+          </Card>
+      </div>
     </div>
   );
 };

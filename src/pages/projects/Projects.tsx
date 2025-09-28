@@ -44,7 +44,8 @@ const Projects = () => {
 
   const filteredProjects = projects.filter(project =>
     project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.clients?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+    project.clients?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (project.tags && project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())))
   );
 
   const getStatusBadge = (status: string) => {
