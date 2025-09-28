@@ -247,7 +247,7 @@ const NoteEditor = () => {
       )}
       <div className="container mx-auto px-6 py-8 max-w-6xl">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="sticky top-16 bg-white/95 backdrop-blur-sm border-b border-border/50 z-40 flex items-center gap-4 mb-8 pb-4 -mx-6 px-6">
           <Button 
             variant="ghost" 
             size="icon" 
