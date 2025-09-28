@@ -3,7 +3,6 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
@@ -19,7 +18,6 @@ const NoteEditor = () => {
   const template = location.state?.template;
   
   const [formData, setFormData] = useState({
-    title: '',
     content: template?.content || '',
     project_id: '',
     client_id: ''
@@ -54,7 +52,6 @@ const NoteEditor = () => {
   useEffect(() => {
     if (existingNote && isEditing) {
       setFormData({
-        title: existingNote.title || '',
         content: existingNote.content || '',
         project_id: existingNote.project_id || '',
         client_id: existingNote.client_id || ''
@@ -99,13 +96,7 @@ const NoteEditor = () => {
   });
 
   const handleInputChange = (field: string, value: any) => {
-    // Handle "none" value for client_id and project_id to allow unlinking
-    if ((field === 'client_id' || field === 'project_id') && value === 'none') {
-      setFormData(prev => ({ ...prev, [field]: '' }));
-    } else {
-      setFormData(prev => ({ ...prev, [field]: value }));
-    }
-
+    setFormData(prev => ({ ...prev, [field]: value }));
     
     // Trigger autosave for content changes
     if (field === 'content' && isEditing) {
@@ -128,10 +119,9 @@ const NoteEditor = () => {
       await supabase
         .from('notes')
         .update({
-          title: formData.title || null,
           content: formData.content.trim(),
-          project_id: formData.project_id === 'none' ? null : (formData.project_id || null),
-          client_id: formData.client_id === 'none' ? null : (formData.client_id || null)
+          project_id: formData.project_id || null,
+          client_id: formData.client_id || null
         })
         .eq('id', id)
         .eq('user_id', user.id);
@@ -175,10 +165,9 @@ const NoteEditor = () => {
         const { error } = await supabase
           .from('notes')
           .update({
-            title: formData.title || null,
             content: formData.content.trim(),
-            project_id: formData.project_id === 'none' ? null : (formData.project_id || null),
-            client_id: formData.client_id === 'none' ? null : (formData.client_id || null)
+            project_id: formData.project_id || null,
+            client_id: formData.client_id || null
           })
           .eq('id', id)
           .eq('user_id', user.id);
@@ -196,10 +185,9 @@ const NoteEditor = () => {
         const { data, error } = await supabase
           .from('notes')
           .insert({
-            title: formData.title || null,
             content: formData.content.trim(),
-            project_id: formData.project_id === 'none' ? null : (formData.project_id || null),
-            client_id: formData.client_id === 'none' ? null : (formData.client_id || null),
+            project_id: formData.project_id || null,
+            client_id: formData.client_id || null,
             user_id: user.id,
             private: true
           })
@@ -248,7 +236,7 @@ const NoteEditor = () => {
       )}
       <div className="container mx-auto px-6 py-8 max-w-6xl">
         {/* Header */}
-        <div className="sticky top-16 bg-white/95 backdrop-blur-sm border-b border-border/50 z-40 flex items-center gap-4 mb-8 pb-4 -mx-6 px-6">
+        <div className="flex items-center gap-4 mb-8">
           <Button 
             variant="ghost" 
             size="icon" 
@@ -285,20 +273,6 @@ const NoteEditor = () => {
           </CardHeader>
           <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Title */}
-              <div className="space-y-4">
-                <Label htmlFor="title" className="text-base font-semibold text-complie-primary">
-                  Note Title
-                </Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
-                  placeholder="Enter a title for your note..."
-                  className="h-12 border-2 focus:border-complie-accent text-lg"
-                />
-              </div>
-
               {/* Content */}
               <div className="space-y-4">
                 <Label htmlFor="content" className="text-base font-semibold text-complie-primary">
@@ -307,7 +281,17 @@ const NoteEditor = () => {
                 <RichTextEditor
                   value={formData.content}
                   onChange={(value) => handleInputChange('content', value)}
-                  placeholder="Start writing your note..."
+                  placeholder="Start writing your note... 
+
+📝 Use the toolbar above for rich formatting:
+• Bold, italic, underline text
+• Headers and font sizes
+• Text colors and highlighting
+• Bulleted and numbered lists
+• Insert links, images, and tables
+• Add quotes and code blocks
+
+💡 Tip: Your note autosaves every 5 seconds while editing!"
                   className="w-full"
                 />
               </div>
@@ -317,14 +301,13 @@ const NoteEditor = () => {
                 <div className="space-y-3">
                   <Label className="text-base font-semibold text-complie-primary">Project</Label>
                   <Select
-                    value={formData.project_id || 'none'}
+                    value={formData.project_id}
                     onValueChange={(value) => handleInputChange('project_id', value)}
                   >
                     <SelectTrigger className="h-12 border-2 focus:border-complie-accent">
                       <SelectValue placeholder="Link to a project (optional)" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">No project</SelectItem>
                       {projects.map((project) => (
                         <SelectItem key={project.id} value={project.id}>
                           {project.name}
@@ -337,14 +320,13 @@ const NoteEditor = () => {
                 <div className="space-y-3">
                   <Label className="text-base font-semibold text-complie-primary">Client</Label>
                   <Select
-                    value={formData.client_id || 'none'}
+                    value={formData.client_id}
                     onValueChange={(value) => handleInputChange('client_id', value)}
                   >
                     <SelectTrigger className="h-12 border-2 focus:border-complie-accent">
                       <SelectValue placeholder="Link to a client (optional)" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">No client</SelectItem>
                       {clients.map((client) => (
                         <SelectItem key={client.id} value={client.id}>
                           {client.name}

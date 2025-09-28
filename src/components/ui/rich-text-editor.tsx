@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './quill-styles.css';
+
 interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
@@ -13,7 +14,7 @@ interface RichTextEditorProps {
 export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   value,
   onChange,
-  placeholder = "Start writing your note...",
+  placeholder = "Start writing...",
   readOnly = false,
   className = "",
 }) => {
@@ -22,7 +23,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       container: [
         [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
         [{ 'font': [] }],
-        [{ 'size': ['8px', '10px', '12px', '14px', '16px', '18px', '20px', '24px', '32px', '48px'] }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
         ['bold', 'italic', 'underline', 'strike'],
         [{ 'color': [] }, { 'background': [] }],
         [{ 'script': 'sub' }, { 'script': 'super' }],
@@ -43,28 +44,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           } else {
             this.quill.format('link', false);
           }
-        },
-        image: function() {
-          const input = document.createElement('input');
-          input.setAttribute('type', 'file');
-          input.setAttribute('accept', 'image/*');
-          input.click();
-
-          input.onchange = () => {
-            const file = input.files?.[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                const imageUrl = e.target?.result as string;
-                const range = this.quill.getSelection();
-                if (range) {
-                  this.quill.insertEmbed(range.index, 'image', imageUrl);
-                  this.quill.setSelection(range.index + 1);
-                }
-              };
-              reader.readAsDataURL(file);
-            }
-          };
         }
       }
     },

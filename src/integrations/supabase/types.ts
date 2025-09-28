@@ -206,7 +206,6 @@ export type Database = {
           id: string
           private: boolean | null
           project_id: string | null
-          title: string | null
           updated_at: string
           user_id: string | null
         }
@@ -217,7 +216,6 @@ export type Database = {
           id?: string
           private?: boolean | null
           project_id?: string | null
-          title?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -228,7 +226,6 @@ export type Database = {
           id?: string
           private?: boolean | null
           project_id?: string | null
-          title?: string | null
           updated_at?: string
           user_id?: string | null
         }
