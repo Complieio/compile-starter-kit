@@ -308,7 +308,6 @@ const NoteEditor = () => {
                       <SelectValue placeholder="Link to a project (optional)" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No project</SelectItem>
                       {projects.map((project) => (
                         <SelectItem key={project.id} value={project.id}>
                           {project.name}
@@ -328,7 +327,6 @@ const NoteEditor = () => {
                       <SelectValue placeholder="Link to a client (optional)" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No client</SelectItem>
                       {clients.map((client) => (
                         <SelectItem key={client.id} value={client.id}>
                           {client.name}
