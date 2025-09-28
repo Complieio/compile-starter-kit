@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -40,7 +42,14 @@ const Clients = () => {
     contact_phone: '',
     address: '',
     description: '',
-    status: 'active'
+    status: 'active',
+    contact_person: '',
+    industry: '',
+    company_size: '',
+    website: '',
+    tax_id: '',
+    billing_address: '',
+    notes: ''
   });
 
   const { user } = useAuth();
@@ -175,7 +184,14 @@ const Clients = () => {
       contact_phone: '',
       address: '',
       description: '',
-      status: 'active'
+      status: 'active',
+      contact_person: '',
+      industry: '',
+      company_size: '',
+      website: '',
+      tax_id: '',
+      billing_address: '',
+      notes: ''
     });
   };
 
@@ -187,7 +203,14 @@ const Clients = () => {
       contact_phone: client.contact_phone || '',
       address: client.address || '',
       description: client.description || '',
-      status: client.status || 'active'
+      status: client.status || 'active',
+      contact_person: '',
+      industry: '',
+      company_size: '',
+      website: '',
+      tax_id: '',
+      billing_address: '',
+      notes: ''
     });
     setIsDialogOpen(true);
   };
@@ -278,7 +301,14 @@ const Clients = () => {
       contact_phone: template.contact_phone,
       address: template.address,
       description: template.companyDescription,
-      status: 'active'
+      status: 'active',
+      contact_person: '',
+      industry: '',
+      company_size: '',
+      website: '',
+      tax_id: '',
+      billing_address: '',
+      notes: ''
     });
     setEditingClient(null);
     setIsDialogOpen(true);
@@ -327,67 +357,220 @@ const Clients = () => {
                   Create Custom Client
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>{editingClient ? 'Edit Client' : 'Create New Client'}</DialogTitle>
-                  <DialogDescription>
-                    {editingClient ? 'Update the client information below.' : 'Add a new client to your system.'}
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Name *</label>
-                    <Input
-                      placeholder="Client name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Email</label>
-                    <Input
-                      type="email"
-                      placeholder="contact@client.com"
-                      value={formData.contact_email}
-                      onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Phone</label>
-                    <Input
-                      placeholder="Phone number"
-                      value={formData.contact_phone}
-                      onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Address</label>
-                    <Textarea
-                      placeholder="Client address"
-                      value={formData.address}
-                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Description</label>
-                    <Textarea
-                      placeholder="Additional notes about the client"
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button 
-                    onClick={handleSubmit}
-                    disabled={!formData.name || createMutation.isPending || updateMutation.isPending}
-                  >
-                    {createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingClient ? 'Update' : 'Create')}
-                  </Button>
-                </DialogFooter>
+              <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+                <Card className="card-complie border-complie-accent/20 shadow-lg bg-white/70 backdrop-blur-sm border-0">
+                  <CardHeader className="bg-gradient-to-r from-complie-accent/10 to-complie-primary/10 -m-6 mb-6 p-6 rounded-t-xl">
+                    <CardTitle className="text-complie-primary">
+                      {editingClient ? 'Edit Client' : 'Client Details'}
+                    </CardTitle>
+                    <CardDescription>
+                      {editingClient ? 'Update the client information below' : 'Fill in the information below to create your new client'}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+                      {/* Client Name */}
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Client Name *</Label>
+                        <Input
+                          id="name"
+                          placeholder="Enter client name"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          required
+                        />
+                      </div>
+
+                      {/* Description */}
+                      <div className="space-y-2">
+                        <Label htmlFor="description">Description</Label>
+                        <Textarea
+                          id="description"
+                          placeholder="Describe your client (optional)"
+                          value={formData.description}
+                          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                          rows={3}
+                        />
+                      </div>
+
+                      {/* Contact Person */}
+                      <div className="space-y-2">
+                        <Label htmlFor="contact_person">Contact Person</Label>
+                        <Input
+                          id="contact_person"
+                          placeholder="Primary contact name"
+                          value={formData.contact_person || ''}
+                          onChange={(e) => setFormData({ ...formData, contact_person: e.target.value })}
+                        />
+                      </div>
+
+                      {/* Contact Information */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="contact_email">Email</Label>
+                          <Input
+                            id="contact_email"
+                            type="email"
+                            placeholder="client@example.com"
+                            value={formData.contact_email}
+                            onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="contact_phone">Phone</Label>
+                          <Input
+                            id="contact_phone"
+                            type="tel"
+                            placeholder="+1 (555) 123-4567"
+                            value={formData.contact_phone}
+                            onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Industry and Company Size */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Industry</Label>
+                          <Select
+                            value={formData.industry || ''}
+                            onValueChange={(value) => setFormData({ ...formData, industry: value })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select industry" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="technology">Technology</SelectItem>
+                              <SelectItem value="healthcare">Healthcare</SelectItem>
+                              <SelectItem value="finance">Finance</SelectItem>
+                              <SelectItem value="retail">Retail</SelectItem>
+                              <SelectItem value="manufacturing">Manufacturing</SelectItem>
+                              <SelectItem value="education">Education</SelectItem>
+                              <SelectItem value="consulting">Consulting</SelectItem>
+                              <SelectItem value="real-estate">Real Estate</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Company Size</Label>
+                          <Select
+                            value={formData.company_size || ''}
+                            onValueChange={(value) => setFormData({ ...formData, company_size: value })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select company size" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="1-10">1-10 employees</SelectItem>
+                              <SelectItem value="11-50">11-50 employees</SelectItem>
+                              <SelectItem value="51-200">51-200 employees</SelectItem>
+                              <SelectItem value="201-500">201-500 employees</SelectItem>
+                              <SelectItem value="500+">500+ employees</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      {/* Status and Website */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Status</Label>
+                          <Select
+                            value={formData.status}
+                            onValueChange={(value) => setFormData({ ...formData, status: value })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="active">Active</SelectItem>
+                              <SelectItem value="prospect">Prospect</SelectItem>
+                              <SelectItem value="inactive">Inactive</SelectItem>
+                              <SelectItem value="archived">Archived</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="website">Website</Label>
+                          <Input
+                            id="website"
+                            type="url"
+                            placeholder="https://example.com"
+                            value={formData.website || ''}
+                            onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Tax ID */}
+                      <div className="space-y-2">
+                        <Label htmlFor="tax_id">Tax ID / Business Number</Label>
+                        <Input
+                          id="tax_id"
+                          placeholder="Enter tax ID or business registration number"
+                          value={formData.tax_id || ''}
+                          onChange={(e) => setFormData({ ...formData, tax_id: e.target.value })}
+                        />
+                      </div>
+
+                      {/* Address */}
+                      <div className="space-y-2">
+                        <Label htmlFor="address">Business Address</Label>
+                        <Textarea
+                          id="address"
+                          placeholder="123 Main St, City, State 12345"
+                          value={formData.address}
+                          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                          rows={2}
+                        />
+                      </div>
+
+                      {/* Billing Address */}
+                      <div className="space-y-2">
+                        <Label htmlFor="billing_address">Billing Address</Label>
+                        <Textarea
+                          id="billing_address"
+                          placeholder="Leave blank if same as business address"
+                          value={formData.billing_address || ''}
+                          onChange={(e) => setFormData({ ...formData, billing_address: e.target.value })}
+                          rows={2}
+                        />
+                      </div>
+
+                      {/* Notes */}
+                      <div className="space-y-2">
+                        <Label htmlFor="notes">Notes</Label>
+                        <Textarea
+                          id="notes"
+                          placeholder="Internal notes, special requirements, preferences, etc..."
+                          value={formData.notes || ''}
+                          onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                          rows={3}
+                        />
+                      </div>
+
+                      {/* Submit Buttons */}
+                      <div className="flex gap-4 pt-6">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setIsDialogOpen(false)}
+                          disabled={createMutation.isPending || updateMutation.isPending}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          type="submit"
+                          className="btn-complie-primary flex-1"
+                          disabled={!formData.name || createMutation.isPending || updateMutation.isPending}
+                        >
+                          {createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingClient ? 'Update Client' : 'Create Client')}
+                        </Button>
+                      </div>
+                    </form>
+                  </CardContent>
+                </Card>
               </DialogContent>
             </Dialog>
           </div>
