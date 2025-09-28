@@ -313,14 +313,6 @@ const Projects = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-center justify-between mb-4">
-                      <Badge variant="secondary" className="bg-white/80">
-                        {template.tasks.length} tasks
-                      </Badge>
-                      <Badge variant="outline" className="bg-white/80">
-                        {template.estimatedDays} days
-                      </Badge>
-                    </div>
                     <Button 
                       size="sm" 
                       variant="ghost" 
