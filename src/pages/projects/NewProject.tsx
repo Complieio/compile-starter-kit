@@ -25,6 +25,7 @@ const NewProject = () => {
     description: '',
     client_id: '',
     status: 'active',
+    start_date: undefined as Date | undefined,
     due_date: undefined as Date | undefined,
     tags: [] as string[],
   });
@@ -61,6 +62,7 @@ const NewProject = () => {
         description: existingProject.description || '',
         client_id: existingProject.client_id || '',
         status: existingProject.status || 'active',
+        start_date: existingProject.start_date ? new Date(existingProject.start_date) : undefined,
         due_date: existingProject.due_date ? new Date(existingProject.due_date) : undefined,
         tags: existingProject.tags || [],
       });
@@ -122,31 +124,61 @@ const NewProject = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase
-        .from('projects')
-        .insert({
-          name: formData.name.trim(),
-          description: formData.description.trim(),
-          client_id: formData.client_id || null,
-          user_id: user.id,
-          status: formData.status,
-          due_date: formData.due_date?.toISOString().split('T')[0] || null,
-          tags: formData.tags.length > 0 ? formData.tags : null,
-        })
-        .select()
-        .single();
+      if (isEditing && id) {
+        // Update existing project
+        const { data, error } = await supabase
+          .from('projects')
+          .update({
+            name: formData.name.trim(),
+            description: formData.description.trim(),
+            client_id: formData.client_id || null,
+            status: formData.status,
+            start_date: formData.start_date?.toISOString().split('T')[0] || null,
+            due_date: formData.due_date?.toISOString().split('T')[0] || null,
+            tags: formData.tags.length > 0 ? formData.tags : null,
+          })
+          .eq('id', id)
+          .eq('user_id', user.id)
+          .select()
+          .single();
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Project created!",
-        description: `${formData.name} has been created successfully.`,
-      });
+        toast({
+          title: "Project updated!",
+          description: `${formData.name} has been updated successfully.`,
+        });
 
-      navigate(`/projects/${data.id}`);
+        navigate(`/projects/${data.id}`);
+      } else {
+        // Create new project
+        const { data, error } = await supabase
+          .from('projects')
+          .insert({
+            name: formData.name.trim(),
+            description: formData.description.trim(),
+            client_id: formData.client_id || null,
+            user_id: user.id,
+            status: formData.status,
+            start_date: formData.start_date?.toISOString().split('T')[0] || null,
+            due_date: formData.due_date?.toISOString().split('T')[0] || null,
+            tags: formData.tags.length > 0 ? formData.tags : null,
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        toast({
+          title: "Project created!",
+          description: `${formData.name} has been created successfully.`,
+        });
+
+        navigate(`/projects/${data.id}`);
+      }
     } catch (error: any) {
       toast({
-        title: "Error creating project",
+        title: isEditing ? "Error updating project" : "Error creating project",
         description: error.message,
         variant: "destructive",
       });
@@ -211,12 +243,13 @@ const NewProject = () => {
               <div className="flex gap-2">
                 <Select
                   value={formData.client_id}
-                  onValueChange={(value) => handleInputChange('client_id', value)}
+                  onValueChange={(value) => handleInputChange('client_id', value === "no-client" ? "" : value)}
                 >
                   <SelectTrigger className="flex-1">
                     <SelectValue placeholder="Select a client (optional)" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="no-client">No client</SelectItem>
                     {clients.map((client) => (
                       <SelectItem key={client.id} value={client.id}>
                         {client.name}
@@ -254,6 +287,34 @@ const NewProject = () => {
               </Select>
             </div>
 
+            {/* Start Date */}
+            <div className="space-y-2">
+              <Label>Start Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !formData.start_date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.start_date ? format(formData.start_date, "PPP") : "Pick a start date (optional)"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.start_date}
+                    onSelect={(date) => handleInputChange('start_date', date)}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
             {/* Due Date */}
             <div className="space-y-2">
               <Label>Due Date</Label>
@@ -267,7 +328,7 @@ const NewProject = () => {
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.due_date ? format(formData.due_date, "PPP") : "Pick a date (optional)"}
+                    {formData.due_date ? format(formData.due_date, "PPP") : "Pick a due date (optional)"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">

@@ -318,6 +318,7 @@ export type Database = {
           id: string
           name: string
           private: boolean | null
+          start_date: string | null
           status: string | null
           tags: string[] | null
           updated_at: string
@@ -331,6 +332,7 @@ export type Database = {
           id?: string
           name: string
           private?: boolean | null
+          start_date?: string | null
           status?: string | null
           tags?: string[] | null
           updated_at?: string
@@ -344,6 +346,7 @@ export type Database = {
           id?: string
           name?: string
           private?: boolean | null
+          start_date?: string | null
           status?: string | null
           tags?: string[] | null
           updated_at?: string

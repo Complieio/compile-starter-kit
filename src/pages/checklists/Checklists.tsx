@@ -99,7 +99,32 @@ const Checklists = () => {
   const { data: checklists = [], isLoading } = useQuery({
     queryKey: ['checklists'],
     queryFn: async () => {
-      if (!user) return [];
+      if (!user) {
+        // Return demo data for preview mode
+        return [
+          {
+            id: 'demo-1',
+            title: 'Project Launch Checklist',
+            items: [
+              { id: '1', text: 'Finalize project requirements', completed: true },
+              { id: '2', text: 'Set up development environment', completed: true },
+              { id: '3', text: 'Create project timeline', completed: false },
+              { id: '4', text: 'Deploy to production', completed: false }
+            ],
+            created_at: new Date().toISOString()
+          },
+          {
+            id: 'demo-2',
+            title: 'Client Onboarding',
+            items: [
+              { id: '1', text: 'Initial consultation call', completed: true },
+              { id: '2', text: 'Contract signed', completed: false },
+              { id: '3', text: 'Project kickoff meeting', completed: false }
+            ],
+            created_at: new Date().toISOString()
+          }
+        ] as Checklist[];
+      }
       
       const { data, error } = await supabase
         .from('checklists')
@@ -113,7 +138,7 @@ const Checklists = () => {
         items: (item.items as any) || []
       })) as Checklist[];
     },
-    enabled: !!user,
+    enabled: true, // Always enabled now, will return demo data if no user
   });
 
   const createMutation = useMutation({
@@ -275,6 +300,15 @@ const Checklists = () => {
   };
 
   const handleSubmit = () => {
+    if (!user) {
+      toast({
+        title: "Authentication required", 
+        description: "Please sign in to create checklists.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const validItems = formData.items.filter(item => item.text.trim() !== '');
     if (!formData.title.trim() || validItems.length === 0) {
       toast({
