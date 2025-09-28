@@ -298,10 +298,10 @@ const Projects = () => {
               return (
                 <Card 
                   key={template.id} 
-                  className={`group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-2 ${template.color} hover:scale-105`}
+                  className={`group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-2 ${template.color} hover:scale-105 h-full flex flex-col`}
                   onClick={() => createProjectFromTemplate(template)}
                 >
-                  <CardHeader className="pb-4">
+                  <CardHeader className="pb-4 flex-grow">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="p-3 rounded-xl bg-white shadow-sm">
                         <IconComponent className="h-6 w-6" />
@@ -312,7 +312,7 @@ const Projects = () => {
                       {template.description}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="mt-auto">
                     <Button 
                       size="sm" 
                       variant="ghost" 
