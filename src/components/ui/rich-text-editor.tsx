@@ -2,15 +2,6 @@ import React, { useCallback, useMemo } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './quill-styles.css';
-import Quill from 'quill';
-// @ts-ignore - module has no types
-import ImageResize from 'quill-image-resize-module-react';
-
-// Register image resize module in browser only
-if (typeof window !== 'undefined') {
-  // @ts-ignore - Quill register typing
-  Quill.register('modules/imageResize', ImageResize);
-}
 interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
@@ -79,8 +70,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
     clipboard: {
       matchVisual: false,
-    },
-    imageResize: {}
+    }
   }), []);
 
   const formats = [
