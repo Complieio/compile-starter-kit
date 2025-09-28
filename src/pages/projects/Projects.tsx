@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Search, Grid, List, FileText, Download, Eye, Edit, Trash2 } from 'lucide-react';
+import { Plus, Search, Grid, List, FileText, Download, Eye, Edit, Trash2, Sparkles, Globe, TrendingUp, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -125,54 +125,78 @@ const Projects = () => {
       id: 'website-project',
       name: 'Website Development',
       description: 'Complete website project with design, development, and deployment phases',
-      icon: '🌐',
+      icon: Globe,
+      color: 'bg-blue-50 border-blue-200 text-blue-700',
       tags: ['Web Development', 'Design'],
       estimatedDays: 60,
       tasks: [
-        'Initial consultation and requirements gathering',
-        'Design wireframes and mockups', 
-        'Frontend development',
-        'Backend development and database setup',
-        'Content creation and optimization',
-        'Testing and quality assurance',
-        'Deployment and launch',
-        'Post-launch support and maintenance'
+        'Define project scope and technical requirements',
+        'Create user personas and journey mapping',
+        'Design system and style guide development',
+        'Wireframe and prototype creation',
+        'Frontend development and responsive design',
+        'Backend API development and database setup',
+        'Third-party integrations and payment systems',
+        'Cross-browser testing and optimization',
+        'SEO implementation and analytics setup',
+        'Content migration and quality assurance',
+        'Performance testing and security audit',
+        'User acceptance testing and feedback',
+        'Production deployment and DNS configuration',
+        'Post-launch monitoring and bug fixes',
+        'Documentation and training materials'
       ]
     },
     {
       id: 'marketing-campaign',
-      name: 'Marketing Campaign',
-      description: 'Comprehensive marketing campaign with strategy, content creation, and analytics',
-      icon: '📈',
-      tags: ['Marketing', 'Content'],
-      estimatedDays: 30,
+      name: 'Digital Marketing Campaign',
+      description: 'Multi-channel marketing strategy with content creation, social media, and performance analytics',
+      icon: TrendingUp,
+      color: 'bg-green-50 border-green-200 text-green-700',
+      tags: ['Marketing', 'Content', 'Analytics'],
+      estimatedDays: 45,
       tasks: [
-        'Market research and competitor analysis',
-        'Campaign strategy development',
-        'Creative asset creation',
-        'Social media content planning',
-        'Email marketing setup',
-        'Campaign launch and monitoring',
-        'Performance analysis and reporting',
-        'Campaign optimization'
+        'Market research and competitive analysis',
+        'Target audience segmentation and buyer personas',
+        'Brand messaging and positioning strategy',
+        'Content calendar and editorial planning',
+        'Creative asset design and copywriting',
+        'Landing page development and optimization',
+        'Social media campaign setup and scheduling',
+        'Email marketing automation sequences',
+        'Paid advertising campaign creation',
+        'Influencer outreach and partnership setup',
+        'Campaign launch and initial monitoring',
+        'A/B testing implementation and analysis',
+        'Performance tracking and KPI reporting',
+        'Campaign optimization and budget reallocation',
+        'Final campaign analysis and recommendations'
       ]
     },
     {
       id: 'compliance-audit',
-      name: 'Compliance Audit',
-      description: 'Thorough compliance review and documentation for regulatory requirements',
-      icon: '📋',
-      tags: ['Compliance', 'Audit'],
-      estimatedDays: 45,
+      name: 'Regulatory Compliance Review',
+      description: 'Comprehensive compliance assessment with documentation, policy updates, and staff training',
+      icon: Shield,
+      color: 'bg-purple-50 border-purple-200 text-purple-700',
+      tags: ['Compliance', 'Legal', 'Documentation'],
+      estimatedDays: 60,
       tasks: [
-        'Compliance requirements analysis',
-        'Current state assessment',
-        'Gap analysis and risk identification',
-        'Documentation review',
-        'Policy and procedure updates',
-        'Staff training and awareness',
-        'Implementation monitoring',
-        'Final compliance report'
+        'Regulatory framework analysis and requirements mapping',
+        'Current compliance status assessment and gap analysis',
+        'Risk identification and impact evaluation',
+        'Stakeholder interviews and process documentation',
+        'Policy and procedure review and updates',
+        'Compliance management system implementation',
+        'Staff training program development and delivery',
+        'Internal audit procedures and checklist creation',
+        'Documentation management and version control',
+        'Remediation plan development and implementation',
+        'External compliance assessment and validation',
+        'Management reporting and dashboard setup',
+        'Ongoing monitoring and maintenance procedures',
+        'Final compliance report and certification',
+        'Continuous improvement recommendations'
       ]
     }
   ];
@@ -241,250 +265,293 @@ const Projects = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-complie-accent/5 via-background to-complie-primary/5">
-      <div className="p-6 space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
+      <div className="container mx-auto px-6 py-8 max-w-7xl">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-complie-primary">Projects</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage your client projects and track progress
-            </p>
-          </div>
-          <Button onClick={() => navigate('/projects/new')} className="btn-complie-primary">
-            <Plus className="h-4 w-4 mr-2" />
-            New Project
-          </Button>
-        </div>
-
-        {/* Project Templates */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-complie-primary">Quick Start Templates</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {projectTemplates.map((template) => (
-              <Card key={template.id} className="card-complie border-complie-accent/20 shadow-lg bg-white/70 backdrop-blur-sm hover:shadow-xl transition-all cursor-pointer group">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{template.icon}</span>
-                    <div>
-                      <CardTitle className="text-lg group-hover:text-complie-primary transition-colors">
-                        {template.name}
-                      </CardTitle>
-                      <CardDescription className="text-sm">
-                        {template.estimatedDays} days • {template.tasks.length} tasks
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-sm text-muted-foreground mb-4">{template.description}</p>
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {template.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                  <Button 
-                    className="w-full btn-complie-primary"
-                    onClick={() => createProjectFromTemplate(template)}
-                  >
-                    Use Template
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-      {/* Search and View Controls */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Search projects or clients..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant={viewMode === 'table' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('table')}
-          >
-            <List className="h-4 w-4" />
-          </Button>
-          <Button
-            variant={viewMode === 'cards' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('cards')}
-          >
-            <Grid className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Projects Content */}
-      {filteredProjects.length === 0 ? (
-        <Card className="card-complie">
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <FileText className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No projects yet</h3>
-            <p className="text-muted-foreground text-center mb-6 max-w-md">
-              Get started by creating your first project. You can organize work by client, 
-              track deadlines, and manage compliance requirements.
-            </p>
-            <Button onClick={() => navigate('/projects/new')} className="btn-complie-primary">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Your First Project
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold text-complie-primary mb-2 flex items-center gap-3">
+                <FileText className="h-10 w-10 text-complie-accent" />
+                Projects
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Manage your client projects and track progress with comprehensive templates
+              </p>
+            </div>
+            <Button onClick={() => navigate('/projects/new')} size="lg" className="btn-complie-primary">
+              <Plus className="h-5 w-5 mr-2" />
+              Create Custom Project
             </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'table' | 'cards')}>
-          <TabsContent value="table">
-            <Card className="card-complie">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Project Name</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Tasks</TableHead>
-                    <TableHead>Documents</TableHead>
-                    <TableHead>Dates</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+          </div>
+        </div>
+
+        {/* Templates Section */}
+        <div className="mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <Sparkles className="h-6 w-6 text-complie-accent" />
+            <h2 className="text-2xl font-bold text-complie-primary">Quick Start Templates</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {projectTemplates.map((template) => {
+              const IconComponent = template.icon;
+              return (
+                <Card 
+                  key={template.id} 
+                  className={`group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-2 ${template.color} hover:scale-105`}
+                  onClick={() => createProjectFromTemplate(template)}
+                >
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="p-3 rounded-xl bg-white shadow-sm">
+                        <IconComponent className="h-6 w-6" />
+                      </div>
+                      <CardTitle className="text-lg font-bold">{template.name}</CardTitle>
+                    </div>
+                    <CardDescription className="text-sm leading-relaxed">
+                      {template.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between mb-4">
+                      <Badge variant="secondary" className="bg-white/80">
+                        {template.tasks.length} tasks
+                      </Badge>
+                      <Badge variant="outline" className="bg-white/80">
+                        {template.estimatedDays} days
+                      </Badge>
+                    </div>
+                    <div className="flex flex-wrap gap-1 mb-4">
+                      {template.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="text-xs bg-white/60">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      className="group-hover:bg-white/80 transition-colors w-full"
+                    >
+                      Use Template
+                      <Plus className="h-4 w-4 ml-1" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* My Projects Section */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-complie-primary">My Projects</h2>
+            {filteredProjects.length > 0 && (
+              <Badge variant="outline" className="px-3 py-1 text-sm">
+                {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
+              </Badge>
+            )}
+          </div>
+
+          {/* Search and View Controls */}
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+              <Input
+                placeholder="Search your projects..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 py-3 text-base border-2 focus:border-complie-accent transition-colors"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant={viewMode === 'table' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('table')}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'cards' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('cards')}
+              >
+                <Grid className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Projects Content */}
+          {filteredProjects.length === 0 ? (
+            <Card className="text-center py-16 bg-gradient-to-br from-slate-50 to-white border-2 border-dashed border-slate-200">
+              <CardContent>
+                <div className="flex justify-center mb-6">
+                  <div className="p-6 bg-slate-100 rounded-full">
+                    <FileText className="h-12 w-12 text-muted-foreground" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold text-complie-primary mb-3">No projects created yet</h3>
+                <p className="text-muted-foreground text-lg mb-8 max-w-md mx-auto leading-relaxed">
+                  Get started by using one of our professional templates above, or create a custom project from scratch.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button 
+                    size="lg" 
+                    className="btn-complie-primary" 
+                    onClick={() => navigate('/projects/new')}
+                  >
+                    <Plus className="h-5 w-5 mr-2" />
+                    Create Custom Project
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'table' | 'cards')}>
+              <TabsContent value="table">
+                <Card>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Project Name</TableHead>
+                        <TableHead>Client</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Tasks</TableHead>
+                        <TableHead>Documents</TableHead>
+                        <TableHead>Dates</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredProjects.map((project) => {
+                        const taskCounts = getTaskCounts(project.tasks || []);
+                        return (
+                          <TableRow key={project.id}>
+                            <TableCell className="font-medium">{project.name}</TableCell>
+                            <TableCell>{project.clients?.name || 'No Client'}</TableCell>
+                            <TableCell>{getStatusBadge(project.status)}</TableCell>
+                            <TableCell>
+                              <span className="text-sm">
+                                {taskCounts.completed}/{taskCounts.total}
+                                {taskCounts.overdue > 0 && (
+                                  <span className="text-red-600 ml-1">({taskCounts.overdue} overdue)</span>
+                                )}
+                              </span>
+                            </TableCell>
+                            <TableCell>{project.documents?.length || 0}</TableCell>
+                            <TableCell>
+                              <div className="space-y-1">
+                                {project.start_date && (
+                                  <div className="text-xs text-muted-foreground">
+                                    Started: {format(new Date(project.start_date), 'MMM d, yyyy')}
+                                  </div>
+                                )}
+                                <div>
+                                  {project.due_date ? format(new Date(project.due_date), 'MMM d, yyyy') : '-'}
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => navigate(`/projects/${project.id}`)}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => navigate(`/projects/${project.id}/edit`)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handleDeleteProject(project.id)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="cards">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredProjects.map((project) => {
                     const taskCounts = getTaskCounts(project.tasks || []);
                     return (
-                      <TableRow key={project.id}>
-                        <TableCell className="font-medium">{project.name}</TableCell>
-                        <TableCell>{project.clients?.name || 'No Client'}</TableCell>
-                        <TableCell>{getStatusBadge(project.status)}</TableCell>
-                        <TableCell>
-                          <span className="text-sm">
-                            {taskCounts.completed}/{taskCounts.total}
-                            {taskCounts.overdue > 0 && (
-                              <span className="text-red-600 ml-1">({taskCounts.overdue} overdue)</span>
-                            )}
-                          </span>
-                        </TableCell>
-                        <TableCell>{project.documents?.length || 0}</TableCell>
-                        <TableCell>
-                          <div className="space-y-1">
+                      <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+                        <CardHeader className="pb-4">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <CardTitle className="text-lg">{project.name}</CardTitle>
+                              <CardDescription className="mt-1">
+                                {project.clients?.name || 'No Client'}
+                              </CardDescription>
+                            </div>
+                            {getStatusBadge(project.status)}
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-3">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-muted-foreground">Tasks:</span>
+                              <span>{taskCounts.completed}/{taskCounts.total} complete</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-muted-foreground">Documents:</span>
+                              <span>{project.documents?.length || 0}</span>
+                            </div>
                             {project.start_date && (
-                              <div className="text-xs text-muted-foreground">
-                                Started: {format(new Date(project.start_date), 'MMM d, yyyy')}
+                              <div className="flex justify-between text-sm">
+                                <span className="text-muted-foreground">Started:</span>
+                                <span>{format(new Date(project.start_date), 'MMM d')}</span>
                               </div>
                             )}
-                            <div>
-                              {project.due_date ? format(new Date(project.due_date), 'MMM d, yyyy') : '-'}
+                            {project.due_date && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-muted-foreground">Due:</span>
+                                <span>{format(new Date(project.due_date), 'MMM d')}</span>
+                              </div>
+                            )}
+                            <div className="flex gap-2 pt-4">
+                              <Button 
+                                size="sm" 
+                                className="flex-1"
+                                onClick={() => navigate(`/projects/${project.id}`)}
+                              >
+                                <Eye className="h-4 w-4 mr-2" />
+                                View
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => navigate(`/projects/${project.id}/export`)}
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
                             </div>
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => navigate(`/projects/${project.id}`)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => navigate(`/projects/${project.id}/edit`)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleDeleteProject(project.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
+                        </CardContent>
+                      </Card>
                     );
                   })}
-                </TableBody>
-              </Table>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="cards">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProjects.map((project) => {
-                const taskCounts = getTaskCounts(project.tasks || []);
-                return (
-                  <Card key={project.id} className="card-complie hover:shadow-lg transition-shadow cursor-pointer">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <CardTitle className="text-lg">{project.name}</CardTitle>
-                          <CardDescription className="mt-1">
-                            {project.clients?.name || 'No Client'}
-                          </CardDescription>
-                        </div>
-                        {getStatusBadge(project.status)}
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Tasks:</span>
-                          <span>{taskCounts.completed}/{taskCounts.total} complete</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Documents:</span>
-                          <span>{project.documents?.length || 0}</span>
-                        </div>
-                        {project.start_date && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Started:</span>
-                            <span>{format(new Date(project.start_date), 'MMM d')}</span>
-                          </div>
-                        )}
-                        {project.due_date && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Due:</span>
-                            <span>{format(new Date(project.due_date), 'MMM d')}</span>
-                          </div>
-                        )}
-                        <div className="flex gap-2 pt-4">
-                          <Button 
-                            size="sm" 
-                            className="flex-1"
-                            onClick={() => navigate(`/projects/${project.id}`)}
-                          >
-                            <Eye className="h-4 w-4 mr-2" />
-                            View
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => navigate(`/projects/${project.id}/export`)}
-                          >
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </TabsContent>
-        </Tabs>
-      )}
+                </div>
+              </TabsContent>
+            </Tabs>
+          )}
+        </div>
       </div>
     </div>
   );
