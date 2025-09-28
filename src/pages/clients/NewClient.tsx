@@ -132,12 +132,9 @@ const NewClient = () => {
 
         <Card className="card-complie border-complie-accent/20 shadow-lg bg-white/70 backdrop-blur-sm">
           <CardHeader className="bg-gradient-to-r from-complie-accent/10 to-complie-primary/10 -m-6 mb-6 p-6 rounded-t-xl">
-            <CardTitle className="text-complie-primary flex items-center gap-2">
-              <Building2 className="h-5 w-5" />
-              Client Information
-            </CardTitle>
+            <CardTitle className="text-complie-primary">Client Details</CardTitle>
             <CardDescription>
-              Fill in the details below to create a comprehensive client profile
+              Fill in the information below to create your new client
             </CardDescription>
           </CardHeader>
           <CardContent>
