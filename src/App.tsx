@@ -15,6 +15,7 @@ import Projects from "./pages/projects/Projects";
 import NewProject from "./pages/projects/NewProject";
 import ProjectDetail from "./pages/projects/ProjectDetail";
 import Clients from "./pages/clients/Clients";
+import NewClient from "./pages/clients/NewClient";
 import Checklists from "./pages/checklists/Checklists";
 import Notes from "./pages/notes/Notes";
 import NoteEditor from "./pages/notes/NoteEditor";
@@ -66,7 +67,7 @@ const App = () => (
             </Route>
             <Route path="/clients" element={<PublicAppLayout />}>
               <Route index element={<Clients />} />
-              <Route path="new" element={<Clients />} />
+              <Route path="new" element={<NewClient />} />
             </Route>
             <Route path="/checklists" element={<PublicAppLayout />}>
               <Route index element={<Checklists />} />

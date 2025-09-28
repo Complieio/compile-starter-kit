@@ -266,7 +266,10 @@ const NewProject = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate('/clients/new?return=/projects/new')}
+                  onClick={() => {
+                    const currentUrl = window.location.pathname + window.location.search;
+                    navigate(`/clients/new?returnTo=${encodeURIComponent(currentUrl)}`);
+                  }}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   New Client

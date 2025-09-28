@@ -39,10 +39,7 @@ const ProjectDetail = () => {
         .from('projects')
         .select(`
           *,
-          clients (id, name, contact_email),
-          tasks (id, title, status, priority, due_date, completed_at),
-          documents (id, name, file_size, file_type, uploaded_at),
-          notes (id, content, created_at, updated_at)
+          clients (id, name, contact_email)
         `)
         .eq('id', id)
         .eq('user_id', user.id)
@@ -50,6 +47,49 @@ const ProjectDetail = () => {
 
       if (error) throw error;
       return data;
+    },
+    enabled: !!user && !!id,
+  });
+
+  // Separate queries for better performance
+  const { data: tasks } = useQuery({
+    queryKey: ['project-tasks', id],
+    queryFn: async () => {
+      if (!user || !id) return [];
+      const { data } = await supabase
+        .from('tasks')
+        .select('id, title, status, priority, due_date, completed_at')
+        .eq('project_id', id)
+        .eq('user_id', user.id);
+      return data || [];
+    },
+    enabled: !!user && !!id,
+  });
+
+  const { data: documents } = useQuery({
+    queryKey: ['project-documents', id],
+    queryFn: async () => {
+      if (!user || !id) return [];
+      const { data } = await supabase
+        .from('documents')
+        .select('id, name, file_size, file_type, uploaded_at')
+        .eq('project_id', id)
+        .eq('user_id', user.id);
+      return data || [];
+    },
+    enabled: !!user && !!id,
+  });
+
+  const { data: notes } = useQuery({
+    queryKey: ['project-notes', id],
+    queryFn: async () => {
+      if (!user || !id) return [];
+      const { data } = await supabase
+        .from('notes')
+        .select('id, content, created_at, updated_at')
+        .eq('project_id', id)
+        .eq('user_id', user.id);
+      return data || [];
     },
     enabled: !!user && !!id,
   });
@@ -70,9 +110,9 @@ const ProjectDetail = () => {
   };
 
   const calculateProgress = () => {
-    if (!project?.tasks || project.tasks.length === 0) return 0;
-    const completedTasks = project.tasks.filter(task => task.status === 'done').length;
-    return Math.round((completedTasks / project.tasks.length) * 100);
+    if (!tasks || tasks.length === 0) return 0;
+    const completedTasks = tasks.filter(task => task.status === 'done').length;
+    return Math.round((completedTasks / tasks.length) * 100);
   };
 
   const handleArchiveProject = async () => {
@@ -144,7 +184,7 @@ const ProjectDetail = () => {
   }
 
   const progress = calculateProgress();
-  const overdueTasks = project.tasks?.filter(task => 
+  const overdueTasks = tasks?.filter(task => 
     task.status !== 'done' && task.due_date && new Date(task.due_date) < new Date()
   ).length || 0;
 
@@ -208,7 +248,7 @@ const ProjectDetail = () => {
             <div className="text-2xl font-bold text-complie-primary mb-2">{progress}%</div>
             <Progress value={progress} className="h-2" />
             <p className="text-xs text-muted-foreground mt-2">
-              {project.tasks?.filter(t => t.status === 'done').length || 0} of {project.tasks?.length || 0} tasks complete
+              {tasks?.filter(t => t.status === 'done').length || 0} of {tasks?.length || 0} tasks complete
             </p>
           </CardContent>
         </Card>
@@ -218,7 +258,7 @@ const ProjectDetail = () => {
             <CardTitle className="text-sm font-medium">Tasks</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-complie-primary">{project.tasks?.length || 0}</div>
+            <div className="text-2xl font-bold text-complie-primary">{tasks?.length || 0}</div>
             {overdueTasks > 0 && (
               <p className="text-xs text-red-600 mt-1">{overdueTasks} overdue</p>
             )}
@@ -230,9 +270,9 @@ const ProjectDetail = () => {
             <CardTitle className="text-sm font-medium">Documents</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-complie-primary">{project.documents?.length || 0}</div>
+            <div className="text-2xl font-bold text-complie-primary">{documents?.length || 0}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              {project.documents?.reduce((sum, doc) => sum + (doc.file_size || 0), 0) || 0} bytes
+              {documents?.reduce((sum, doc) => sum + (doc.file_size || 0), 0) || 0} bytes
             </p>
           </CardContent>
         </Card>
@@ -242,10 +282,10 @@ const ProjectDetail = () => {
             <CardTitle className="text-sm font-medium">Notes</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-complie-primary">{project.notes?.length || 0}</div>
+            <div className="text-2xl font-bold text-complie-primary">{notes?.length || 0}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Last updated {(project.notes as any)?.length ? 
-                format(new Date((project.notes as any)[0].created_at), 'MMM d') : 'Never'
+              Last updated {notes?.length ? 
+                format(new Date(notes[0].created_at), 'MMM d') : 'Never'
               }
             </p>
           </CardContent>
@@ -295,7 +335,7 @@ const ProjectDetail = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {project.tasks?.slice(0, 3).map((task) => (
+                  {tasks?.slice(0, 3).map((task) => (
                     <div key={task.id} className="flex items-center gap-3 p-2 rounded border">
                       <div className={`w-2 h-2 rounded-full ${
                         task.status === 'done' ? 'bg-green-500' : 
@@ -312,7 +352,7 @@ const ProjectDetail = () => {
                       </div>
                     </div>
                   ))}
-                  {(!project.tasks || project.tasks.length === 0) && (
+                  {(!tasks || tasks.length === 0) && (
                     <div className="text-center py-8 text-muted-foreground">
                       <CheckSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
                       <p>No tasks yet</p>
