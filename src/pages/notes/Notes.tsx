@@ -13,6 +13,7 @@ import { format } from 'date-fns';
 
 interface Note {
   id: string;
+  title?: string;
   content: string;
   created_at: string;
   updated_at: string;
@@ -75,6 +76,7 @@ const Notes = () => {
         return [
           {
             id: 'demo-1',
+            title: 'Welcome to Notes!',
             content: '<h2><strong>Welcome to Notes!</strong></h2><p>This is a demo note showing the rich text capabilities. You can format text with <strong>bold</strong>, <em>italic</em>, and <u>underline</u>.</p><ul><li>Create bulleted lists</li><li>Add numbered lists</li><li>Insert links and images</li></ul><p>Sign in to create your own notes!</p>',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
@@ -128,9 +130,11 @@ const Notes = () => {
     },
   });
 
-  const filteredNotes = notes.filter(note =>
-    note.content.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredNotes = notes.filter(note => {
+    const titleMatch = note.title?.toLowerCase().includes(searchQuery.toLowerCase()) || false;
+    const contentMatch = note.content.toLowerCase().includes(searchQuery.toLowerCase());
+    return titleMatch || contentMatch;
+  });
 
   const handleDelete = (noteId: string) => {
     if (!user) {
@@ -369,6 +373,11 @@ const Notes = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
+                  {note.title && (
+                    <h3 className="text-lg font-semibold text-complie-primary mb-2 line-clamp-2">
+                      {note.title}
+                    </h3>
+                  )}
                   <div className="text-sm text-foreground leading-relaxed">
                     {getPreview(note.content)}
                   </div>

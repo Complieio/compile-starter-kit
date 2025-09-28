@@ -18,6 +18,7 @@ interface ProjectNotesProps {
 
 interface Note {
   id: string;
+  title?: string;
   content: string;
   created_at: string;
   updated_at: string;
@@ -280,43 +281,59 @@ export function ProjectNotes({ projectId }: ProjectNotesProps) {
               {filteredNotes.map((note) => (
                 <div
                   key={note.id}
-                  className="p-4 rounded-lg border hover:bg-muted/50 transition-colors"
+                  className="p-6 rounded-lg border-2 bg-gradient-to-r from-white to-gray-50/50 hover:shadow-lg transition-all duration-300"
+                  style={{
+                    backgroundImage: 'linear-gradient(135deg, #000000 0%, #1F73FF 100%)',
+                    backgroundClip: 'border-box',
+                    border: '2px solid transparent',
+                    background: 'linear-gradient(135deg, #000000 0%, #1F73FF 100%) border-box, linear-gradient(to right, white, #f8fafc) padding-box'
+                  }}
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm whitespace-pre-wrap break-words mb-3">
-                        {note.content}
-                      </p>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          <span>Created {formatDistanceToNow(new Date(note.created_at), { addSuffix: true })}</span>
-                        </div>
-                        {note.updated_at !== note.created_at && (
-                          <span>Updated {formatDistanceToNow(new Date(note.updated_at), { addSuffix: true })}</span>
+                  <div className="bg-white rounded-md p-4 border-l-4 border-l-complie-accent">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        {note.title && (
+                          <h3 className="text-lg font-semibold text-complie-primary mb-2 truncate">
+                            {note.title}
+                          </h3>
                         )}
+                        <div 
+                          className="text-sm text-gray-700 mb-3 prose prose-sm max-w-none"
+                          dangerouslySetInnerHTML={{ __html: note.content.slice(0, 200) + (note.content.length > 200 ? '...' : '') }}
+                        />
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            <span>Created {formatDistanceToNow(new Date(note.created_at), { addSuffix: true })}</span>
+                          </div>
+                          {note.updated_at !== note.created_at && (
+                            <span>Updated {formatDistanceToNow(new Date(note.updated_at), { addSuffix: true })}</span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setEditingNote(note)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => {
-                          if (confirm('Are you sure you want to delete this note?')) {
-                            deleteNoteMutation.mutate(note.id);
-                          }
-                        }}
-                        disabled={deleteNoteMutation.isPending}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setEditingNote(note)}
+                          className="hover:bg-complie-accent/10 hover:text-complie-accent"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            if (confirm('Are you sure you want to delete this note?')) {
+                              deleteNoteMutation.mutate(note.id);
+                            }
+                          }}
+                          disabled={deleteNoteMutation.isPending}
+                          className="hover:bg-red-50 hover:text-red-600"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
