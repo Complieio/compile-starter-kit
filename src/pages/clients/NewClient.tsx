@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Building2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -25,6 +26,14 @@ const NewClient = () => {
     contact_phone: '',
     address: '',
     description: '',
+    status: 'active',
+    website: '',
+    industry: '',
+    company_size: '',
+    tax_id: '',
+    billing_address: '',
+    contact_person: '',
+    notes: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -123,94 +132,238 @@ const NewClient = () => {
 
         <Card className="card-complie border-complie-accent/20 shadow-lg bg-white/70 backdrop-blur-sm">
           <CardHeader className="bg-gradient-to-r from-complie-accent/10 to-complie-primary/10 -m-6 mb-6 p-6 rounded-t-xl">
-            <CardTitle className="text-complie-primary">Client Information</CardTitle>
+            <CardTitle className="text-complie-primary flex items-center gap-2">
+              <Building2 className="h-5 w-5" />
+              Client Information
+            </CardTitle>
             <CardDescription>
-              Fill in the details below to create a new client profile
+              Fill in the details below to create a comprehensive client profile
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Client Name */}
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-medium">
-                  Client Name *
-                </Label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  placeholder="Enter client name"
-                  required
-                />
+              {/* Basic Information Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-complie-primary border-b border-complie-accent/20 pb-2">
+                  Basic Information
+                </h3>
+                
+                {/* Client Name */}
+                <div className="space-y-2">
+                  <Label htmlFor="name">Client/Company Name *</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="Enter client or company name"
+                    required
+                  />
+                </div>
+
+                {/* Industry and Company Size */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="industry">Industry</Label>
+                    <Select
+                      value={formData.industry}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, industry: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select industry" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="technology">Technology</SelectItem>
+                        <SelectItem value="healthcare">Healthcare</SelectItem>
+                        <SelectItem value="finance">Finance</SelectItem>
+                        <SelectItem value="retail">Retail</SelectItem>
+                        <SelectItem value="manufacturing">Manufacturing</SelectItem>
+                        <SelectItem value="education">Education</SelectItem>
+                        <SelectItem value="consulting">Consulting</SelectItem>
+                        <SelectItem value="real-estate">Real Estate</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="company_size">Company Size</Label>
+                    <Select
+                      value={formData.company_size}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, company_size: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select company size" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1-10">1-10 employees</SelectItem>
+                        <SelectItem value="11-50">11-50 employees</SelectItem>
+                        <SelectItem value="51-200">51-200 employees</SelectItem>
+                        <SelectItem value="201-500">201-500 employees</SelectItem>
+                        <SelectItem value="500+">500+ employees</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Status and Website */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Status</Label>
+                    <Select
+                      value={formData.status}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="prospect">Prospect</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                        <SelectItem value="archived">Archived</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="website">Website</Label>
+                    <Input
+                      id="website"
+                      name="website"
+                      type="url"
+                      value={formData.website}
+                      onChange={handleInputChange}
+                      placeholder="https://example.com"
+                    />
+                  </div>
+                </div>
+
+                {/* Tax ID */}
+                <div className="space-y-2">
+                  <Label htmlFor="tax_id">Tax ID / Business Number</Label>
+                  <Input
+                    id="tax_id"
+                    name="tax_id"
+                    value={formData.tax_id}
+                    onChange={handleInputChange}
+                    placeholder="Enter tax ID or business registration number"
+                  />
+                </div>
               </div>
 
-              {/* Contact Email */}
-              <div className="space-y-2">
-                <Label htmlFor="contact_email" className="text-sm font-medium">
-                  Email Address
-                </Label>
-                <Input
-                  id="contact_email"
-                  name="contact_email"
-                  type="email"
-                  value={formData.contact_email}
-                  onChange={handleInputChange}
-                  placeholder="client@example.com"
-                />
+              {/* Contact Information Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-complie-primary border-b border-complie-accent/20 pb-2">
+                  Contact Information
+                </h3>
+
+                {/* Contact Person */}
+                <div className="space-y-2">
+                  <Label htmlFor="contact_person">Primary Contact Person</Label>
+                  <Input
+                    id="contact_person"
+                    name="contact_person"
+                    value={formData.contact_person}
+                    onChange={handleInputChange}
+                    placeholder="Name of primary contact"
+                  />
+                </div>
+
+                {/* Email and Phone */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="contact_email">Email Address</Label>
+                    <Input
+                      id="contact_email"
+                      name="contact_email"
+                      type="email"
+                      value={formData.contact_email}
+                      onChange={handleInputChange}
+                      placeholder="client@example.com"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="contact_phone">Phone Number</Label>
+                    <Input
+                      id="contact_phone"
+                      name="contact_phone"
+                      type="tel"
+                      value={formData.contact_phone}
+                      onChange={handleInputChange}
+                      placeholder="+1 (555) 123-4567"
+                    />
+                  </div>
+                </div>
+
+                {/* Address */}
+                <div className="space-y-2">
+                  <Label htmlFor="address">Business Address</Label>
+                  <Textarea
+                    id="address"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    placeholder="123 Main St, City, State 12345"
+                    rows={2}
+                  />
+                </div>
+
+                {/* Billing Address */}
+                <div className="space-y-2">
+                  <Label htmlFor="billing_address">Billing Address (if different)</Label>
+                  <Textarea
+                    id="billing_address"
+                    name="billing_address"
+                    value={formData.billing_address}
+                    onChange={handleInputChange}
+                    placeholder="Leave blank if same as business address"
+                    rows={2}
+                  />
+                </div>
               </div>
 
-              {/* Contact Phone */}
-              <div className="space-y-2">
-                <Label htmlFor="contact_phone" className="text-sm font-medium">
-                  Phone Number
-                </Label>
-                <Input
-                  id="contact_phone"
-                  name="contact_phone"
-                  type="tel"
-                  value={formData.contact_phone}
-                  onChange={handleInputChange}
-                  placeholder="+1 (555) 123-4567"
-                />
+              {/* Additional Information Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-complie-primary border-b border-complie-accent/20 pb-2">
+                  Additional Information
+                </h3>
+
+                {/* Description */}
+                <div className="space-y-2">
+                  <Label htmlFor="description">Company Description</Label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    placeholder="Brief description of the client's business and services..."
+                    rows={3}
+                  />
+                </div>
+
+                {/* Notes */}
+                <div className="space-y-2">
+                  <Label htmlFor="notes">Internal Notes</Label>
+                  <Textarea
+                    id="notes"
+                    name="notes"
+                    value={formData.notes}
+                    onChange={handleInputChange}
+                    placeholder="Internal notes, special requirements, preferences, etc..."
+                    rows={3}
+                  />
+                </div>
               </div>
 
-              {/* Address */}
-              <div className="space-y-2">
-                <Label htmlFor="address" className="text-sm font-medium">
-                  Address
-                </Label>
-                <Input
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  placeholder="123 Main St, City, State 12345"
-                />
-              </div>
-
-              {/* Description */}
-              <div className="space-y-2">
-                <Label htmlFor="description" className="text-sm font-medium">
-                  Description
-                </Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  placeholder="Brief description or notes about the client..."
-                  rows={3}
-                />
-              </div>
-
-              {/* Submit Button */}
-              <div className="flex gap-4 pt-4">
+              {/* Submit Buttons */}
+              <div className="flex gap-4 pt-6">
                 <Button 
                   type="button" 
                   variant="outline" 
                   onClick={handleBack}
-                  className="flex-1"
+                  disabled={isSubmitting}
                 >
                   Cancel
                 </Button>

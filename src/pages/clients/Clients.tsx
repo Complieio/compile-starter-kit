@@ -59,35 +59,7 @@ const Clients = () => {
   const { data: clients = [], isLoading } = useQuery({
     queryKey: ['clients'],
     queryFn: async () => {
-      if (!user) {
-        // Return demo data for preview mode
-        return [
-          {
-            id: 'demo-1',
-            name: 'Acme Corporation',
-            contact_email: 'contact@acme.com',
-            contact_phone: '+1 (555) 123-4567',
-            address: '123 Business St, City, State 12345',
-            status: 'active',
-            description: 'Leading technology company focused on innovation',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            projects: [{ id: 'proj-1' }, { id: 'proj-2' }]
-          },
-          {
-            id: 'demo-2',
-            name: 'TechStart Inc',
-            contact_email: 'hello@techstart.com',
-            contact_phone: '+1 (555) 987-6543',
-            address: '456 Innovation Ave, Tech City, TC 67890',
-            status: 'active',
-            description: 'Startup specializing in digital solutions',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            projects: [{ id: 'proj-3' }]
-          }
-        ] as Client[];
-      }
+      if (!user) return [];
       
       const { data, error } = await supabase
         .from('clients')
@@ -101,7 +73,7 @@ const Clients = () => {
       if (error) throw error;
       return data as Client[];
     },
-    enabled: true, // Always enabled now, will return demo data if no user
+    enabled: !!user
   });
 
   const createMutation = useMutation({
