@@ -3,6 +3,14 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './quill-styles.css';
 import Quill from 'quill';
+// @ts-ignore - module has no types
+import ImageResize from 'quill-image-resize-module-react';
+
+// Register image resize module in browser only
+if (typeof window !== 'undefined') {
+  // @ts-ignore - Quill register typing
+  Quill.register('modules/imageResize', ImageResize);
+}
 interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
@@ -30,7 +38,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         [{ 'list': 'ordered' }, { 'list': 'bullet' }],
         [{ 'indent': '-1' }, { 'indent': '+1' }],
         [{ 'align': [] }],
-        ['link', 'image', 'video', 'imageSize'],
+        ['link', 'image', 'video'],
         ['blockquote', 'code-block'],
         ['clean']
       ],
@@ -66,41 +74,13 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               reader.readAsDataURL(file);
             }
           };
-        },
-        imageSize: function() {
-          const range = this.quill.getSelection(true);
-          if (!range) return;
-          const getImageDom = () => {
-            const leafAt = this.quill.getLeaf(range.index)?.[0];
-            if (leafAt && leafAt.domNode && leafAt.domNode.tagName === 'IMG') return leafAt.domNode;
-            const prevLeaf = this.quill.getLeaf(Math.max(range.index - 1, 0))?.[0];
-            if (prevLeaf && prevLeaf.domNode && prevLeaf.domNode.tagName === 'IMG') return prevLeaf.domNode;
-            const nextLeaf = this.quill.getLeaf(range.index + 1)?.[0];
-            if (nextLeaf && nextLeaf.domNode && nextLeaf.domNode.tagName === 'IMG') return nextLeaf.domNode;
-            return null;
-          };
-          const img = getImageDom();
-          if (!img) {
-            alert('Select an image (place the cursor next to it) to resize.');
-            return;
-          }
-          const currentWidth = (img.style && img.style.width) ? img.style.width : '';
-          const value = prompt('Set image width (e.g., 300px or 50%). Leave empty to reset.', currentWidth || '');
-          if (value === null) return;
-          const v = value.trim();
-          if (!v) {
-            img.style.width = '';
-            img.style.height = '';
-          } else {
-            img.style.width = v;
-            img.style.height = 'auto';
-          }
         }
       }
     },
     clipboard: {
       matchVisual: false,
-    }
+    },
+    imageResize: {}
   }), []);
 
   const formats = [
