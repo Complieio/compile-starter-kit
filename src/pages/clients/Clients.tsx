@@ -36,6 +36,7 @@ const Clients = () => {
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [clientType, setClientType] = useState<'small' | 'medium' | 'large'>('small');
   const [formData, setFormData] = useState({
     name: '',
     contact_email: '',
@@ -197,6 +198,7 @@ const Clients = () => {
 
   const handleEdit = (client: Client) => {
     setEditingClient(client);
+    setClientType('large'); // Always use large editor for editing existing clients
     setFormData({
       name: client.name || '',
       contact_email: client.contact_email || '',
@@ -249,43 +251,73 @@ const Clients = () => {
     }
   };
 
-  const clientTemplates = [
+  const clientEditorTypes = [
     {
-      id: 'tech-company',
-      name: 'Technology Company',
-      description: 'Tech startup or established technology company with development and innovation focus',
+      id: 'small',
+      name: 'Simple Client',
+      description: 'Perfect for small, easy-to-manage clients with basic information needs',
+      icon: Users,
+      color: 'bg-green-50 border-green-200 text-green-700',
+      type: 'small' as const
+    },
+    {
+      id: 'medium',
+      name: 'Standard Client',
+      description: 'Ideal for important clients requiring detailed contact information and business details',
       icon: Building2,
       color: 'bg-blue-50 border-blue-200 text-blue-700',
-      contact_email: 'contact@techcompany.com',
-      contact_phone: '+1 (555) 123-4567',
-      address: '123 Innovation Drive, Tech City, TC 12345',
-      companyDescription: 'Leading technology company focused on innovation and digital solutions'
+      type: 'medium' as const
     },
     {
-      id: 'retail-business',
-      name: 'Retail Business',
-      description: 'Retail store or e-commerce business with focus on customer experience and sales',
+      id: 'large',
+      name: 'Enterprise Client',
+      description: 'Comprehensive client management for large, high-value clients with complex requirements',
       icon: Store,
-      color: 'bg-green-50 border-green-200 text-green-700',
-      contact_email: 'info@retailbusiness.com',
-      contact_phone: '+1 (555) 987-6543',
-      address: '456 Commerce Street, Retail City, RC 67890',
-      companyDescription: 'Customer-focused retail business specializing in quality products and service'
-    },
-    {
-      id: 'healthcare-provider',
-      name: 'Healthcare Provider',
-      description: 'Medical practice, clinic, or healthcare organization with patient care focus',
-      icon: Hospital,
       color: 'bg-purple-50 border-purple-200 text-purple-700',
-      contact_email: 'admin@healthcareprovider.com',
-      contact_phone: '+1 (555) 555-0123',
-      address: '789 Medical Center Blvd, Health City, HC 13579',
-      companyDescription: 'Dedicated healthcare provider committed to patient care and medical excellence'
+      type: 'large' as const
     }
   ];
 
-  const createClientFromTemplate = async (template: typeof clientTemplates[0]) => {
+  const industryOptions = [
+    'Accounting & Finance',
+    'Advertising & Marketing', 
+    'Agriculture & Farming',
+    'Architecture & Design',
+    'Automotive',
+    'Banking & Financial Services',
+    'Biotechnology',
+    'Construction & Building',
+    'Consulting',
+    'E-commerce & Retail',
+    'Education & Training',
+    'Energy & Utilities',
+    'Entertainment & Media',
+    'Environmental Services',
+    'Fashion & Apparel',
+    'Food & Beverage',
+    'Government & Public Sector',
+    'Healthcare & Medical',
+    'Hospitality & Tourism',
+    'Human Resources',
+    'Information Technology',
+    'Insurance',
+    'Legal Services',
+    'Logistics & Transportation',
+    'Manufacturing',
+    'Mining & Natural Resources',
+    'Non-Profit & NGO',
+    'Pharmaceutical',
+    'Real Estate',
+    'Research & Development',
+    'Security & Defense',
+    'Sports & Recreation',
+    'Telecommunications',
+    'Travel & Aviation',
+    'Wholesale & Distribution',
+    'Other'
+  ];
+
+  const openClientEditor = (type: 'small' | 'medium' | 'large') => {
     if (!user) {
       toast({
         title: "Authentication required",
@@ -295,21 +327,8 @@ const Clients = () => {
       return;
     }
 
-    setFormData({
-      name: template.name,
-      contact_email: template.contact_email,
-      contact_phone: template.contact_phone,
-      address: template.address,
-      description: template.companyDescription,
-      status: 'active',
-      contact_person: '',
-      industry: '',
-      company_size: '',
-      website: '',
-      tax_id: '',
-      billing_address: '',
-      notes: ''
-    });
+    setClientType(type);
+    resetForm();
     setEditingClient(null);
     setIsDialogOpen(true);
   };
@@ -352,7 +371,7 @@ const Clients = () => {
             </div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button size="lg" className="btn-complie-primary" onClick={() => { resetForm(); setEditingClient(null); }}>
+                <Button size="lg" className="btn-complie-primary" onClick={() => openClientEditor('large')}>
                   <Plus className="h-5 w-5 mr-2" />
                   Create Custom Client
                 </Button>
@@ -361,15 +380,23 @@ const Clients = () => {
                 <Card className="card-complie border-complie-accent/20 shadow-lg bg-white/70 backdrop-blur-sm border-0">
                   <CardHeader className="bg-gradient-to-r from-complie-accent/10 to-complie-primary/10 -m-6 mb-6 p-6 rounded-t-xl">
                     <CardTitle className="text-complie-primary">
-                      {editingClient ? 'Edit Client' : 'Client Details'}
+                      {editingClient ? 'Edit Client' : 
+                        clientType === 'small' ? 'Simple Client Details' :
+                        clientType === 'medium' ? 'Standard Client Details' :
+                        'Enterprise Client Details'
+                      }
                     </CardTitle>
                     <CardDescription>
-                      {editingClient ? 'Update the client information below' : 'Fill in the information below to create your new client'}
+                      {editingClient ? 'Update the client information below' : 
+                        clientType === 'small' ? 'Fill in basic information for your simple client' :
+                        clientType === 'medium' ? 'Add detailed information for your standard client' :
+                        'Complete comprehensive information for your enterprise client'
+                      }
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
-                      {/* Client Name */}
+                      {/* Client Name - Always shown */}
                       <div className="space-y-2">
                         <Label htmlFor="name">Client Name *</Label>
                         <Input
@@ -381,30 +408,7 @@ const Clients = () => {
                         />
                       </div>
 
-                      {/* Description */}
-                      <div className="space-y-2">
-                        <Label htmlFor="description">Description</Label>
-                        <Textarea
-                          id="description"
-                          placeholder="Describe your client (optional)"
-                          value={formData.description}
-                          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                          rows={3}
-                        />
-                      </div>
-
-                      {/* Contact Person */}
-                      <div className="space-y-2">
-                        <Label htmlFor="contact_person">Contact Person</Label>
-                        <Input
-                          id="contact_person"
-                          placeholder="Primary contact name"
-                          value={formData.contact_person || ''}
-                          onChange={(e) => setFormData({ ...formData, contact_person: e.target.value })}
-                        />
-                      </div>
-
-                      {/* Contact Information */}
+                      {/* Contact Information - Always shown */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="contact_email">Email</Label>
@@ -428,95 +432,9 @@ const Clients = () => {
                         </div>
                       </div>
 
-                      {/* Industry and Company Size */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label>Industry</Label>
-                          <Select
-                            value={formData.industry || ''}
-                            onValueChange={(value) => setFormData({ ...formData, industry: value })}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select industry" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="technology">Technology</SelectItem>
-                              <SelectItem value="healthcare">Healthcare</SelectItem>
-                              <SelectItem value="finance">Finance</SelectItem>
-                              <SelectItem value="retail">Retail</SelectItem>
-                              <SelectItem value="manufacturing">Manufacturing</SelectItem>
-                              <SelectItem value="education">Education</SelectItem>
-                              <SelectItem value="consulting">Consulting</SelectItem>
-                              <SelectItem value="real-estate">Real Estate</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Company Size</Label>
-                          <Select
-                            value={formData.company_size || ''}
-                            onValueChange={(value) => setFormData({ ...formData, company_size: value })}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select company size" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="1-10">1-10 employees</SelectItem>
-                              <SelectItem value="11-50">11-50 employees</SelectItem>
-                              <SelectItem value="51-200">51-200 employees</SelectItem>
-                              <SelectItem value="201-500">201-500 employees</SelectItem>
-                              <SelectItem value="500+">500+ employees</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-
-                      {/* Status and Website */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label>Status</Label>
-                          <Select
-                            value={formData.status}
-                            onValueChange={(value) => setFormData({ ...formData, status: value })}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="active">Active</SelectItem>
-                              <SelectItem value="prospect">Prospect</SelectItem>
-                              <SelectItem value="inactive">Inactive</SelectItem>
-                              <SelectItem value="archived">Archived</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="website">Website</Label>
-                          <Input
-                            id="website"
-                            type="url"
-                            placeholder="https://example.com"
-                            value={formData.website || ''}
-                            onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Tax ID */}
+                      {/* Address - Always shown */}
                       <div className="space-y-2">
-                        <Label htmlFor="tax_id">Tax ID / Business Number</Label>
-                        <Input
-                          id="tax_id"
-                          placeholder="Enter tax ID or business registration number"
-                          value={formData.tax_id || ''}
-                          onChange={(e) => setFormData({ ...formData, tax_id: e.target.value })}
-                        />
-                      </div>
-
-                      {/* Address */}
-                      <div className="space-y-2">
-                        <Label htmlFor="address">Business Address</Label>
+                        <Label htmlFor="address">Address</Label>
                         <Textarea
                           id="address"
                           placeholder="123 Main St, City, State 12345"
@@ -526,29 +444,144 @@ const Clients = () => {
                         />
                       </div>
 
-                      {/* Billing Address */}
+                      {/* Description - Always shown */}
                       <div className="space-y-2">
-                        <Label htmlFor="billing_address">Billing Address</Label>
+                        <Label htmlFor="description">Description</Label>
                         <Textarea
-                          id="billing_address"
-                          placeholder="Leave blank if same as business address"
-                          value={formData.billing_address || ''}
-                          onChange={(e) => setFormData({ ...formData, billing_address: e.target.value })}
-                          rows={2}
-                        />
-                      </div>
-
-                      {/* Notes */}
-                      <div className="space-y-2">
-                        <Label htmlFor="notes">Notes</Label>
-                        <Textarea
-                          id="notes"
-                          placeholder="Internal notes, special requirements, preferences, etc..."
-                          value={formData.notes || ''}
-                          onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                          id="description"
+                          placeholder="Describe your client (optional)"
+                          value={formData.description}
+                          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                           rows={3}
                         />
                       </div>
+
+                      {/* Medium and Large client fields */}
+                      {(clientType === 'medium' || clientType === 'large') && (
+                        <>
+                          {/* Contact Person */}
+                          <div className="space-y-2">
+                            <Label htmlFor="contact_person">Contact Person</Label>
+                            <Input
+                              id="contact_person"
+                              placeholder="Primary contact name"
+                              value={formData.contact_person || ''}
+                              onChange={(e) => setFormData({ ...formData, contact_person: e.target.value })}
+                            />
+                          </div>
+
+                          {/* Industry and Company Size */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label>Industry</Label>
+                              <Select
+                                value={formData.industry || ''}
+                                onValueChange={(value) => setFormData({ ...formData, industry: value })}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select industry" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {industryOptions.map((industry) => (
+                                    <SelectItem key={industry} value={industry.toLowerCase().replace(/\s+/g, '-')}>
+                                      {industry}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Company Size</Label>
+                              <Select
+                                value={formData.company_size || ''}
+                                onValueChange={(value) => setFormData({ ...formData, company_size: value })}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select company size" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="1-10">1-10 employees</SelectItem>
+                                  <SelectItem value="11-50">11-50 employees</SelectItem>
+                                  <SelectItem value="51-200">51-200 employees</SelectItem>
+                                  <SelectItem value="201-500">201-500 employees</SelectItem>
+                                  <SelectItem value="500+">500+ employees</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+
+                          {/* Status and Website */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label>Status</Label>
+                              <Select
+                                value={formData.status}
+                                onValueChange={(value) => setFormData({ ...formData, status: value })}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="active">Active</SelectItem>
+                                  <SelectItem value="prospect">Prospect</SelectItem>
+                                  <SelectItem value="inactive">Inactive</SelectItem>
+                                  <SelectItem value="archived">Archived</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="website">Website</Label>
+                              <Input
+                                id="website"
+                                type="url"
+                                placeholder="https://example.com"
+                                value={formData.website || ''}
+                                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                              />
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {/* Large client only fields */}
+                      {clientType === 'large' && (
+                        <>
+                          {/* Tax ID */}
+                          <div className="space-y-2">
+                            <Label htmlFor="tax_id">Tax ID / Business Number</Label>
+                            <Input
+                              id="tax_id"
+                              placeholder="Enter tax ID or business registration number"
+                              value={formData.tax_id || ''}
+                              onChange={(e) => setFormData({ ...formData, tax_id: e.target.value })}
+                            />
+                          </div>
+
+                          {/* Billing Address */}
+                          <div className="space-y-2">
+                            <Label htmlFor="billing_address">Billing Address</Label>
+                            <Textarea
+                              id="billing_address"
+                              placeholder="Leave blank if same as business address"
+                              value={formData.billing_address || ''}
+                              onChange={(e) => setFormData({ ...formData, billing_address: e.target.value })}
+                              rows={2}
+                            />
+                          </div>
+
+                          {/* Notes */}
+                          <div className="space-y-2">
+                            <Label htmlFor="notes">Notes</Label>
+                            <Textarea
+                              id="notes"
+                              placeholder="Internal notes, special requirements, preferences, etc..."
+                              value={formData.notes || ''}
+                              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                              rows={3}
+                            />
+                          </div>
+                        </>
+                      )}
 
                       {/* Submit Buttons */}
                       <div className="flex gap-4 pt-6">
@@ -576,30 +609,33 @@ const Clients = () => {
           </div>
         </div>
 
-        {/* Templates Section */}
+        {/* Client Editor Types Section */}
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-6">
             <Sparkles className="h-6 w-6 text-complie-accent" />
-            <h2 className="text-2xl font-bold text-complie-primary">Quick Start Templates</h2>
+            <h2 className="text-2xl font-bold text-complie-primary">Choose Your Client Editor</h2>
           </div>
+          <p className="text-muted-foreground mb-6 text-lg">
+            Select the right editor for your client type. From simple contacts to complex enterprise relationships.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {clientTemplates.map((template) => {
-              const IconComponent = template.icon;
+            {clientEditorTypes.map((editorType) => {
+              const IconComponent = editorType.icon;
               return (
                 <Card 
-                  key={template.id} 
-                  className={`group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-2 ${template.color} hover:scale-105 h-full flex flex-col`}
-                  onClick={() => createClientFromTemplate(template)}
+                  key={editorType.id} 
+                  className={`group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-2 ${editorType.color} hover:scale-105 h-full flex flex-col`}
+                  onClick={() => openClientEditor(editorType.type)}
                 >
                   <CardHeader className="pb-4 flex-grow">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="p-3 rounded-xl bg-white shadow-sm">
                         <IconComponent className="h-6 w-6" />
                       </div>
-                      <CardTitle className="text-lg font-bold">{template.name}</CardTitle>
+                      <CardTitle className="text-lg font-bold">{editorType.name}</CardTitle>
                     </div>
                     <CardDescription className="text-sm leading-relaxed">
-                      {template.description}
+                      {editorType.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="mt-auto">
@@ -608,7 +644,7 @@ const Clients = () => {
                       variant="ghost" 
                       className="group-hover:bg-white/80 transition-colors w-full"
                     >
-                      Use Template
+                      Open Editor
                       <Plus className="h-4 w-4 ml-1" />
                     </Button>
                   </CardContent>
@@ -675,7 +711,7 @@ const Clients = () => {
                   <Button 
                     size="lg" 
                     className="btn-complie-primary" 
-                    onClick={() => { resetForm(); setEditingClient(null); setIsDialogOpen(true); }}
+                    onClick={() => openClientEditor('large')}
                   >
                     <Plus className="h-5 w-5 mr-2" />
                     Create Custom Client
