@@ -99,13 +99,12 @@ const NoteEditor = () => {
   });
 
   const handleInputChange = (field: string, value: any) => {
-    // Handle "none" value for client_id and project_id to allow unlinking
-    if ((field === 'client_id' || field === 'project_id') && value === 'none') {
+    // Handle "none" value for client_id to allow unlinking
+    if (field === 'client_id' && value === 'none') {
       setFormData(prev => ({ ...prev, [field]: '' }));
     } else {
       setFormData(prev => ({ ...prev, [field]: value }));
     }
-
     
     // Trigger autosave for content changes
     if (field === 'content' && isEditing) {
@@ -130,8 +129,8 @@ const NoteEditor = () => {
         .update({
           title: formData.title || null,
           content: formData.content.trim(),
-          project_id: formData.project_id === 'none' ? null : (formData.project_id || null),
-          client_id: formData.client_id === 'none' ? null : (formData.client_id || null)
+          project_id: formData.project_id || null,
+          client_id: formData.client_id || null
         })
         .eq('id', id)
         .eq('user_id', user.id);
@@ -177,8 +176,8 @@ const NoteEditor = () => {
           .update({
             title: formData.title || null,
             content: formData.content.trim(),
-            project_id: formData.project_id === 'none' ? null : (formData.project_id || null),
-            client_id: formData.client_id === 'none' ? null : (formData.client_id || null)
+            project_id: formData.project_id || null,
+            client_id: formData.client_id === 'none' ? null : formData.client_id || null
           })
           .eq('id', id)
           .eq('user_id', user.id);
@@ -198,8 +197,8 @@ const NoteEditor = () => {
           .insert({
             title: formData.title || null,
             content: formData.content.trim(),
-            project_id: formData.project_id === 'none' ? null : (formData.project_id || null),
-            client_id: formData.client_id === 'none' ? null : (formData.client_id || null),
+            project_id: formData.project_id || null,
+            client_id: formData.client_id === 'none' ? null : formData.client_id || null,
             user_id: user.id,
             private: true
           })
@@ -317,14 +316,13 @@ const NoteEditor = () => {
                 <div className="space-y-3">
                   <Label className="text-base font-semibold text-complie-primary">Project</Label>
                   <Select
-                    value={formData.project_id || 'none'}
+                    value={formData.project_id}
                     onValueChange={(value) => handleInputChange('project_id', value)}
                   >
                     <SelectTrigger className="h-12 border-2 focus:border-complie-accent">
                       <SelectValue placeholder="Link to a project (optional)" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">No project</SelectItem>
                       {projects.map((project) => (
                         <SelectItem key={project.id} value={project.id}>
                           {project.name}

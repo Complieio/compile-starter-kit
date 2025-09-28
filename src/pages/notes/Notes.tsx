@@ -72,7 +72,20 @@ const Notes = () => {
     queryKey: ['notes'],
     queryFn: async () => {
       if (!user) {
-        return [] as Note[];
+        // Return demo notes for preview
+        return [
+          {
+            id: 'demo-1',
+            title: 'Welcome to Notes!',
+            content: '<h2><strong>Welcome to Notes!</strong></h2><p>This is a demo note showing the rich text capabilities. You can format text with <strong>bold</strong>, <em>italic</em>, and <u>underline</u>.</p><ul><li>Create bulleted lists</li><li>Add numbered lists</li><li>Insert links and images</li></ul><p>Sign in to create your own notes!</p>',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            project_id: null,
+            client_id: null,
+            user_id: 'demo',
+            private: true
+          }
+        ] as Note[];
       }
       
       const { data, error } = await supabase

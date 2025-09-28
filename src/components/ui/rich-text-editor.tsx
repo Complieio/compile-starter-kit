@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './quill-styles.css';
+
 interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
