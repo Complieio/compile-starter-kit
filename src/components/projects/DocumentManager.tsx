@@ -176,6 +176,27 @@ export function DocumentManager({ projectId }: DocumentManagerProps) {
     }
   };
 
+  const handleView = async (document: Document) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from('documents')
+        .download(document.file_path);
+
+      if (error) throw error;
+
+      const url = URL.createObjectURL(data);
+      window.open(url, '_blank');
+      // Clean up the URL after a short delay to allow the browser to use it
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error: any) {
+      toast({
+        title: "View failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -295,7 +316,16 @@ export function DocumentManager({ projectId }: DocumentManagerProps) {
                     <Button
                       size="sm"
                       variant="ghost"
+                      onClick={() => handleView(doc)}
+                      title="View document"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
                       onClick={() => handleDownload(doc)}
+                      title="Download document"
                     >
                       <Download className="h-4 w-4" />
                     </Button>
@@ -304,6 +334,7 @@ export function DocumentManager({ projectId }: DocumentManagerProps) {
                       variant="ghost"
                       onClick={() => deleteDocumentMutation.mutate(doc)}
                       disabled={deleteDocumentMutation.isPending}
+                      title="Delete document"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
