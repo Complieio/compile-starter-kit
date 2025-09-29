@@ -4,9 +4,8 @@
   border-radius: 8px 8px 0 0 !important;
   background-color: hsl(var(--background)) !important;
   padding: 8px !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 100 !important;
+  position: relative !important;
+  z-index: 10 !important;
   box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1) !important;
   margin-bottom: 0 !important;
 }
