@@ -63,16 +63,16 @@ const Notes = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isTemplateDialogOpen, setIsTemplateDialogOpen] = useState(false);
 
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { data: notes = [], isLoading } = useQuery({
-    queryKey: ['notes'],
+    queryKey: ['notes', user?.id],
     queryFn: async () => {
       if (!user) {
-        return [] as Note[];
+        throw new Error('No authenticated user');
       }
       
       const { data, error } = await supabase
@@ -84,7 +84,7 @@ const Notes = () => {
       if (error) throw error;
       return data as Note[];
     },
-    enabled: true, // Always enabled now
+    enabled: !!user && !loading, // Only run when user is loaded and authenticated
   });
 
   const deleteMutation = useMutation({
