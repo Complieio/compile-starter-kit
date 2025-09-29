@@ -1,7 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 import ReactQuill from 'react-quill';
+import ImageResize from 'quill-image-resize-module-react';
 import 'react-quill/dist/quill.snow.css';
 import './quill-styles.css';
+
+// Register the image resize module
+ReactQuill.Quill.register('modules/imageResize', ImageResize);
 interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
@@ -22,7 +26,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       container: [
         [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
         [{ 'font': [] }],
-        [{ 'size': ['8px', '10px', '12px', '14px', '16px', '18px', '20px', '24px', '32px', '48px'] }],
+        [{ 'size': ['8px', '9px', '10px', '11px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px', '36px', '48px', '72px'] }],
         ['bold', 'italic', 'underline', 'strike'],
         [{ 'color': [] }, { 'background': [] }],
         [{ 'script': 'sub' }, { 'script': 'super' }],
@@ -68,6 +72,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         }
       }
     },
+    imageResize: {
+      parchment: ReactQuill.Quill.import('parchment'),
+      modules: ['Resize', 'DisplaySize']
+    },
     clipboard: {
       matchVisual: false,
     }
@@ -89,19 +97,21 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   return (
     <div className={`rich-text-editor ${className}`}>
-      <ReactQuill
-        theme="snow"
-        value={value}
-        onChange={handleChange}
-        modules={modules}
-        formats={formats}
-        placeholder={placeholder}
-        readOnly={readOnly}
-        style={{
-          minHeight: '400px',
-          fontSize: '16px',
-        }}
-      />
+      <div style={{ position: 'relative', overflow: 'hidden' }}>
+        <ReactQuill
+          theme="snow"
+          value={value}
+          onChange={handleChange}
+          modules={modules}
+          formats={formats}
+          placeholder={placeholder}
+          readOnly={readOnly}
+          style={{
+            minHeight: '400px',
+            fontSize: '16px',
+          }}
+        />
+      </div>
     </div>
   );
 };
