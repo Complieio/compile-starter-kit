@@ -186,7 +186,7 @@ const Notes = () => {
   };
 
   const createFromTemplate = (template: NoteTemplate) => {
-    navigate('/notes/new', { state: { template } });
+    navigate('/notes/new', { state: { templateContent: template.content, templateTitle: template.title } });
   };
 
   if (isLoading) {

@@ -16,11 +16,12 @@ const NoteEditor = () => {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const isEditing = !!id;
-  const template = location.state?.template;
+  const templateContent = location.state?.templateContent;
+  const templateTitle = location.state?.templateTitle;
   
   const [formData, setFormData] = useState({
     title: '',
-    content: template?.content || '',
+    content: templateContent || '',
     project_id: '',
     client_id: ''
   });
@@ -260,7 +261,7 @@ const NoteEditor = () => {
           <div className="flex-1">
             <h1 className="text-4xl font-bold text-complie-primary flex items-center gap-3">
               <FileText className="h-8 w-8 text-complie-accent" />
-              {isEditing ? 'Edit Note' : (template ? `New ${template.title}` : 'New Note')}
+              {isEditing ? 'Edit Note' : (templateTitle ? `New ${templateTitle}` : 'New Note')}
             </h1>
             <p className="text-lg text-muted-foreground mt-1">
               {isEditing ? 'Update your note content with rich formatting' : 'Create a professional note with rich text formatting'}
