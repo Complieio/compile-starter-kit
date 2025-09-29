@@ -193,7 +193,7 @@ const Dashboard = () => {
 
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-complie-accent/5 hover:shadow-xl transition-all duration-300">
+          <Card className="border border-complie-accent/20 shadow-lg bg-gradient-to-br from-white via-white to-complie-accent/5 hover:shadow-xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Compliance Health</CardTitle>
               <div className="p-2 bg-gradient-to-r from-complie-accent to-complie-primary rounded-md shadow-sm">
@@ -212,7 +212,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-green-50 hover:shadow-xl transition-all duration-300">
+          <Card className="border border-complie-accent/20 shadow-lg bg-gradient-to-br from-white via-white to-green-50 hover:shadow-xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Active Checklists</CardTitle>
               <div className="p-2 bg-gradient-to-r from-green-500 to-green-600 rounded-md shadow-sm">
@@ -230,7 +230,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-purple-50 hover:shadow-xl transition-all duration-300">
+          <Card className="border border-complie-accent/20 shadow-lg bg-gradient-to-br from-white via-white to-purple-50 hover:shadow-xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Active Projects</CardTitle>
               <div className="p-2 bg-gradient-to-r from-purple-500 to-purple-600 rounded-md shadow-sm">
@@ -248,7 +248,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-orange-50 hover:shadow-xl transition-all duration-300">
+          <Card className="border border-complie-accent/20 shadow-lg bg-gradient-to-br from-white via-white to-orange-50 hover:shadow-xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Total Notes</CardTitle>
               <div className="p-2 bg-gradient-to-r from-orange-500 to-orange-600 rounded-md shadow-sm">
@@ -270,7 +270,7 @@ const Dashboard = () => {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Upcoming Checklists */}
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-blue-50/30">
+          <Card className="border border-complie-accent/20 shadow-lg bg-gradient-to-br from-white via-white to-blue-50/30">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -314,7 +314,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Recent Projects */}
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-indigo-50/30">
+          <Card className="border border-complie-accent/20 shadow-lg bg-gradient-to-br from-white via-white to-indigo-50/30">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -365,7 +365,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Activity Overview */}
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-slate-50/30">
+          <Card className="border border-complie-accent/20 shadow-lg bg-gradient-to-br from-white via-white to-slate-50/30">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
