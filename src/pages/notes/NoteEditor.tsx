@@ -11,6 +11,10 @@ import { ArrowLeft, Save, Clock, FileText } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { ChecklistManager, ChecklistItem } from '@/components/notes/ChecklistManager';
+import { TagsInput } from '@/components/notes/TagsInput';
+import { PrioritySelector } from '@/components/notes/PrioritySelector';
+import { StatusSelector } from '@/components/notes/StatusSelector';
 
 const NoteEditor = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,13 +22,42 @@ const NoteEditor = () => {
   const isEditing = !!id;
   const templateContent = location.state?.templateContent;
   const templateTitle = location.state?.templateTitle;
+  const templateId = location.state?.templateId;
   
-  const [formData, setFormData] = useState({
-    title: '',
-    content: templateContent || '',
-    project_id: '',
-    client_id: ''
-  });
+  // Set initial values based on template type
+  const getInitialFormData = () => {
+    const baseData = {
+      title: '',
+      content: templateContent || '',
+      project_id: '',
+      client_id: '',
+      tags: [] as string[],
+      priority: 'medium' as 'low' | 'medium' | 'high',
+      status: 'draft' as 'draft' | 'active' | 'in_progress' | 'completed',
+      checklists: [] as ChecklistItem[]
+    };
+
+    // Customize based on template
+    if (templateId === 'simple') {
+      return { ...baseData, priority: 'low' as const };
+    } else if (templateId === 'structured') {
+      return { 
+        ...baseData, 
+        priority: 'medium' as const,
+        status: 'active' as const 
+      };
+    } else if (templateId === 'advanced') {
+      return { 
+        ...baseData, 
+        priority: 'high' as const,
+        status: 'in_progress' as const 
+      };
+    }
+
+    return baseData;
+  };
+  
+  const [formData, setFormData] = useState(getInitialFormData());
   const [loading, setLoading] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [autoSaveTimer, setAutoSaveTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
@@ -58,7 +91,11 @@ const NoteEditor = () => {
         title: existingNote.title || '',
         content: existingNote.content || '',
         project_id: existingNote.project_id || '',
-        client_id: existingNote.client_id || ''
+        client_id: existingNote.client_id || '',
+        tags: existingNote.tags || [],
+        priority: (existingNote.priority as 'low' | 'medium' | 'high') || 'medium',
+        status: (existingNote.status as 'draft' | 'active' | 'in_progress' | 'completed') || 'draft',
+        checklists: Array.isArray(existingNote.checklists) ? existingNote.checklists as unknown as ChecklistItem[] : []
       });
     }
   }, [existingNote, isEditing]);
@@ -132,7 +169,11 @@ const NoteEditor = () => {
           title: formData.title || null,
           content: formData.content.trim(),
           project_id: formData.project_id === 'none' ? null : (formData.project_id || null),
-          client_id: formData.client_id === 'none' ? null : (formData.client_id || null)
+          client_id: formData.client_id === 'none' ? null : (formData.client_id || null),
+          tags: formData.tags,
+          priority: formData.priority,
+          status: formData.status,
+          checklists: formData.checklists as any
         })
         .eq('id', id)
         .eq('user_id', user.id);
@@ -179,7 +220,11 @@ const NoteEditor = () => {
             title: formData.title || null,
             content: formData.content.trim(),
             project_id: formData.project_id === 'none' ? null : (formData.project_id || null),
-            client_id: formData.client_id === 'none' ? null : (formData.client_id || null)
+            client_id: formData.client_id === 'none' ? null : (formData.client_id || null),
+            tags: formData.tags,
+            priority: formData.priority,
+            status: formData.status,
+            checklists: formData.checklists as any
           })
           .eq('id', id)
           .eq('user_id', user.id);
@@ -202,7 +247,11 @@ const NoteEditor = () => {
             project_id: formData.project_id === 'none' ? null : (formData.project_id || null),
             client_id: formData.client_id === 'none' ? null : (formData.client_id || null),
             user_id: user.id,
-            private: true
+            private: true,
+            tags: formData.tags,
+            priority: formData.priority,
+            status: formData.status,
+            checklists: formData.checklists as any
           })
           .select()
           .single();
@@ -311,6 +360,43 @@ const NoteEditor = () => {
                   placeholder="Start writing your note..."
                   className="w-full"
                 />
+              </div>
+
+              {/* Metadata Section */}
+              <div className="space-y-6 p-6 bg-gradient-to-br from-muted/30 to-muted/10 rounded-lg border-2 border-border">
+                <h3 className="text-lg font-bold text-complie-primary">Note Details</h3>
+                
+                {/* Priority and Status */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <PrioritySelector
+                    value={formData.priority}
+                    onChange={(value) => handleInputChange('priority', value)}
+                  />
+                  <StatusSelector
+                    value={formData.status}
+                    onChange={(value) => handleInputChange('status', value)}
+                  />
+                </div>
+
+                {/* Tags */}
+                <div className="space-y-3">
+                  <Label className="text-base font-semibold text-complie-primary">Tags</Label>
+                  <TagsInput
+                    tags={formData.tags}
+                    onChange={(tags) => handleInputChange('tags', tags)}
+                    placeholder="Add tags (press Enter or comma to add)..."
+                  />
+                </div>
+
+                {/* Checklist */}
+                <div className="space-y-3">
+                  <Label className="text-base font-semibold text-complie-primary">Checklists / Action Items</Label>
+                  <ChecklistManager
+                    checklists={formData.checklists}
+                    onChange={(checklists) => handleInputChange('checklists', checklists)}
+                    title="Tasks & Actions"
+                  />
+                </div>
               </div>
 
               {/* Project and Client Selection */}

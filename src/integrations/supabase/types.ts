@@ -158,6 +158,7 @@ export type Database = {
           file_type: string | null
           id: string
           name: string
+          note_id: string | null
           ocr_status: string | null
           private: boolean | null
           project_id: string | null
@@ -170,6 +171,7 @@ export type Database = {
           file_type?: string | null
           id?: string
           name: string
+          note_id?: string | null
           ocr_status?: string | null
           private?: boolean | null
           project_id?: string | null
@@ -182,6 +184,7 @@ export type Database = {
           file_type?: string | null
           id?: string
           name?: string
+          note_id?: string | null
           ocr_status?: string | null
           private?: boolean | null
           project_id?: string | null
@@ -189,6 +192,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "documents_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "documents_project_id_fkey"
             columns: ["project_id"]
@@ -200,37 +210,55 @@ export type Database = {
       }
       notes: {
         Row: {
+          checklists: Json | null
           client_id: string | null
           content: string | null
           created_at: string
           id: string
+          metadata: Json | null
           pinned: boolean | null
+          priority: string | null
           private: boolean | null
           project_id: string | null
+          related_note_ids: string[] | null
+          status: string | null
+          tags: string[] | null
           title: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          checklists?: Json | null
           client_id?: string | null
           content?: string | null
           created_at?: string
           id?: string
+          metadata?: Json | null
           pinned?: boolean | null
+          priority?: string | null
           private?: boolean | null
           project_id?: string | null
+          related_note_ids?: string[] | null
+          status?: string | null
+          tags?: string[] | null
           title?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          checklists?: Json | null
           client_id?: string | null
           content?: string | null
           created_at?: string
           id?: string
+          metadata?: Json | null
           pinned?: boolean | null
+          priority?: string | null
           private?: boolean | null
           project_id?: string | null
+          related_note_ids?: string[] | null
+          status?: string | null
+          tags?: string[] | null
           title?: string | null
           updated_at?: string
           user_id?: string | null
