@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Plus, TrendingUp, AlertTriangle, CheckCircle, Clock, Users, FileText, BarChart3, Activity } from 'lucide-react';
+import { Plus, TrendingUp, AlertTriangle, CheckSquare, Clock, Users, FileText, BarChart3, Activity, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,7 +13,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [dashboardData, setDashboardData] = useState({
-    tasks: [],
+    checklists: [],
     projects: [],
     notes: [],
     clients: [],
@@ -30,19 +30,19 @@ const Dashboard = () => {
 
       try {
         // Fetch real user data
-        const [tasksResult, projectsResult, notesResult, clientsResult] = await Promise.all([
+        const [checklistsResult, projectsResult, notesResult, clientsResult] = await Promise.all([
           supabase
-            .from('tasks')
+            .from('checklists')
             .select('*')
             .eq('user_id', user.id)
-            .order('due_date', { ascending: true })
-            .limit(5),
+            .order('created_at', { ascending: false })
+            .limit(3),
           supabase
             .from('projects')
             .select('*')
             .eq('user_id', user.id)
             .order('updated_at', { ascending: false })
-            .limit(5),
+            .limit(3),
           supabase
             .from('notes')
             .select('*')
@@ -57,37 +57,34 @@ const Dashboard = () => {
             .limit(3)
         ]);
 
-        const tasks = tasksResult.data || [];
+        const checklists = checklistsResult.data || [];
         const projects = projectsResult.data || [];
         const notes = notesResult.data || [];
         const clients = clientsResult.data || [];
 
-        // Calculate metrics
-        const now = new Date();
-        const upcoming = tasks.filter(task => 
-          task.due_date && 
-          new Date(task.due_date) > now && 
-          task.status !== 'done'
-        );
-        const overdue = tasks.filter(task => 
-          task.due_date && 
-          new Date(task.due_date) < now && 
-          task.status !== 'done'
-        );
+        // Calculate checklist metrics
+        const totalChecklists = checklists.length;
+        const completedChecklists = checklists.filter(checklist => {
+          const items = Array.isArray(checklist.items) ? checklist.items : [];
+          return items.length > 0 && items.every((item: any) => item.completed);
+        }).length;
+        
+        const upcomingChecklists = checklists.filter(checklist => {
+          const items = Array.isArray(checklist.items) ? checklist.items : [];
+          return items.length > 0 && !items.every((item: any) => item.completed);
+        });
 
         // Simple compliance score calculation
-        const totalTasks = tasks.length;
-        const completedTasks = tasks.filter(task => task.status === 'done').length;
-        const complianceScore = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 100;
+        const complianceScore = totalChecklists > 0 ? Math.round((completedChecklists / totalChecklists) * 100) : 100;
 
         setDashboardData({
-          tasks: upcoming,
+          checklists: upcomingChecklists.slice(0, 3),
           projects,
           notes,
           clients,
           complianceScore,
-          upcomingCount: upcoming.length,
-          overdueCount: overdue.length,
+          upcomingCount: upcomingChecklists.length,
+          overdueCount: 0, // We'll implement overdue logic later if needed
           storageUsed: 24, // Mock storage for now
           loading: false
         });
@@ -101,9 +98,9 @@ const Dashboard = () => {
   }, [user]);
 
   // Demo data for when user has no content
-  const demoTasks = [
-    { id: 'demo-1', title: 'Review compliance checklist', due_date: '2024-02-15', priority: 'high', status: 'todo' },
-    { id: 'demo-2', title: 'Update client documentation', due_date: '2024-02-18', priority: 'medium', status: 'todo' },
+  const demoChecklists = [
+    { id: 'demo-1', title: 'Website Compliance Checklist', items: [{ text: 'Review privacy policy', completed: false }] },
+    { id: 'demo-2', title: 'Client Onboarding Checklist', items: [{ text: 'Collect contact information', completed: false }] },
   ];
 
   const demoProjects = [
@@ -111,36 +108,36 @@ const Dashboard = () => {
     { id: 'demo-2', name: 'GDPR Documentation Update', status: 'active', updated_at: new Date().toISOString() },
   ];
 
-  const { tasks, projects, notes, clients, complianceScore, upcomingCount, overdueCount, storageUsed, loading } = dashboardData;
+  const { checklists, projects, notes, clients, complianceScore, upcomingCount, overdueCount, storageUsed, loading } = dashboardData;
   
   // Use demo data when user has no content
-  const displayTasks = tasks.length > 0 ? tasks : demoTasks;
+  const displayChecklists = checklists.length > 0 ? checklists : demoChecklists;
   const displayProjects = projects.length > 0 ? projects : demoProjects;
-  const isUsingDemoData = tasks.length === 0 && projects.length === 0;
+  const isUsingDemoData = checklists.length === 0 && projects.length === 0;
 
   // Chart data
-  const taskStatusData = [
-    { name: 'Completed', value: tasks.filter(t => t.status === 'done').length, color: '#10b981' },
-    { name: 'In Progress', value: tasks.filter(t => t.status === 'in_progress').length, color: '#f59e0b' },
-    { name: 'Todo', value: tasks.filter(t => t.status === 'todo').length, color: '#6b7280' }
+  const projectStatusData = [
+    { name: 'Active', value: projects.filter(p => p.status === 'active').length, color: 'hsl(var(--complie-accent))' },
+    { name: 'Completed', value: projects.filter(p => p.status === 'completed').length, color: 'hsl(var(--complie-success))' },
+    { name: 'On Hold', value: projects.filter(p => p.status === 'on_hold').length, color: 'hsl(var(--complie-warning))' }
   ];
 
   const activityData = [
-    { name: 'Mon', projects: 4, tasks: 8 },
-    { name: 'Tue', projects: 3, tasks: 12 },
-    { name: 'Wed', projects: 2, tasks: 6 },
-    { name: 'Thu', projects: 5, tasks: 15 },
-    { name: 'Fri', projects: 7, tasks: 10 },
-    { name: 'Sat', projects: 2, tasks: 4 },
-    { name: 'Sun', projects: 1, tasks: 2 }
+    { name: 'Mon', projects: 2, checklists: 4 },
+    { name: 'Tue', projects: 1, checklists: 6 },
+    { name: 'Wed', projects: 3, checklists: 3 },
+    { name: 'Thu', projects: 2, checklists: 8 },
+    { name: 'Fri', projects: 4, checklists: 5 },
+    { name: 'Sat', projects: 1, checklists: 2 },
+    { name: 'Sun', projects: 0, checklists: 1 }
   ];
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'completed':
         return <Badge className="status-ok">Complete</Badge>;
-      case 'attention':
-        return <Badge className="status-attention">Attention</Badge>;
+      case 'on_hold':
+        return <Badge className="status-attention">On Hold</Badge>;
       case 'overdue':
         return <Badge className="status-overdue">Overdue</Badge>;
       default:
@@ -148,30 +145,19 @@ const Dashboard = () => {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return 'text-red-600';
-      case 'medium':
-        return 'text-yellow-600';
-      default:
-        return 'text-green-600';
-    }
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8">
-        <div className="animate-pulse space-y-8">
+      <div className="min-h-screen bg-background p-6">
+        <div className="animate-pulse space-y-6">
           <div className="h-8 bg-muted rounded w-64 mb-6"></div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-muted rounded-xl"></div>
+              <div key={i} className="h-28 bg-muted rounded-lg"></div>
             ))}
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-96 bg-muted rounded-xl"></div>
+              <div key={i} className="h-80 bg-muted rounded-lg"></div>
             ))}
           </div>
         </div>
@@ -180,146 +166,140 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <div className="p-8 space-y-8">
+    <div className="min-h-screen bg-background">
+      <div className="p-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-complie-primary to-complie-accent bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold text-foreground">
               Dashboard
             </h1>
-            <p className="text-muted-foreground mt-2 text-lg">
+            <p className="text-muted-foreground mt-1">
               Welcome back! Here&apos;s what&apos;s happening with your projects.
             </p>
           </div>
-          <Button onClick={() => navigate('/projects/new')} className="btn-complie-primary shadow-lg">
+          <Button onClick={() => navigate('/projects/new')} className="btn-complie-primary">
             <Plus className="h-4 w-4 mr-2" />
             New Project
           </Button>
         </div>
 
         {/* Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-gradient-to-br from-white to-blue-50 border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <Card className="border-border hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Compliance Health</CardTitle>
-              <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Compliance Health</CardTitle>
+              <div className="p-2 bg-complie-accent rounded-md">
                 <TrendingUp className="h-4 w-4 text-white" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              <div className="text-2xl font-bold text-foreground">
                 {complianceScore}%
               </div>
-              <Progress value={complianceScore} className="mt-3 h-2" />
-              <p className="text-xs text-muted-foreground mt-3">
-                {isUsingDemoData && <span className="text-orange-600 font-medium">[DEMO] </span>}
-                {complianceScore >= 80 ? 'Great' : 'Needs attention'} — {upcomingCount} items due soon
+              <Progress value={complianceScore} className="mt-2 h-2" />
+              <p className="text-xs text-muted-foreground mt-2">
+                {isUsingDemoData && <span className="text-complie-warning font-medium">[DEMO] </span>}
+                {complianceScore >= 80 ? 'Great progress' : 'Needs attention'}
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-white to-amber-50 border-amber-200 shadow-lg hover:shadow-xl transition-all duration-300">
+          <Card className="border-border hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Upcoming Deadlines</CardTitle>
-              <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg">
-                <Clock className="h-4 w-4 text-white" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Active Checklists</CardTitle>
+              <div className="p-2 bg-complie-accent rounded-md">
+                <CheckSquare className="h-4 w-4 text-white" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+              <div className="text-2xl font-bold text-foreground">
                 {upcomingCount}
               </div>
               <p className="text-xs text-muted-foreground mt-4">
-                {isUsingDemoData && <span className="text-orange-600 font-medium">[DEMO] </span>}
-                Next: {displayTasks[0]?.due_date ? new Date(displayTasks[0].due_date).toLocaleDateString() : 'None'}
+                {isUsingDemoData && <span className="text-complie-warning font-medium">[DEMO] </span>}
+                Pending completion
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-white to-red-50 border-red-200 shadow-lg hover:shadow-xl transition-all duration-300">
+          <Card className="border-border hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Overdue Tasks</CardTitle>
-              <div className="p-2 bg-gradient-to-br from-red-500 to-rose-600 rounded-lg">
-                <AlertTriangle className="h-4 w-4 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
-                {overdueCount}
-              </div>
-              <p className="text-xs text-muted-foreground mt-4">
-                {isUsingDemoData && <span className="text-orange-600 font-medium">[DEMO] </span>}
-                {overdueCount === 0 ? "All caught up!" : `${overdueCount} overdue`}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-white to-purple-50 border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Active Projects</CardTitle>
-              <div className="p-2 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Active Projects</CardTitle>
+              <div className="p-2 bg-complie-accent rounded-md">
                 <BarChart3 className="h-4 w-4 text-white" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              <div className="text-2xl font-bold text-foreground">
                 {projects.length}
               </div>
               <p className="text-xs text-muted-foreground mt-4">
-                {isUsingDemoData && <span className="text-orange-600 font-medium">[DEMO] </span>}
+                {isUsingDemoData && <span className="text-complie-warning font-medium">[DEMO] </span>}
                 {projects.filter(p => p.status === 'active').length} in progress
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-border hover:shadow-md transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Total Notes</CardTitle>
+              <div className="p-2 bg-complie-accent rounded-md">
+                <FileText className="h-4 w-4 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-foreground">
+                {notes.length}
+              </div>
+              <p className="text-xs text-muted-foreground mt-4">
+                {isUsingDemoData && <span className="text-complie-warning font-medium">[DEMO] </span>}
+                Saved notes
               </p>
             </CardContent>
           </Card>
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Upcoming Tasks */}
-          <Card className="bg-white/80 backdrop-blur border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-t-lg">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Upcoming Checklists */}
+          <Card className="border-border">
+            <CardHeader>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="h-5 w-5" />
-                  <CardTitle className="text-lg">
-                    Upcoming Tasks
-                    {tasks.length === 0 && <Badge variant="outline" className="ml-2 text-orange-200 border-orange-200">DEMO</Badge>}
+                <div className="flex items-center gap-2">
+                  <CheckSquare className="h-5 w-5 text-complie-accent" />
+                  <CardTitle className="text-lg text-foreground">
+                    Upcoming Checklists
+                    {checklists.length === 0 && <Badge variant="outline" className="ml-2 text-complie-warning">DEMO</Badge>}
                   </CardTitle>
                 </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => navigate('/checklists')}
+                  className="text-complie-accent hover:text-complie-accent hover:bg-accent"
+                >
+                  See All <ArrowRight className="h-4 w-4 ml-1" />
+                </Button>
               </div>
-              <CardDescription className="text-blue-100 mt-1">Your next deadlines and priorities</CardDescription>
+              <CardDescription className="text-muted-foreground">Your pending checklists</CardDescription>
             </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              {displayTasks.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <CheckCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No upcoming tasks — create a checklist to get started.</p>
-                  <Button variant="outline" onClick={() => navigate('/checklists')} className="mt-4">
+            <CardContent className="space-y-3">
+              {displayChecklists.length === 0 ? (
+                <div className="text-center py-6 text-muted-foreground">
+                  <CheckSquare className="h-8 w-8 mx-auto mb-3 opacity-50" />
+                  <p className="text-sm">No checklists yet</p>
+                  <Button variant="outline" onClick={() => navigate('/checklists')} className="mt-3" size="sm">
                     Create Checklist
                   </Button>
                 </div>
               ) : (
-                displayTasks.map((task) => (
-                  <div key={task.id} className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-slate-50 to-blue-50 border border-blue-100 hover:border-blue-200 transition-colors">
-                    <div className="flex-1">
-                      <h4 className="font-medium text-slate-900">{task.title}</h4>
-                      <p className="text-sm text-slate-600 mt-1">
-                        {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'No due date'}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className={`text-sm font-medium px-2 py-1 rounded-full ${
-                        task.priority === 'high' ? 'bg-red-100 text-red-700' :
-                        task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-green-100 text-green-700'
-                      }`}>
-                        {task.priority || 'medium'}
-                      </span>
-                      <Button size="sm" variant="outline" className="hover:bg-blue-50">
-                        Mark Done
-                      </Button>
-                    </div>
+                displayChecklists.map((checklist) => (
+                  <div key={checklist.id} className="p-3 rounded-lg border border-border hover:bg-accent transition-colors">
+                    <h4 className="font-medium text-foreground text-sm">{checklist.title}</h4>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {Array.isArray(checklist.items) ? checklist.items.length : 0} items
+                    </p>
                   </div>
                 ))
               )}
@@ -327,44 +307,49 @@ const Dashboard = () => {
           </Card>
 
           {/* Recent Projects */}
-          <Card className="bg-white/80 backdrop-blur border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-t-lg">
+          <Card className="border-border">
+            <CardHeader>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <BarChart3 className="h-5 w-5" />
-                  <CardTitle className="text-lg">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-complie-accent" />
+                  <CardTitle className="text-lg text-foreground">
                     Recent Projects
-                    {projects.length === 0 && <Badge variant="outline" className="ml-2 text-orange-200 border-orange-200">DEMO</Badge>}
+                    {projects.length === 0 && <Badge variant="outline" className="ml-2 text-complie-warning">DEMO</Badge>}
                   </CardTitle>
                 </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => navigate('/projects')}
+                  className="text-complie-accent hover:text-complie-accent hover:bg-accent"
+                >
+                  See All <ArrowRight className="h-4 w-4 ml-1" />
+                </Button>
               </div>
-              <CardDescription className="text-purple-100 mt-1">Quick access to your active work</CardDescription>
+              <CardDescription className="text-muted-foreground">Your active projects</CardDescription>
             </CardHeader>
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="space-y-3">
               {displayProjects.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Plus className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Welcome! Create your first project to start tracking compliance.</p>
-                  <Button onClick={() => navigate('/projects/new')} className="mt-4 btn-complie-primary">
+                <div className="text-center py-6 text-muted-foreground">
+                  <Plus className="h-8 w-8 mx-auto mb-3 opacity-50" />
+                  <p className="text-sm">No projects yet</p>
+                  <Button onClick={() => navigate('/projects/new')} className="mt-3 btn-complie-primary" size="sm">
                     Create Project
                   </Button>
                 </div>
               ) : (
                 displayProjects.map((project) => (
-                  <div key={project.id} className="p-4 rounded-lg bg-gradient-to-r from-slate-50 to-purple-50 border border-purple-100 hover:border-purple-200 cursor-pointer transition-all duration-200 hover:shadow-md">
+                  <div key={project.id} className="p-3 rounded-lg border border-border hover:bg-accent transition-colors cursor-pointer">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h4 className="font-medium text-slate-900">{project.name}</h4>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-medium text-foreground text-sm">{project.name}</h4>
                           {getStatusBadge(project.status || 'active')}
                         </div>
-                        <p className="text-sm text-slate-600">
+                        <p className="text-xs text-muted-foreground">
                           Updated: {new Date(project.updated_at).toLocaleDateString()}
                         </p>
                       </div>
-                      <Button size="sm" variant="ghost" className="hover:bg-purple-50">
-                        Open
-                      </Button>
                     </div>
                   </div>
                 ))
@@ -372,32 +357,42 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Analytics & Quick Stats */}
-          <Card className="bg-white/80 backdrop-blur border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-t-lg">
-              <div className="flex items-center gap-3">
-                <Activity className="h-5 w-5" />
-                <CardTitle className="text-lg">Activity Overview</CardTitle>
+          {/* Activity Overview */}
+          <Card className="border-border">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-complie-accent" />
+                  <CardTitle className="text-lg text-foreground">Activity Overview</CardTitle>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => navigate('/analytics')}
+                  className="text-complie-accent hover:text-complie-accent hover:bg-accent"
+                >
+                  Full Report <ArrowRight className="h-4 w-4 ml-1" />
+                </Button>
               </div>
-              <CardDescription className="text-emerald-100 mt-1">Progress insights and trends</CardDescription>
+              <CardDescription className="text-muted-foreground">Progress insights and trends</CardDescription>
             </CardHeader>
-            <CardContent className="p-6 space-y-6">
-              {/* Task Status Chart */}
+            <CardContent className="space-y-4">
+              {/* Project Status Chart */}
               <div>
-                <h4 className="font-medium text-slate-900 mb-3">Task Progress</h4>
-                <div className="h-32">
+                <h4 className="font-medium text-foreground mb-2 text-sm">Project Status</h4>
+                <div className="h-24">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
-                        data={taskStatusData}
+                        data={projectStatusData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={30}
-                        outerRadius={60}
+                        innerRadius={20}
+                        outerRadius={40}
                         paddingAngle={5}
                         dataKey="value"
                       >
-                        {taskStatusData.map((entry, index) => (
+                        {projectStatusData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
@@ -409,36 +404,35 @@ const Dashboard = () => {
 
               {/* Weekly Activity */}
               <div>
-                <h4 className="font-medium text-slate-900 mb-3">Weekly Activity</h4>
-                <div className="h-32">
+                <h4 className="font-medium text-foreground mb-2 text-sm">Weekly Activity</h4>
+                <div className="h-24">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={activityData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
+                      <XAxis dataKey="name" hide />
+                      <YAxis hide />
                       <Tooltip />
-                      <Area type="monotone" dataKey="tasks" stackId="1" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.6} />
-                      <Area type="monotone" dataKey="projects" stackId="1" stroke="#10b981" fill="#10b981" fillOpacity={0.6} />
+                      <Area type="monotone" dataKey="checklists" stackId="1" stroke="hsl(var(--complie-accent))" fill="hsl(var(--complie-accent))" fillOpacity={0.6} />
+                      <Area type="monotone" dataKey="projects" stackId="1" stroke="hsl(var(--complie-success))" fill="hsl(var(--complie-success))" fillOpacity={0.6} />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
               {/* Quick Stats */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-2 bg-accent rounded-md border border-border">
                   <div className="flex items-center gap-2 mb-1">
-                    <Users className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-medium text-blue-900">Clients</span>
+                    <Users className="h-3 w-3 text-complie-accent" />
+                    <span className="text-xs font-medium text-muted-foreground">Clients</span>
                   </div>
-                  <div className="text-xl font-bold text-blue-600">{clients.length}</div>
+                  <div className="text-lg font-bold text-foreground">{clients.length}</div>
                 </div>
-                <div className="p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border border-amber-100">
+                <div className="p-2 bg-accent rounded-md border border-border">
                   <div className="flex items-center gap-2 mb-1">
-                    <FileText className="h-4 w-4 text-amber-600" />
-                    <span className="text-sm font-medium text-amber-900">Notes</span>
+                    <FileText className="h-3 w-3 text-complie-accent" />
+                    <span className="text-xs font-medium text-muted-foreground">Notes</span>
                   </div>
-                  <div className="text-xl font-bold text-amber-600">{notes.length}</div>
+                  <div className="text-lg font-bold text-foreground">{notes.length}</div>
                 </div>
               </div>
             </CardContent>
