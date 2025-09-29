@@ -204,6 +204,7 @@ export type Database = {
           content: string | null
           created_at: string
           id: string
+          pinned: boolean | null
           private: boolean | null
           project_id: string | null
           title: string | null
@@ -215,6 +216,7 @@ export type Database = {
           content?: string | null
           created_at?: string
           id?: string
+          pinned?: boolean | null
           private?: boolean | null
           project_id?: string | null
           title?: string | null
@@ -226,6 +228,7 @@ export type Database = {
           content?: string | null
           created_at?: string
           id?: string
+          pinned?: boolean | null
           private?: boolean | null
           project_id?: string | null
           title?: string | null

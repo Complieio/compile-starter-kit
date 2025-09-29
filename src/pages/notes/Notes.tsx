@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Search, FileText, Edit, Trash2, Sparkles, BookOpen, Users, Briefcase } from 'lucide-react';
+import { Plus, Search, FileText, Edit, Trash2, Sparkles, BookOpen, Users, Briefcase, Pin } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -21,6 +21,7 @@ interface Note {
   client_id: string | null;
   user_id: string;
   private: boolean;
+  pinned: boolean;
 }
 
 interface NoteTemplate {
@@ -79,6 +80,7 @@ const Notes = () => {
         .from('notes')
         .select('*')
         .eq('user_id', user.id)
+        .order('pinned', { ascending: false })
         .order('updated_at', { ascending: false });
 
       if (error) throw error;
@@ -117,6 +119,32 @@ const Notes = () => {
     },
   });
 
+  const togglePinMutation = useMutation({
+    mutationFn: async ({ noteId, pinned }: { noteId: string; pinned: boolean }) => {
+      if (!user) {
+        throw new Error("Please sign in to pin notes");
+      }
+      
+      const { error } = await supabase
+        .from('notes')
+        .update({ pinned: !pinned })
+        .eq('id', noteId)
+        .eq('user_id', user.id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const filteredNotes = notes.filter(note => {
     const titleMatch = note.title?.toLowerCase().includes(searchQuery.toLowerCase()) || false;
     const contentMatch = note.content.toLowerCase().includes(searchQuery.toLowerCase());
@@ -136,6 +164,19 @@ const Notes = () => {
     if (confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
       deleteMutation.mutate(noteId);
     }
+  };
+
+  const handleTogglePin = (noteId: string, pinned: boolean) => {
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to pin notes.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    togglePinMutation.mutate({ noteId, pinned });
   };
 
   const getPreview = (content: string) => {
@@ -334,12 +375,24 @@ const Notes = () => {
               >
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
-                    <div className="flex-1">
+                    <div className="flex-1 flex items-center gap-2">
+                      {note.pinned && (
+                        <Pin className="h-4 w-4 text-complie-accent fill-complie-accent" />
+                      )}
                       <CardDescription className="text-sm font-medium text-complie-primary">
                         {format(new Date(note.updated_at), 'MMM d, yyyy at h:mm a')}
                       </CardDescription>
                     </div>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleTogglePin(note.id, note.pinned)}
+                        className={`hover:bg-complie-accent hover:text-white ${note.pinned ? 'opacity-100' : ''}`}
+                        title={note.pinned ? "Unpin note" : "Pin note"}
+                      >
+                        <Pin className={`h-4 w-4 ${note.pinned ? 'fill-current' : ''}`} />
+                      </Button>
                       <Button
                         size="sm"
                         variant="ghost"

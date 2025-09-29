@@ -4,8 +4,15 @@ import ImageResize from 'quill-image-resize-module-react';
 import 'react-quill/dist/quill.snow.css';
 import './quill-styles.css';
 
+const Quill = ReactQuill.Quill;
+const Size = Quill.import('formats/size') as any;
+
+// Register custom font sizes
+Size.whitelist = ['8px', '9px', '10px', '11px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px', '36px', '48px', '72px'];
+Quill.register(Size, true);
+
 // Register the image resize module
-ReactQuill.Quill.register('modules/imageResize', ImageResize);
+Quill.register('modules/imageResize', ImageResize);
 interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
