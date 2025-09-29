@@ -19,7 +19,11 @@ import { cn } from '@/lib/utils';
 
 const NewProject = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const editorType = searchParams.get('editor') || 'enterprise'; // default to enterprise for existing functionality
   const isEditing = !!id;
+  
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -28,6 +32,21 @@ const NewProject = () => {
     start_date: undefined as Date | undefined,
     due_date: undefined as Date | undefined,
     tags: [] as string[],
+    // Standard and Enterprise fields
+    budget: '',
+    project_type: '',
+    industry: '',
+    priority: 'medium',
+    estimated_hours: '',
+    // Enterprise only fields
+    department: '',
+    stakeholders: '',
+    risk_level: '',
+    methodology: '',
+    milestones: '',
+    deliverables: '',
+    resources_required: '',
+    success_criteria: '',
   });
   const [newTag, setNewTag] = useState('');
   const [loading, setLoading] = useState(false);
@@ -35,6 +54,30 @@ const NewProject = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Industry options for Standard and Enterprise editors
+  const industries = [
+    'Technology & Software', 'Healthcare & Medicine', 'Finance & Banking', 'Education & Training',
+    'Real Estate & Construction', 'Manufacturing & Production', 'Retail & E-commerce', 'Marketing & Advertising',
+    'Consulting & Professional Services', 'Transportation & Logistics', 'Energy & Utilities', 'Entertainment & Media',
+    'Food & Beverage', 'Agriculture & Farming', 'Tourism & Hospitality', 'Non-Profit & NGO',
+    'Government & Public Sector', 'Legal & Law', 'Insurance & Risk Management', 'Telecommunications',
+    'Automotive & Transportation', 'Fashion & Apparel', 'Sports & Recreation', 'Environmental & Sustainability',
+    'Biotechnology & Life Sciences', 'Aerospace & Defense', 'Mining & Natural Resources', 'Chemical & Pharmaceutical',
+    'Art & Design', 'Research & Development', 'Human Resources', 'Security & Safety',
+    'Architecture & Engineering', 'Publishing & Journalism', 'Social Media & Digital Marketing', 'Other'
+  ];
+
+  const projectTypes = [
+    'Web Development', 'Mobile App Development', 'Software Development', 'Design & Branding',
+    'Marketing Campaign', 'Content Creation', 'Consulting Project', 'Research & Analysis',
+    'Training & Education', 'Event Planning', 'Product Launch', 'System Integration',
+    'Data Migration', 'Quality Assurance', 'Infrastructure Setup', 'Other'
+  ];
+
+  const methodologies = [
+    'Agile', 'Scrum', 'Kanban', 'Waterfall', 'Lean', 'DevOps', 'Design Thinking', 'Six Sigma', 'PRINCE2', 'Custom'
+  ];
 
   // Fetch existing project data if editing
   const { data: existingProject } = useQuery({
@@ -58,7 +101,8 @@ const NewProject = () => {
   // Update form data when existing project loads
   useEffect(() => {
     if (existingProject && isEditing) {
-      setFormData({
+      setFormData(prev => ({
+        ...prev,
         name: existingProject.name || '',
         description: existingProject.description || '',
         client_id: existingProject.client_id || '',
@@ -66,7 +110,7 @@ const NewProject = () => {
         start_date: existingProject.start_date ? new Date(existingProject.start_date) : undefined,
         due_date: existingProject.due_date ? new Date(existingProject.due_date) : undefined,
         tags: existingProject.tags || [],
-      });
+      }));
     }
   }, [existingProject, isEditing]);
 
@@ -202,10 +246,10 @@ const NewProject = () => {
         </Button>
         <div>
           <h1 className="text-3xl font-bold text-complie-primary">
-            {isEditing ? 'Edit Project' : 'New Project'}
+            {isEditing ? 'Edit Project' : `New ${editorType.charAt(0).toUpperCase() + editorType.slice(1)} Project`}
           </h1>
           <p className="text-muted-foreground mt-1">
-            {isEditing ? 'Update your project information' : 'Create a new project to organize your work'}
+            {isEditing ? 'Update your project information' : `Create a new ${editorType} project to organize your work`}
           </p>
         </div>
       </div>
@@ -352,7 +396,209 @@ const NewProject = () => {
               </Popover>
             </div>
 
-            {/* Tags */}
+            {/* Standard and Enterprise Editor Fields */}
+            {(editorType === 'standard' || editorType === 'enterprise') && (
+              <>
+                {/* Budget */}
+                <div className="space-y-2">
+                  <Label htmlFor="budget">Budget</Label>
+                  <Input
+                    id="budget"
+                    placeholder="Enter project budget (optional)"
+                    value={formData.budget}
+                    onChange={(e) => handleInputChange('budget', e.target.value)}
+                  />
+                </div>
+
+                {/* Project Type */}
+                <div className="space-y-2">
+                  <Label>Project Type</Label>
+                  <Select
+                    value={formData.project_type}
+                    onValueChange={(value) => handleInputChange('project_type', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select project type (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {projectTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Industry */}
+                <div className="space-y-2">
+                  <Label>Industry</Label>
+                  <Select
+                    value={formData.industry}
+                    onValueChange={(value) => handleInputChange('industry', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select industry (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {industries.map((industry) => (
+                        <SelectItem key={industry} value={industry}>
+                          {industry}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Priority */}
+                <div className="space-y-2">
+                  <Label>Priority</Label>
+                  <Select
+                    value={formData.priority}
+                    onValueChange={(value) => handleInputChange('priority', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="urgent">Urgent</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Estimated Hours */}
+                <div className="space-y-2">
+                  <Label htmlFor="estimated_hours">Estimated Hours</Label>
+                  <Input
+                    id="estimated_hours"
+                    placeholder="Enter estimated hours (optional)"
+                    value={formData.estimated_hours}
+                    onChange={(e) => handleInputChange('estimated_hours', e.target.value)}
+                    type="number"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Enterprise Editor Only Fields */}
+            {editorType === 'enterprise' && (
+              <>
+                {/* Department */}
+                <div className="space-y-2">
+                  <Label htmlFor="department">Department</Label>
+                  <Input
+                    id="department"
+                    placeholder="Enter department (optional)"
+                    value={formData.department}
+                    onChange={(e) => handleInputChange('department', e.target.value)}
+                  />
+                </div>
+
+                {/* Stakeholders */}
+                <div className="space-y-2">
+                  <Label htmlFor="stakeholders">Key Stakeholders</Label>
+                  <Textarea
+                    id="stakeholders"
+                    placeholder="List key stakeholders (optional)"
+                    value={formData.stakeholders}
+                    onChange={(e) => handleInputChange('stakeholders', e.target.value)}
+                    rows={2}
+                  />
+                </div>
+
+                {/* Risk Level */}
+                <div className="space-y-2">
+                  <Label>Risk Level</Label>
+                  <Select
+                    value={formData.risk_level}
+                    onValueChange={(value) => handleInputChange('risk_level', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select risk level (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Low Risk</SelectItem>
+                      <SelectItem value="medium">Medium Risk</SelectItem>
+                      <SelectItem value="high">High Risk</SelectItem>
+                      <SelectItem value="critical">Critical Risk</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Methodology */}
+                <div className="space-y-2">
+                  <Label>Project Methodology</Label>
+                  <Select
+                    value={formData.methodology}
+                    onValueChange={(value) => handleInputChange('methodology', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select methodology (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {methodologies.map((methodology) => (
+                        <SelectItem key={methodology} value={methodology}>
+                          {methodology}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Milestones */}
+                <div className="space-y-2">
+                  <Label htmlFor="milestones">Key Milestones</Label>
+                  <Textarea
+                    id="milestones"
+                    placeholder="Describe key project milestones (optional)"
+                    value={formData.milestones}
+                    onChange={(e) => handleInputChange('milestones', e.target.value)}
+                    rows={3}
+                  />
+                </div>
+
+                {/* Deliverables */}
+                <div className="space-y-2">
+                  <Label htmlFor="deliverables">Deliverables</Label>
+                  <Textarea
+                    id="deliverables"
+                    placeholder="List expected deliverables (optional)"
+                    value={formData.deliverables}
+                    onChange={(e) => handleInputChange('deliverables', e.target.value)}
+                    rows={3}
+                  />
+                </div>
+
+                {/* Resources Required */}
+                <div className="space-y-2">
+                  <Label htmlFor="resources_required">Resources Required</Label>
+                  <Textarea
+                    id="resources_required"
+                    placeholder="Describe required resources (optional)"
+                    value={formData.resources_required}
+                    onChange={(e) => handleInputChange('resources_required', e.target.value)}
+                    rows={2}
+                  />
+                </div>
+
+                {/* Success Criteria */}
+                <div className="space-y-2">
+                  <Label htmlFor="success_criteria">Success Criteria</Label>
+                  <Textarea
+                    id="success_criteria"
+                    placeholder="Define project success criteria (optional)"
+                    value={formData.success_criteria}
+                    onChange={(e) => handleInputChange('success_criteria', e.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Tags - Show for all editor types */}
             <div className="space-y-2">
               <Label>Tags</Label>
               <div className="flex gap-2">

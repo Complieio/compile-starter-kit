@@ -122,86 +122,35 @@ const Projects = () => {
 
   const projectTemplates = [
     {
-      id: 'website-project',
-      name: 'Website Development',
-      description: 'Complete website project with design, development, and deployment phases',
-      icon: Globe,
+      id: 'simple-project',
+      name: 'Simple Project',
+      description: 'Perfect for small, straightforward projects with basic requirements',
+      icon: FileText,
       color: 'bg-blue-50 border-blue-200 text-blue-700',
-      tags: ['Web Development', 'Design'],
-      estimatedDays: 60,
-      tasks: [
-        'Define project scope and technical requirements',
-        'Create user personas and journey mapping',
-        'Design system and style guide development',
-        'Wireframe and prototype creation',
-        'Frontend development and responsive design',
-        'Backend API development and database setup',
-        'Third-party integrations and payment systems',
-        'Cross-browser testing and optimization',
-        'SEO implementation and analytics setup',
-        'Content migration and quality assurance',
-        'Performance testing and security audit',
-        'User acceptance testing and feedback',
-        'Production deployment and DNS configuration',
-        'Post-launch monitoring and bug fixes',
-        'Documentation and training materials'
-      ]
+      editorType: 'simple',
+      estimatedDays: 14
     },
     {
-      id: 'marketing-campaign',
-      name: 'Digital Marketing Campaign',
-      description: 'Multi-channel marketing strategy with content creation, social media, and performance analytics',
+      id: 'standard-project',
+      name: 'Standard Project',
+      description: 'Ideal for medium-sized projects with detailed planning and tracking needs',
       icon: TrendingUp,
       color: 'bg-green-50 border-green-200 text-green-700',
-      tags: ['Marketing', 'Content', 'Analytics'],
-      estimatedDays: 45,
-      tasks: [
-        'Market research and competitive analysis',
-        'Target audience segmentation and buyer personas',
-        'Brand messaging and positioning strategy',
-        'Content calendar and editorial planning',
-        'Creative asset design and copywriting',
-        'Landing page development and optimization',
-        'Social media campaign setup and scheduling',
-        'Email marketing automation sequences',
-        'Paid advertising campaign creation',
-        'Influencer outreach and partnership setup',
-        'Campaign launch and initial monitoring',
-        'A/B testing implementation and analysis',
-        'Performance tracking and KPI reporting',
-        'Campaign optimization and budget reallocation',
-        'Final campaign analysis and recommendations'
-      ]
+      editorType: 'standard',
+      estimatedDays: 30
     },
     {
-      id: 'compliance-audit',
-      name: 'Regulatory Compliance Review',
-      description: 'Comprehensive compliance assessment with documentation, policy updates, and staff training',
+      id: 'enterprise-project',
+      name: 'Enterprise Project',
+      description: 'Comprehensive project management for large, complex initiatives',
       icon: Shield,
       color: 'bg-purple-50 border-purple-200 text-purple-700',
-      tags: ['Compliance', 'Legal', 'Documentation'],
-      estimatedDays: 60,
-      tasks: [
-        'Regulatory framework analysis and requirements mapping',
-        'Current compliance status assessment and gap analysis',
-        'Risk identification and impact evaluation',
-        'Stakeholder interviews and process documentation',
-        'Policy and procedure review and updates',
-        'Compliance management system implementation',
-        'Staff training program development and delivery',
-        'Internal audit procedures and checklist creation',
-        'Documentation management and version control',
-        'Remediation plan development and implementation',
-        'External compliance assessment and validation',
-        'Management reporting and dashboard setup',
-        'Ongoing monitoring and maintenance procedures',
-        'Final compliance report and certification',
-        'Continuous improvement recommendations'
-      ]
+      editorType: 'enterprise',
+      estimatedDays: 60
     }
   ];
 
-  const createProjectFromTemplate = async (template: typeof projectTemplates[0]) => {
+  const navigateToTemplateEditor = (template: typeof projectTemplates[0]) => {
     if (!user) {
       toast({
         title: "Authentication required",
@@ -211,57 +160,8 @@ const Projects = () => {
       return;
     }
 
-    try {
-      const startDate = new Date();
-      const dueDate = new Date();
-      dueDate.setDate(startDate.getDate() + template.estimatedDays);
-
-      const { data: projectData, error: projectError } = await supabase
-        .from('projects')
-        .insert({
-          name: template.name,
-          description: template.description,
-          tags: template.tags,
-          start_date: startDate.toISOString().split('T')[0],
-          due_date: dueDate.toISOString().split('T')[0],
-          user_id: user.id,
-          status: 'active'
-        })
-        .select()
-        .single();
-
-      if (projectError) throw projectError;
-
-      // Create tasks from template
-      const tasks = template.tasks.map((taskTitle, index) => ({
-        title: taskTitle,
-        project_id: projectData.id,
-        user_id: user.id,
-        status: 'todo' as const,
-        priority: 'medium' as const,
-        due_date: new Date(startDate.getTime() + (index + 1) * (template.estimatedDays / template.tasks.length) * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-      }));
-
-      const { error: tasksError } = await supabase
-        .from('tasks')
-        .insert(tasks);
-
-      if (tasksError) throw tasksError;
-
-      toast({
-        title: "Project created from template",
-        description: `${template.name} project has been created with ${template.tasks.length} tasks.`,
-      });
-
-      refetch();
-      navigate(`/projects/${projectData.id}`);
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create project from template.",
-        variant: "destructive",
-      });
-    }
+    // Navigate to the NewProject page with the editor type as a query parameter
+    navigate(`/projects/new?editor=${template.editorType}`);
   };
 
   return (
@@ -299,7 +199,7 @@ const Projects = () => {
                 <Card 
                   key={template.id} 
                   className={`group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-2 ${template.color} hover:scale-105 h-full flex flex-col`}
-                  onClick={() => createProjectFromTemplate(template)}
+                  onClick={() => navigateToTemplateEditor(template)}
                 >
                   <CardHeader className="pb-4 flex-grow">
                     <div className="flex items-center gap-3 mb-2">
