@@ -95,6 +95,13 @@ const Dashboard = () => {
     };
 
     fetchDashboardData();
+
+    // Set up real-time updates every 30 seconds
+    const interval = setInterval(() => {
+      fetchDashboardData();
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, [user]);
 
   // Demo data for when user has no content
@@ -166,7 +173,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -186,10 +193,10 @@ const Dashboard = () => {
 
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card className="border-border hover:shadow-md transition-shadow">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-complie-accent/5 hover:shadow-xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Compliance Health</CardTitle>
-              <div className="p-2 bg-complie-accent rounded-md">
+              <div className="p-2 bg-gradient-to-r from-complie-accent to-complie-primary rounded-md shadow-sm">
                 <TrendingUp className="h-4 w-4 text-white" />
               </div>
             </CardHeader>
@@ -205,10 +212,10 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-border hover:shadow-md transition-shadow">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-green-50 hover:shadow-xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Active Checklists</CardTitle>
-              <div className="p-2 bg-complie-accent rounded-md">
+              <div className="p-2 bg-gradient-to-r from-green-500 to-green-600 rounded-md shadow-sm">
                 <CheckSquare className="h-4 w-4 text-white" />
               </div>
             </CardHeader>
@@ -223,10 +230,10 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-border hover:shadow-md transition-shadow">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-purple-50 hover:shadow-xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Active Projects</CardTitle>
-              <div className="p-2 bg-complie-accent rounded-md">
+              <div className="p-2 bg-gradient-to-r from-purple-500 to-purple-600 rounded-md shadow-sm">
                 <BarChart3 className="h-4 w-4 text-white" />
               </div>
             </CardHeader>
@@ -241,10 +248,10 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-border hover:shadow-md transition-shadow">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-orange-50 hover:shadow-xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Total Notes</CardTitle>
-              <div className="p-2 bg-complie-accent rounded-md">
+              <div className="p-2 bg-gradient-to-r from-orange-500 to-orange-600 rounded-md shadow-sm">
                 <FileText className="h-4 w-4 text-white" />
               </div>
             </CardHeader>
@@ -263,7 +270,7 @@ const Dashboard = () => {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Upcoming Checklists */}
-          <Card className="border-border">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-blue-50/30">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -307,7 +314,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Recent Projects */}
-          <Card className="border-border">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-indigo-50/30">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -358,7 +365,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Activity Overview */}
-          <Card className="border-border">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-white via-white to-slate-50/30">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -407,13 +414,43 @@ const Dashboard = () => {
                 <h4 className="font-medium text-foreground mb-2 text-sm">Weekly Activity</h4>
                 <div className="h-24">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={activityData}>
-                      <XAxis dataKey="name" hide />
-                      <YAxis hide />
-                      <Tooltip />
-                      <Area type="monotone" dataKey="checklists" stackId="1" stroke="hsl(var(--complie-accent))" fill="hsl(var(--complie-accent))" fillOpacity={0.6} />
-                      <Area type="monotone" dataKey="projects" stackId="1" stroke="hsl(var(--complie-success))" fill="hsl(var(--complie-success))" fillOpacity={0.6} />
-                    </AreaChart>
+                     <AreaChart data={activityData}>
+                       <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                       <XAxis 
+                         dataKey="name" 
+                         axisLine={false}
+                         tickLine={false}
+                         className="text-xs text-muted-foreground"
+                       />
+                       <YAxis 
+                         axisLine={false}
+                         tickLine={false}
+                         className="text-xs text-muted-foreground"
+                       />
+                       <Tooltip 
+                         contentStyle={{
+                           background: 'hsl(var(--background))',
+                           border: '1px solid hsl(var(--border))',
+                           borderRadius: '8px'
+                         }}
+                       />
+                       <Area 
+                         type="monotone" 
+                         dataKey="projects" 
+                         stackId="1"
+                         stroke="hsl(217.2 91.2% 59.8%)" 
+                         fill="hsl(217.2 91.2% 59.8%)"
+                         fillOpacity={0.6}
+                       />
+                       <Area 
+                         type="monotone" 
+                         dataKey="checklists" 
+                         stackId="1"
+                         stroke="hsl(142.1 76.2% 36.3%)" 
+                         fill="hsl(142.1 76.2% 36.3%)"
+                         fillOpacity={0.6}
+                       />
+                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
               </div>

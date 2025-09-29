@@ -31,6 +31,7 @@ import TermsOfServicePage from './pages/pre-login/Termsofservice';
 import OnboardingCustomize from './pages/onboarding/OnboardingCustomize';
 import Profile from './pages/profile/Profile';
 import Help from './pages/help/Help';
+import Analytics from './pages/analytics/Analytics';
 
 const queryClient = new QueryClient(); // Force refresh for localhost
 
@@ -91,6 +92,9 @@ const App = () => (
             </Route>
             <Route path="/help" element={<PublicAppLayout />}>
               <Route index element={<Help />} />
+            </Route>
+            <Route path="/analytics" element={<PublicAppLayout />}>
+              <Route index element={<Analytics />} />
             </Route>
             
             <Route path="*" element={<PageNotFound />} />
