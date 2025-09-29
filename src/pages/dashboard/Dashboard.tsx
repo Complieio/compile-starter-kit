@@ -9,6 +9,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
+// Helper function to get note preview
+const getNotePreview = (content: string, maxLength: number = 120) => {
+  const strippedContent = content.replace(/<[^>]*>/g, '');
+  return strippedContent.length > maxLength ? strippedContent.substring(0, maxLength) + '...' : strippedContent;
+};
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -268,7 +274,7 @@ const Dashboard = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {/* Upcoming Checklists */}
           <Card className="border border-complie-accent/20 shadow-lg bg-gradient-to-br from-white via-white to-blue-50/30">
             <CardHeader>
@@ -356,6 +362,62 @@ const Dashboard = () => {
                         <p className="text-xs text-muted-foreground">
                           Updated: {new Date(project.updated_at).toLocaleDateString()}
                         </p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Recent Notes */}
+          <Card className="border border-complie-accent/20 shadow-lg bg-gradient-to-br from-white via-white to-amber-50/30">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-gradient-to-r from-amber-400 to-orange-500 rounded-md shadow-sm">
+                    <FileText className="h-4 w-4 text-white" />
+                  </div>
+                  <CardTitle className="text-lg font-semibold text-foreground">Recent Notes</CardTitle>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => navigate('/notes')}
+                  className="text-complie-accent hover:text-complie-primary hover:bg-complie-accent/10"
+                >
+                  See All Notes
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isUsingDemoData || notes.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <FileText className="h-8 w-8 mx-auto mb-3 opacity-50" />
+                  <p className="text-sm">No notes yet</p>
+                  <Button variant="outline" onClick={() => navigate('/notes')} className="mt-3" size="sm">
+                    Create Note
+                  </Button>
+                </div>
+              ) : (
+                notes.slice(0, 3).map((note) => (
+                  <div 
+                    key={note.id} 
+                    className="group p-4 rounded-lg border border-complie-accent/20 bg-gradient-to-r from-white to-amber-50/50 hover:shadow-md hover:border-complie-accent/30 transition-all duration-300 cursor-pointer mb-3 last:mb-0"
+                    onClick={() => navigate(`/notes/${note.id}`)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-foreground text-sm mb-2 truncate">
+                          {note.title || 'Untitled Note'}
+                        </h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                          {note.content.replace(/<[^>]*>/g, '').substring(0, 120)}
+                          {note.content.replace(/<[^>]*>/g, '').length > 120 && '...'}
+                        </p>
+                      </div>
+                      <div className="ml-3 flex-shrink-0">
+                        <div className="w-2 h-2 bg-complie-accent rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
                       </div>
                     </div>
                   </div>
