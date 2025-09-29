@@ -269,27 +269,15 @@ export function ProjectNotes({ projectId }: ProjectNotesProps) {
                   : "Try adjusting your search terms"
                 }
               </p>
-              {notes.length === 0 && (
-                <Button onClick={() => setShowNewNoteDialog(true)} className="btn-complie-primary">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create First Note
-                </Button>
-              )}
             </div>
           ) : (
             <div className="space-y-4">
               {filteredNotes.map((note) => (
                 <div
                   key={note.id}
-                  className="p-6 rounded-lg border-2 bg-gradient-to-r from-white to-gray-50/50 hover:shadow-lg transition-all duration-300"
-                  style={{
-                    backgroundImage: 'linear-gradient(135deg, #000000 0%, #1F73FF 100%)',
-                    backgroundClip: 'border-box',
-                    border: '2px solid transparent',
-                    background: 'linear-gradient(135deg, #000000 0%, #1F73FF 100%) border-box, linear-gradient(to right, white, #f8fafc) padding-box'
-                  }}
+                  className="p-4 rounded-lg border border-primary/20 bg-card hover:shadow-md transition-all duration-200"
                 >
-                  <div className="bg-white rounded-md p-4 border-l-4 border-l-complie-accent">
+                  <div>
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         {note.title && (

@@ -328,10 +328,6 @@ export function TaskList({ projectId }: TaskListProps) {
               <p className="text-muted-foreground mb-4">
                 Start by creating your first task for this project
               </p>
-              <Button onClick={() => setShowNewTaskDialog(true)} className="btn-complie-primary">
-                <Plus className="h-4 w-4 mr-2" />
-                Create First Task
-              </Button>
             </div>
           ) : (
             <div className="space-y-3">
