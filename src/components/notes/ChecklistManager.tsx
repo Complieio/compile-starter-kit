@@ -93,7 +93,7 @@ export const ChecklistManager: React.FC<ChecklistManagerProps> = ({
           value={newItemText}
           onChange={(e) => setNewItemText(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addItem())}
-          placeholder="Add new item..."
+          placeholder="Add checklist item…"
           className="flex-1"
         />
         <Button type="button" onClick={addItem} size="sm">

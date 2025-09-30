@@ -26,9 +26,12 @@ const NoteEditor = () => {
   
   // Set initial values based on template type
   const getInitialFormData = () => {
+    // Base structured content for simple template
+    const simpleTemplateContent = templateContent || `<p><strong>Context:</strong> What is this note about?</p><p><br></p><p><strong>Key Idea / Thought:</strong> Write the main point clearly.</p><p><br></p><p><strong>Details / Expansion:</strong> Add supporting thoughts or background info.</p>`;
+    
     const baseData = {
       title: '',
-      content: templateContent || '',
+      content: templateId === 'simple' ? simpleTemplateContent : (templateContent || ''),
       project_id: '',
       client_id: '',
       tags: [] as string[],
@@ -344,7 +347,7 @@ const NoteEditor = () => {
                   id="title"
                   value={formData.title}
                   onChange={(e) => handleInputChange('title', e.target.value)}
-                  placeholder="Enter a title for your note..."
+                  placeholder={templateId === 'simple' ? "Write your note title here…" : "Enter a title for your note..."}
                   className="h-12 border-2 focus:border-complie-accent text-lg"
                 />
               </div>
@@ -357,7 +360,7 @@ const NoteEditor = () => {
                 <RichTextEditor
                   value={formData.content}
                   onChange={(value) => handleInputChange('content', value)}
-                  placeholder="Start writing your note..."
+                  placeholder={templateId === 'simple' ? "Start your note here…" : "Start writing your note..."}
                   className="w-full"
                 />
               </div>
