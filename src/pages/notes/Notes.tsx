@@ -407,7 +407,7 @@ const Notes = () => {
         {/* Templates Section */}
         <div className="mb-10">
           <Card 
-            className="group cursor-pointer transition-all duration-300 hover:shadow-xl border-2 bg-blue-500/70 border-blue-600/50 hover:bg-blue-600/80"
+            className="group cursor-pointer transition-all duration-300 hover:shadow-xl border-2 bg-blue-200/40 border-blue-300/40 hover:bg-blue-300/50"
             onClick={() => setIsTemplateDialogOpen(true)}
           >
             <CardContent className="py-8">
