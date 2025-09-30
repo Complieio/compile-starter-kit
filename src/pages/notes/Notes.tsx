@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Search, FileText, Edit, Trash2, Sparkles, BookOpen, Users, Briefcase, Pin } from 'lucide-react';
+import { Plus, Search, FileText, Edit, Trash2, Sparkles, BookOpen, Users, Briefcase, Pin, FileSignature, FileCheck, Receipt, Mail, UserCheck, MessageSquare, Presentation, Share2, ClipboardCheck, Award, Palette, Target } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -30,33 +30,118 @@ interface NoteTemplate {
   description: string;
   icon: React.ElementType;
   color: string;
+  category: 'entrepreneur' | 'freelancer' | 'both';
   content: string;
 }
 
 const NOTE_TEMPLATES: NoteTemplate[] = [
   {
-    id: 'simple',
-    title: 'Simple Note',
-    description: 'Basic note template for quick thoughts and casual notes',
-    icon: FileText,
-    color: 'bg-blue-50 border-blue-200 text-blue-700',
-    content: '<h1>Quick thoughts</h1><p><br></p><p>Start writing your note here...</p>'
-  },
-  {
-    id: 'structured',
-    title: 'Structured Note',
-    description: 'Organized note with predefined sections for better clarity',
-    icon: Users,
-    color: 'bg-green-50 border-green-200 text-green-700',
-    content: `<h1><strong>Title / Subject</strong></h1><p><br></p><h2><strong>Main Points / Key Ideas</strong></h2><ul><li>Key point 1</li><li>Key point 2</li><li>Key point 3</li></ul><p><br></p><h2><strong>Checklist</strong></h2><ul><li>Task item 1</li><li>Task item 2</li><li>Task item 3</li></ul><p><br></p><h2><strong>Notes / Description</strong></h2><p>Additional details and information go here...</p>`
-  },
-  {
-    id: 'advanced',
-    title: 'Advanced Note',
-    description: 'Comprehensive note template with full documentation framework',
-    icon: Briefcase,
+    id: 'client-proposal',
+    title: 'Client Proposal',
+    description: 'Outline your project, deliverables, timeline, and pricing for potential clients.',
+    icon: FileSignature,
     color: 'bg-purple-50 border-purple-200 text-purple-700',
-    content: `<h1><strong>Title / Subject</strong></h1><p><br></p><h2><strong>Summary / Overview</strong></h2><blockquote>Brief overview of what this note covers...</blockquote><p><br></p><h2><strong>Detailed Description</strong></h2><p>Write your detailed content here. Include all necessary information, context, and explanations.</p><p><br></p><h2><strong>Checklists / Tasks / Action Items</strong></h2><table><thead><tr><th><strong>Task</strong></th><th><strong>Status</strong></th><th><strong>Due Date</strong></th><th><strong>Assigned To</strong></th></tr></thead><tbody><tr><td>Task 1</td><td>Pending</td><td></td><td></td></tr><tr><td>Task 2</td><td>Pending</td><td></td><td></td></tr><tr><td>Task 3</td><td>Pending</td><td></td><td></td></tr></tbody></table><p><br></p><h2><strong>References / Links</strong></h2><ul><li><a href="#" rel="noopener noreferrer" target="_blank">Reference link 1</a></li><li><a href="#" rel="noopener noreferrer" target="_blank">Reference link 2</a></li></ul><p><br></p><h2><strong>Attachments</strong></h2><p>List any related documents, files, or resources here...</p><p><br></p><h2><strong>Tags / Categories</strong></h2><p><code>#tag1</code> <code>#tag2</code> <code>#tag3</code></p><p><br></p><p><em>Created on ${new Date().toLocaleDateString()}</em></p>`
+    category: 'entrepreneur',
+    content: '<h1>Client Proposal</h1><p><br></p><h2>Project Overview</h2><p>Brief description of the project...</p><p><br></p><h2>Deliverables</h2><ul><li>Deliverable 1</li><li>Deliverable 2</li><li>Deliverable 3</li></ul><p><br></p><h2>Timeline</h2><p>Project duration and key milestones...</p><p><br></p><h2>Pricing</h2><p>Investment details...</p>'
+  },
+  {
+    id: 'service-agreement',
+    title: 'Service Agreement / Contract',
+    description: 'Set clear terms for scope of work, payment, and revisions.',
+    icon: FileCheck,
+    color: 'bg-purple-50 border-purple-200 text-purple-700',
+    category: 'entrepreneur',
+    content: '<h1>Service Agreement</h1><p><br></p><h2>Scope of Work</h2><p>Define the services to be provided...</p><p><br></p><h2>Payment Terms</h2><p>Payment schedule and amounts...</p><p><br></p><h2>Revision Policy</h2><p>Number of revisions included...</p><p><br></p><h2>Terms & Conditions</h2><p>Additional terms...</p>'
+  },
+  {
+    id: 'invoice',
+    title: 'Invoice',
+    description: 'Itemized billing template for smooth client payments.',
+    icon: Receipt,
+    color: 'bg-green-50 border-green-200 text-green-700',
+    category: 'both',
+    content: '<h1>Invoice</h1><p><br></p><h2>Invoice Details</h2><p>Invoice #: </p><p>Date: </p><p>Due Date: </p><p><br></p><h2>Itemized Services</h2><table><tbody><tr><td>Service</td><td>Quantity</td><td>Rate</td><td>Amount</td></tr><tr><td></td><td></td><td></td><td></td></tr></tbody></table><p><br></p><h2>Total Amount Due</h2><p>$0.00</p>'
+  },
+  {
+    id: 'cover-letter',
+    title: 'Cover Letter',
+    description: 'Pitch yourself to clients with credibility and value.',
+    icon: Mail,
+    color: 'bg-blue-50 border-blue-200 text-blue-700',
+    category: 'freelancer',
+    content: '<h1>Cover Letter</h1><p><br></p><p>Dear [Client Name],</p><p><br></p><p>I am writing to express my interest in [project/position]...</p><p><br></p><h2>Why I\'m a Great Fit</h2><p>Highlight relevant skills and experience...</p><p><br></p><h2>What I Can Deliver</h2><p>Specific value you bring...</p><p><br></p><p>Best regards,<br>[Your Name]</p>'
+  },
+  {
+    id: 'freelancer-resume',
+    title: 'Freelancer Resume / CV',
+    description: 'Show your skills, experience, and portfolio professionally.',
+    icon: UserCheck,
+    color: 'bg-blue-50 border-blue-200 text-blue-700',
+    category: 'freelancer',
+    content: '<h1>[Your Name]</h1><p>[Your Title/Specialty]</p><p><br></p><h2>Professional Summary</h2><p>Brief overview of your expertise...</p><p><br></p><h2>Skills</h2><ul><li>Skill 1</li><li>Skill 2</li><li>Skill 3</li></ul><p><br></p><h2>Experience</h2><p><strong>Role | Company | Dates</strong></p><p>Description of responsibilities...</p><p><br></p><h2>Portfolio</h2><p>Links to your best work...</p>'
+  },
+  {
+    id: 'cold-email',
+    title: 'Cold Email / Outreach',
+    description: 'Script to grab attention and land new clients.',
+    icon: MessageSquare,
+    color: 'bg-green-50 border-green-200 text-green-700',
+    category: 'both',
+    content: '<h1>Cold Email Template</h1><p><br></p><p><strong>Subject Line:</strong> [Attention-grabbing subject]</p><p><br></p><p>Hi [Name],</p><p><br></p><p>I noticed [specific observation about their business]...</p><p><br></p><p>I specialize in [your service] and have helped [similar results].</p><p><br></p><p>Would you be open to a quick call to discuss [specific benefit]?</p><p><br></p><p>Best,<br>[Your Name]</p>'
+  },
+  {
+    id: 'pitch-deck',
+    title: 'Pitch Deck',
+    description: 'Present your project or business professionally to investors or clients.',
+    icon: Presentation,
+    color: 'bg-purple-50 border-purple-200 text-purple-700',
+    category: 'entrepreneur',
+    content: '<h1>Pitch Deck</h1><p><br></p><h2>Problem</h2><p>What problem are you solving?</p><p><br></p><h2>Solution</h2><p>Your unique solution...</p><p><br></p><h2>Market Opportunity</h2><p>Target market and size...</p><p><br></p><h2>Business Model</h2><p>How you make money...</p><p><br></p><h2>Traction</h2><p>Key metrics and achievements...</p><p><br></p><h2>Ask</h2><p>What you\'re seeking...</p>'
+  },
+  {
+    id: 'social-media-proposal',
+    title: 'Social Media Proposal',
+    description: 'Suggest strategy and deliverables for social media clients.',
+    icon: Share2,
+    color: 'bg-purple-50 border-purple-200 text-purple-700',
+    category: 'entrepreneur',
+    content: '<h1>Social Media Proposal</h1><p><br></p><h2>Current Situation Analysis</h2><p>Overview of client\'s current social presence...</p><p><br></p><h2>Proposed Strategy</h2><p>Content themes, posting frequency, platforms...</p><p><br></p><h2>Deliverables</h2><ul><li>Posts per week</li><li>Stories/Reels</li><li>Engagement management</li></ul><p><br></p><h2>Investment & Timeline</h2><p>Package details...</p>'
+  },
+  {
+    id: 'project-report',
+    title: 'Project Report / Progress Update',
+    description: 'Track work done, next steps, and blockers for clients or yourself.',
+    icon: ClipboardCheck,
+    color: 'bg-green-50 border-green-200 text-green-700',
+    category: 'both',
+    content: '<h1>Project Progress Update</h1><p><br></p><h2>Completed This Period</h2><ul><li>Task 1</li><li>Task 2</li><li>Task 3</li></ul><p><br></p><h2>In Progress</h2><ul><li>Current work items...</li></ul><p><br></p><h2>Next Steps</h2><ul><li>Upcoming tasks...</li></ul><p><br></p><h2>Blockers/Issues</h2><p>Any challenges or dependencies...</p>'
+  },
+  {
+    id: 'testimonial-case-study',
+    title: 'Testimonial / Case Study',
+    description: 'Document results and showcase your impact for credibility.',
+    icon: Award,
+    color: 'bg-green-50 border-green-200 text-green-700',
+    category: 'both',
+    content: '<h1>Case Study: [Client Name]</h1><p><br></p><h2>The Challenge</h2><p>What problem did the client face?</p><p><br></p><h2>The Solution</h2><p>How you addressed it...</p><p><br></p><h2>The Results</h2><ul><li>Metric 1: [improvement]</li><li>Metric 2: [improvement]</li><li>Metric 3: [improvement]</li></ul><p><br></p><h2>Client Testimonial</h2><blockquote>"[Client quote]" - [Name, Title]</blockquote>'
+  },
+  {
+    id: 'design-brief',
+    title: 'Graphic Design Project Brief',
+    description: 'Define client goals, deliverables, timeline, and usage rights.',
+    icon: Palette,
+    color: 'bg-blue-50 border-blue-200 text-blue-700',
+    category: 'freelancer',
+    content: '<h1>Design Project Brief</h1><p><br></p><h2>Project Goals</h2><p>What should this design achieve?</p><p><br></p><h2>Target Audience</h2><p>Who is this for?</p><p><br></p><h2>Deliverables</h2><ul><li>File formats needed</li><li>Sizes/dimensions</li><li>Number of concepts</li></ul><p><br></p><h2>Brand Guidelines</h2><p>Colors, fonts, style references...</p><p><br></p><h2>Timeline & Usage Rights</h2><p>Delivery date and licensing terms...</p>'
+  },
+  {
+    id: 'business-plan',
+    title: 'Service-Based Business Plan',
+    description: 'Outline services, target audience, pricing, marketing, and KPIs.',
+    icon: Target,
+    color: 'bg-purple-50 border-purple-200 text-purple-700',
+    category: 'entrepreneur',
+    content: '<h1>Service-Based Business Plan</h1><p><br></p><h2>Executive Summary</h2><p>Brief overview of your business...</p><p><br></p><h2>Services Offered</h2><ul><li>Service 1</li><li>Service 2</li><li>Service 3</li></ul><p><br></p><h2>Target Audience</h2><p>Ideal client profile...</p><p><br></p><h2>Pricing Strategy</h2><p>Package tiers and rates...</p><p><br></p><h2>Marketing Plan</h2><p>How you\'ll attract clients...</p><p><br></p><h2>Key Performance Indicators</h2><p>Metrics to track success...</p>'
   }
 ];
 
@@ -246,17 +331,28 @@ const Notes = () => {
                     Use Template
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
+                <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle className="text-xl flex items-center gap-2">
-                      <Sparkles className="h-6 w-6 text-complie-accent" />
-                      Choose a Note Template
+                    <DialogTitle className="text-2xl flex items-center gap-2">
+                      <Sparkles className="h-7 w-7 text-complie-accent" />
+                      Choose a Template to Get Started
                     </DialogTitle>
-                    <DialogDescription>
-                      Select a template based on the level of structure you need for your note.
+                    <DialogDescription className="flex items-center gap-4 mt-2">
+                      <span className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-purple-500"></span>
+                        <span className="text-sm">Entrepreneur</span>
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+                        <span className="text-sm">Freelancer</span>
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-green-500"></span>
+                        <span className="text-sm">Both</span>
+                      </span>
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 gap-4 py-6">
                     {NOTE_TEMPLATES.map((template) => {
                       const IconComponent = template.icon;
                       return (
@@ -268,14 +364,16 @@ const Notes = () => {
                             setIsTemplateDialogOpen(false);
                           }}
                         >
-                          <CardHeader className="pb-4">
-                            <div className="flex items-center gap-3">
-                              <div className="p-2 rounded-lg bg-white shadow-sm">
-                                <IconComponent className="h-5 w-5" />
+                          <CardHeader className="pb-3 pt-4 px-4">
+                            <div className="flex flex-col gap-3">
+                              <div className="flex items-center gap-2">
+                                <div className="p-2 rounded-lg bg-white shadow-sm">
+                                  <IconComponent className="h-5 w-5" />
+                                </div>
                               </div>
                               <div>
-                                <CardTitle className="text-base font-bold">{template.title}</CardTitle>
-                                <CardDescription className="text-sm mt-1">
+                                <CardTitle className="text-sm font-bold mb-2">{template.title}</CardTitle>
+                                <CardDescription className="text-xs leading-relaxed line-clamp-3">
                                   {template.description}
                                 </CardDescription>
                               </div>
@@ -308,41 +406,18 @@ const Notes = () => {
 
         {/* Templates Section */}
         <div className="mb-10">
-          <div className="flex items-center gap-2 mb-6">
-            <Sparkles className="h-6 w-6 text-complie-accent" />
-            <h2 className="text-2xl font-bold text-complie-primary">Choose Your Note Type</h2>
-            <span className="text-sm text-muted-foreground ml-2">Simple • Structured • Advanced</span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {NOTE_TEMPLATES.map((template) => {
-              const IconComponent = template.icon;
-              return (
-                <Card 
-                  key={template.id}
-                  className={`group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-2 ${template.color} hover:scale-105`}
-                  onClick={() => createFromTemplate(template)}
-                >
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="p-3 rounded-xl bg-white shadow-sm">
-                        <IconComponent className="h-6 w-6" />
-                      </div>
-                      <CardTitle className="text-lg font-bold">{template.title}</CardTitle>
-                    </div>
-                    <CardDescription className="text-sm leading-relaxed">
-                      {template.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-complie-primary">Click to start</span>
-                      <Plus className="h-4 w-4 text-complie-accent group-hover:scale-110 transition-transform" />
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+          <Card 
+            className="group cursor-pointer transition-all duration-300 hover:shadow-xl border-2 bg-blue-500 border-blue-600 hover:bg-blue-600"
+            onClick={() => setIsTemplateDialogOpen(true)}
+          >
+            <CardContent className="py-8">
+              <div className="flex items-center justify-center gap-3">
+                <Sparkles className="h-7 w-7 text-white" />
+                <h2 className="text-2xl font-bold text-white">Choose a Template to Get Started</h2>
+                <Sparkles className="h-7 w-7 text-white" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Notes Content */}
