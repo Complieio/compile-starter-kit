@@ -385,6 +385,7 @@ const NoteEditor = () => {
                     tags={formData.tags}
                     onChange={(tags) => handleInputChange('tags', tags)}
                     placeholder="Add tags (press Enter or comma to add)..."
+                    maxTags={templateId === 'simple' ? 3 : undefined}
                   />
                 </div>
 
@@ -399,8 +400,27 @@ const NoteEditor = () => {
                 </div>
               </div>
 
-              {/* Project and Client Selection */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-slate-50 rounded-lg border-2 border-dashed border-muted-foreground/20">
+              {/* Date Stamps - Show for existing notes or simple template */}
+              {(isEditing && existingNote) && (
+                <div className="p-4 bg-muted/20 rounded-lg border border-border flex items-center justify-between text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span>
+                      Created: {new Date(existingNote.created_at).toLocaleDateString()} at {new Date(existingNote.created_at).toLocaleTimeString()}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span>
+                      Last Modified: {new Date(existingNote.updated_at).toLocaleDateString()} at {new Date(existingNote.updated_at).toLocaleTimeString()}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Project and Client Selection - Hide for simple template */}
+              {templateId !== 'simple' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-slate-50 rounded-lg border-2 border-dashed border-muted-foreground/20">
                 <div className="space-y-3">
                   <Label className="text-base font-semibold text-complie-primary">Project</Label>
                   <Select
@@ -440,7 +460,8 @@ const NoteEditor = () => {
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
+                </div>
+              )}
 
               {/* Submit Buttons */}
               <div className="flex gap-4 pt-8 border-t-2 border-muted-foreground/10">
