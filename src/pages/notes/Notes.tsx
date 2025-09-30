@@ -60,7 +60,7 @@ const NOTE_TEMPLATES: NoteTemplate[] = [
     icon: Receipt,
     color: 'bg-green-50 border-green-200 text-green-700',
     category: 'both',
-    content: '<h1>Invoice</h1><p><br></p><h2>Invoice Details</h2><p>Invoice #: </p><p>Date: </p><p>Due Date: </p><p><br></p><h2>Itemized Services</h2><table><tbody><tr><td>Service</td><td>Quantity</td><td>Rate</td><td>Amount</td></tr><tr><td></td><td></td><td></td><td></td></tr></tbody></table><p><br></p><h2>Total Amount Due</h2><p>$0.00</p>'
+    content: '<h1>INVOICE</h1><p>Invoice Number: [Invoice Number]<br>Invoice Date: [Date]<br>Due Date: [Date]</p><p><br></p><h2>Bill To:</h2><p>[Client / Company Name]<br>[Address]</p><p><br></p><h2>Description / Details:</h2><p>[Short description of product or service]</p><p>Quantity: [Number]<br>Unit Price: [Price]<br>Total: [Total Amount]</p><p><br></p><p>Subtotal: [Subtotal]<br>Taxes (if applicable): [Tax Amount]<br>Total Due: [Total Amount]</p><p><br></p><h2>Payment Status:</h2><p>[Draft / Sent / Paid]<br>Paid Date (if applicable): [Date]</p><p><br></p><h2>Payment Method / Details:</h2><p>[Payment information or link]</p><p><br></p><h2>Issued By:</h2><p>[Your Name or Company]</p><p><br></p><h2>Notes / Terms:</h2><p>[Optional notes: payment terms, reminders, or messages]</p>'
   },
   {
     id: 'cover-letter',
