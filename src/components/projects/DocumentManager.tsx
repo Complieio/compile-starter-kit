@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Upload, FileText, Download, Trash2, Eye, AlertCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Upload, FileText, Download, Trash2, Eye, AlertCircle, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -27,6 +28,7 @@ interface Document {
 
 export function DocumentManager({ projectId }: DocumentManagerProps) {
   const [uploadingFiles, setUploadingFiles] = useState<Map<string, number>>(new Map());
+  const [viewingDocument, setViewingDocument] = useState<{ doc: Document; url: string } | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -185,9 +187,7 @@ export function DocumentManager({ projectId }: DocumentManagerProps) {
       if (error) throw error;
 
       const url = URL.createObjectURL(data);
-      window.open(url, '_blank');
-      // Clean up the URL after a short delay to allow the browser to use it
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setViewingDocument({ doc: document, url });
     } catch (error: any) {
       toast({
         title: "View failed",
@@ -195,6 +195,13 @@ export function DocumentManager({ projectId }: DocumentManagerProps) {
         variant: "destructive",
       });
     }
+  };
+
+  const handleCloseViewer = () => {
+    if (viewingDocument?.url) {
+      URL.revokeObjectURL(viewingDocument.url);
+    }
+    setViewingDocument(null);
   };
 
   const formatFileSize = (bytes: number) => {
@@ -230,8 +237,59 @@ export function DocumentManager({ projectId }: DocumentManagerProps) {
   }
 
   return (
-    <div className="space-y-6">
-      <Card className="card-complie">
+    <>
+      <Dialog open={!!viewingDocument} onOpenChange={(open) => !open && handleCloseViewer()}>
+        <DialogContent className="max-w-6xl h-[90vh] flex flex-col p-0">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b">
+            <DialogTitle className="flex items-center gap-2">
+              <span className="text-2xl">{viewingDocument?.doc && getFileTypeIcon(viewingDocument.doc.file_type)}</span>
+              {viewingDocument?.doc.name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-hidden">
+            {viewingDocument && (
+              <>
+                {viewingDocument.doc.file_type.includes('pdf') ? (
+                  <iframe
+                    src={viewingDocument.url}
+                    className="w-full h-full"
+                    title={viewingDocument.doc.name}
+                  />
+                ) : viewingDocument.doc.file_type.includes('image') ? (
+                  <div className="w-full h-full flex items-center justify-center bg-muted/20 p-4">
+                    <img
+                      src={viewingDocument.url}
+                      alt={viewingDocument.doc.name}
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
+                ) : viewingDocument.doc.file_type.includes('text') ? (
+                  <iframe
+                    src={viewingDocument.url}
+                    className="w-full h-full bg-background"
+                    title={viewingDocument.doc.name}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+                    <FileText className="h-16 w-16 mb-4 text-muted-foreground" />
+                    <h3 className="text-lg font-semibold mb-2">Preview not available</h3>
+                    <p className="text-muted-foreground mb-4">
+                      This file type cannot be previewed in the browser
+                    </p>
+                    <Button onClick={() => viewingDocument.doc && handleDownload(viewingDocument.doc)}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Download to view
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <div className="space-y-6">
+        <Card className="card-complie">
         <CardHeader>
           <CardTitle>Documents</CardTitle>
           <CardDescription>Upload and manage project documents</CardDescription>
@@ -345,6 +403,7 @@ export function DocumentManager({ projectId }: DocumentManagerProps) {
           )}
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </>
   );
 }
