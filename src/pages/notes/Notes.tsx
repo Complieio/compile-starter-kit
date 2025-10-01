@@ -87,7 +87,7 @@ const NOTE_TEMPLATES: NoteTemplate[] = [
     icon: MessageSquare,
     color: 'bg-green-50 border-green-200 text-green-700',
     category: 'both',
-    content: '<h1>Cold Email Template</h1><p><br></p><p><strong>Subject Line:</strong> [Attention-grabbing subject]</p><p><br></p><p>Hi [Name],</p><p><br></p><p>I noticed [specific observation about their business]...</p><p><br></p><p>I specialize in [your service] and have helped [similar results].</p><p><br></p><p>Would you be open to a quick call to discuss [specific benefit]?</p><p><br></p><p>Best,<br>[Your Name]</p>'
+    content: '<h1>Cold Email Template</h1><p><br></p><p><strong>Subject:</strong> [SUBJECT_LINE]</p><p><br></p><p>Hi [RECIPIENT_NAME],</p><p><br></p><p>I’m [YOUR_NAME], [YOUR_ROLE]. I noticed [ASSET / AREA] at [COMPANY] and thought there might be an opportunity to [DESIRED_OUTCOME / BENEFIT].</p><p><br></p><p>Here’s a simple approach you could consider:</p><ul><li>Step 1: [BRIEF_ACTION_1]</li><li>Step 2: [BRIEF_ACTION_2]</li><li>Step 3: [BRIEF_ACTION_3]</li></ul><p><br></p><p>If you’d like, I can [OPTION_1] or [OPTION_2] — your choice.</p><p><br></p><p>Sincerely,<br>[YOUR_NAME]<br>[ROLE] • [PORTFOLIO / WEBSITE / EMAIL]</p>'
   },
   {
     id: 'pitch-deck',
