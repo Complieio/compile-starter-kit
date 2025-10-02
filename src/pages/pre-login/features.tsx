@@ -184,9 +184,9 @@ export default function FeaturesPage(): JSX.Element {
       </section>
 
       <footer>
-        <a href="privacypolicy.html">Privacy Policy</a>
-        <a href="refundpolicy.html">Refund Policy</a>
-        <a href="termsofservice.html">Terms of Service</a>
+        <Link to="privacypolicy.html">Privacy Policy</Link>
+        <Link to="refundpolicy.html">Refund Policy</Link>
+        <Link to="termsofservice.html">Terms of Service</Link>
       </footer>
 
       <div ref={modalRef} className={`popup ${modalOpen ? "show" : ""}`} id="authModal" onClick={onOverlayClick} role="presentation">
