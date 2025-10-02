@@ -554,16 +554,13 @@ const Settings = () => {
               <div className="space-y-4">
                 <div>
                   <h4 className="font-medium mb-2">Current Plan</h4>
-<div className="flex items-center gap-4">
-  {profile && getPlanBadge(profile.plan)}
-  <span className="text-sm text-muted-foreground">
-    {profile?.plan === 'basic' 
-      ? 'Free plan' 
-      : profile?.plan === 'standard' 
-        ? '$9/month' 
-        : '$19/month'}
-  </span>
-</div>
+                  <div className="flex items-center gap-4">
+                    {profile && getPlanBadge(profile.plan)}
+                    <span className="text-sm text-muted-foreground">
+                      {profile?.plan === 'basic' ? 'Free plan' : '$29/month'}
+                    </span>
+                  </div>
+                </div>
 
                 <div>
                   <h4 className="font-medium mb-2">Subscription</h4>
