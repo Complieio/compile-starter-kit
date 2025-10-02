@@ -1,5 +1,6 @@
+// src/pages/pre-login/Termsofservice.tsx
 import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function TermsOfService(): JSX.Element {
   useEffect(() => {
@@ -146,7 +147,6 @@ export default function TermsOfService(): JSX.Element {
 
     // clean up on unmount
     return () => {
-      // remove listeners we added where possible
       try {
         if (googleSignupBtn)
           googleSignupBtn.removeEventListener("click", () => {
@@ -402,8 +402,9 @@ footer a{text-decoration:none;color:#000;font-weight:500}
               Continue with Google
             </div>
             <div className="legal">
-  By creating an account you agree to our <Link to="/termsofservice">Terms</Link> and <Link to="/privacypolicy">Privacy Policy</Link>.
-</div>
+              By creating an account you agree to our <Link to="/termsofservice">Terms</Link> and <Link to="/privacypolicy">Privacy Policy</Link>.
+            </div>
+          </form>
 
           <form id="loginForm" className="form" style={{ display: "none" }} autoComplete="on" noValidate>
             <div className="input-wrap">
