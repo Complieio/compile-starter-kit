@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Link } from 'react-router-dom';
 
 export default function TermsOfService(): JSX.Element {
   useEffect(() => {
@@ -403,9 +402,8 @@ footer a{text-decoration:none;color:#000;font-weight:500}
               Continue with Google
             </div>
             <div className="legal">
-              By creating an account you agree to our <a href="termsofservice.html">Terms</a> and <a href="privacypolicy.html">Privacy Policy</a>.
-            </div>
-          </form>
+  By creating an account you agree to our <Link to="/termsofservice">Terms</Link> and <Link to="/privacypolicy">Privacy Policy</Link>.
+</div>
 
           <form id="loginForm" className="form" style={{ display: "none" }} autoComplete="on" noValidate>
             <div className="input-wrap">
