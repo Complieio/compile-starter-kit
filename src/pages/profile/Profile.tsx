@@ -31,7 +31,9 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [usernameLoading, setUsernameLoading] = useState(false);
   const [usernameError, setUsernameError] = useState('');
+  const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [originalUsername, setOriginalUsername] = useState('');
 
   const [formData, setFormData] = useState({
     username: '',
@@ -56,8 +58,10 @@ const Profile = () => {
           .single();
 
         if (!error && data) {
+          const username = data.username || '';
+          setOriginalUsername(username);
           setFormData({
-            username: data.username || '',
+            username,
             nickname: data.nickname || '',
             email: data.email || user.email || '',
             countryCode: data.country_code || '',
@@ -75,38 +79,70 @@ const Profile = () => {
   }, [user]);
 
   const validateUsername = async (username: string) => {
-    if (!username) return;
+    if (!username) {
+      setUsernameError('');
+      setUsernameAvailable(false);
+      return;
+    }
     
-    const regex = /^[A-Za-z0-9_-]{3,30}$/;
+    // Only allow letters, numbers, and underscores
+    const regex = /^[A-Za-z0-9_]{3,30}$/;
     if (!regex.test(username)) {
-      setUsernameError('Username must be 3-30 characters, letters, numbers, _ and - only');
+      setUsernameError('Username must be 3-30 characters, letters, numbers, and underscores only');
+      setUsernameAvailable(false);
       return;
     }
 
-    if (username === formData.username) {
+    // If it's the same as the original username, mark as available
+    if (username === originalUsername) {
       setUsernameError('');
+      setUsernameAvailable(true);
       return;
     }
 
     setUsernameLoading(true);
     setUsernameError('');
+    setUsernameAvailable(false);
 
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('username')
         .eq('username', username)
         .neq('id', user?.id);
       
+      if (error) {
+        console.error('Error validating username:', error);
+        setUsernameError('Error checking username availability');
+        return;
+      }
+      
       if (data && data.length > 0) {
         setUsernameError('Username not available');
+        setUsernameAvailable(false);
+      } else {
+        setUsernameError('');
+        setUsernameAvailable(true);
       }
     } catch (error) {
       console.error('Error validating username:', error);
+      setUsernameError('Error checking username availability');
+      setUsernameAvailable(false);
     } finally {
       setUsernameLoading(false);
     }
   };
+
+  // Debounce username validation
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (formData.username) {
+        validateUsername(formData.username);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [formData.username]);
 
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -306,7 +342,6 @@ const Profile = () => {
                   id="username"
                   value={formData.username}
                   onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
-                  onBlur={(e) => validateUsername(e.target.value)}
                   placeholder="Choose a username"
                   required
                   disabled={loading}
@@ -317,8 +352,11 @@ const Profile = () => {
                     Checking availability...
                   </div>
                 )}
-                {usernameError && (
+                {!usernameLoading && usernameError && (
                   <p className="text-sm text-destructive">{usernameError}</p>
+                )}
+                {!usernameLoading && usernameAvailable && !usernameError && (
+                  <p className="text-sm text-green-600">✓ Username is available</p>
                 )}
               </div>
 
