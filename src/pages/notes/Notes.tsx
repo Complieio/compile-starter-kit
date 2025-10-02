@@ -87,7 +87,7 @@ const NOTE_TEMPLATES: NoteTemplate[] = [
     icon: MessageSquare,
     color: 'bg-green-50 border-green-200 text-green-700',
     category: 'both',
-    content: '<h1>Cold Email Template</h1><p><br></p><p><strong>Subject:</strong> [SUBJECT_LINE]</p><p><br></p><p>Hi [RECIPIENT_NAME],</p><p><br></p><p>I’m [YOUR_NAME], [YOUR_ROLE]. I noticed [ASSET / AREA] at [COMPANY] and thought there might be an opportunity to [DESIRED_OUTCOME / BENEFIT].</p><p><br></p><p>Here’s a simple approach you could consider:</p><ul><li>Step 1: [BRIEF_ACTION_1]</li><li>Step 2: [BRIEF_ACTION_2]</li><li>Step 3: [BRIEF_ACTION_3]</li></ul><p><br></p><p>If you’d like, I can [OPTION_1] or [OPTION_2] — your choice.</p><p><br></p><p>Sincerely,<br>[YOUR_NAME]<br>[ROLE] • [PORTFOLIO / WEBSITE / EMAIL]</p>'
+    content: '<h1>Cold Email Template</h1><p><br></p><p><strong>Subject:</strong> [SUBJECT_LINE]</p><p><br></p><p>Hi [RECIPIENT_NAME],</p><p><br></p><p>I\'m [YOUR_NAME], [YOUR_ROLE]. I noticed [ASSET / AREA] at [COMPANY] and thought there might be an opportunity to [DESIRED_OUTCOME / BENEFIT].</p><p><br></p><p>Here\'s a simple approach you could consider:</p><ul><li>Step 1: [BRIEF_ACTION_1]</li><li>Step 2: [BRIEF_ACTION_2]</li><li>Step 3: [BRIEF_ACTION_3]</li></ul><p><br></p><p>If you\'d like, I can [OPTION_1] or [OPTION_2] — your choice.</p><p><br></p><p>Sincerely,<br>[YOUR_NAME]<br>[ROLE] • [PORTFOLIO / WEBSITE / EMAIL]</p>'
   },
   {
     id: 'pitch-deck',
@@ -105,7 +105,7 @@ const NOTE_TEMPLATES: NoteTemplate[] = [
     icon: Share2,
     color: 'bg-purple-50 border-purple-200 text-purple-700',
     category: 'entrepreneur',
-    content: '<h1>Social Media Proposal</h1><p><br></p><h2>Current Situation Analysis</h2><p>Overview of client\'s current social presence...</p><p><br></p><h2>Proposed Strategy</h2><p>Content themes, posting frequency, platforms...</p><p><br></p><h2>Deliverables</h2><ul><li>Posts per week</li><li>Stories/Reels</li><li>Engagement management</li></ul><p><br></p><h2>Investment & Timeline</h2><p>Package details...</p>'
+    content: '<h1>[Client Name / Company]</h1><p>[Date]</p><p>[Prepared by: Your Name / Business]</p><p><br></p><h2>Introduction</h2><p>[Brief overview of who you are and the purpose of this proposal]</p><p><br></p><h2>Objectives</h2><p>[Outline the main goals you can help achieve — e.g., increase brand awareness, grow engagement, generate leads, strengthen online presence]</p><p><br></p><h2>Strategy Overview</h2><p>[General description of the approach, such as creating consistent, on-brand content, optimizing posting schedules, engaging with the community, and using data to refine efforts]</p><p><br></p><h2>Scope of Work</h2><p>[List the key activities included in your service, such as content creation, post scheduling, profile optimization, analytics tracking, ad campaign management, or community management]</p><p><br></p><h2>Deliverables</h2><p>[Describe what the client will receive, for example number of posts per week, monthly reports, campaign setups, or creative assets]</p><p><br></p><h2>Timeline</h2><p>[Outline the timeframe for the proposal, e.g., 3 months, 6 months, or ongoing]</p><p><br></p><h2>Investment</h2><p>[Insert pricing details or package structure]</p><p><br></p><h2>Closing</h2><p>[Thank the client for considering the proposal]</p><p><br></p><p>[Your Name]</p><p>[Your Title / Business]</p><p>[Email / Phone / Website]</p>'
   },
   {
     id: 'project-report',
