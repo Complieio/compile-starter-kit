@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Settings as SettingsIcon, User, Bell, Shield, CreditCard, Globe } from 'lucide-react';
+import { Settings as SettingsIcon, User, Bell, Shield, CreditCard, Globe, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -37,8 +37,12 @@ interface Profile {
 const Settings = () => {
   const [profileData, setProfileData] = useState({
     full_name: '',
-    email: ''
+    username: ''
   });
+  const [usernameLoading, setUsernameLoading] = useState(false);
+  const [usernameError, setUsernameError] = useState('');
+  const [usernameAvailable, setUsernameAvailable] = useState(false);
+  const [originalUsername, setOriginalUsername] = useState('');
 
   const { user, signOut } = useAuth();
   const { toast } = useToast();
@@ -56,6 +60,17 @@ const Settings = () => {
         .single();
 
       if (error) throw error;
+      
+      // Set profile data when loaded
+      if (data) {
+        const username = data.username || '';
+        setOriginalUsername(username);
+        setProfileData({
+          full_name: data.full_name || '',
+          username: username
+        });
+      }
+      
       return data as Profile;
     },
     enabled: !!user,
@@ -133,7 +148,82 @@ const Settings = () => {
     },
   });
 
+  const validateUsername = async (username: string) => {
+    if (!username) {
+      setUsernameError('');
+      setUsernameAvailable(false);
+      return;
+    }
+    
+    // Only allow letters, numbers, and underscores
+    const regex = /^[A-Za-z0-9_]{3,30}$/;
+    if (!regex.test(username)) {
+      setUsernameError('Username must be 3-30 characters, letters, numbers, and underscores only');
+      setUsernameAvailable(false);
+      return;
+    }
+
+    // If it's the same as the original username, mark as available
+    if (username === originalUsername) {
+      setUsernameError('');
+      setUsernameAvailable(true);
+      return;
+    }
+
+    setUsernameLoading(true);
+    setUsernameError('');
+    setUsernameAvailable(false);
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('username', username)
+        .neq('id', user?.id);
+      
+      if (error) {
+        console.error('Error validating username:', error);
+        setUsernameError('Error checking username availability');
+        return;
+      }
+      
+      if (data && data.length > 0) {
+        setUsernameError('Username not available');
+        setUsernameAvailable(false);
+      } else {
+        setUsernameError('');
+        setUsernameAvailable(true);
+      }
+    } catch (error) {
+      console.error('Error validating username:', error);
+      setUsernameError('Error checking username availability');
+      setUsernameAvailable(false);
+    } finally {
+      setUsernameLoading(false);
+    }
+  };
+
+  // Debounce username validation
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (profileData.username && profileData.username !== originalUsername) {
+        validateUsername(profileData.username);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [profileData.username]);
+
   const handleProfileUpdate = () => {
+    if (usernameError) {
+      toast({
+        title: 'Invalid username',
+        description: usernameError,
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     updateProfileMutation.mutate(profileData);
   };
 
@@ -252,22 +342,35 @@ const Settings = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Email Address</label>
+                  <label className="text-sm font-medium">Username</label>
                   <Input
-                    type="email"
-                    placeholder="your@email.com"
-                    value={profileData.email}
-                    onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                    type="text"
+                    placeholder="Choose a username"
+                    value={profileData.username}
+                    onChange={(e) => setProfileData({ ...profileData, username: e.target.value })}
+                    disabled={updateProfileMutation.isPending}
                   />
+                  {usernameLoading && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      Checking availability...
+                    </div>
+                  )}
+                  {!usernameLoading && usernameError && (
+                    <p className="text-sm text-destructive">{usernameError}</p>
+                  )}
+                  {!usernameLoading && usernameAvailable && !usernameError && profileData.username !== originalUsername && (
+                    <p className="text-sm text-green-600">✓ Username is available</p>
+                  )}
                 </div>
               </div>
 
               <Button 
                 onClick={handleProfileUpdate}
-                disabled={updateProfileMutation.isPending}
+                disabled={updateProfileMutation.isPending || usernameLoading || !!usernameError}
                 className="btn-complie-primary"
               >
-                {updateProfileMutation.isPending ? 'Updating...' : 'Update Profile'}
+                {updateProfileMutation.isPending ? 'Updating...' : 'Save'}
               </Button>
             </CardContent>
           </Card>
