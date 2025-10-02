@@ -336,9 +336,9 @@ footer a{text-decoration:none;color:#000;font-weight:500}
       </div>
 
       <footer>
-        <a href="privacypolicy.tsx">Privacy Policy</a>
-        <a href="refundpolicy.tsx">Refund Policy</a>
-        <a href="termsofservice.tsx">Terms of Service</a>
+        <Link to="privacypolicy.tsx">Privacy Policy</Link>
+        <Link to="refundpolicy.tsx">Refund Policy</Link>
+        <Link to="termsofservice.tsx">Terms of Service</Link>
       </footer>
 
       <div className="popup" id="authModal">
