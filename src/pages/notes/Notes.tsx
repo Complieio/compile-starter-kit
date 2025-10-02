@@ -123,7 +123,7 @@ const NOTE_TEMPLATES: NoteTemplate[] = [
     icon: Award,
     color: 'bg-green-50 border-green-200 text-green-700',
     category: 'both',
-    content: '<h1>Case Study: [Client Name]</h1><p><br></p><h2>The Challenge</h2><p>What problem did the client face?</p><p><br></p><h2>The Solution</h2><p>How you addressed it...</p><p><br></p><h2>The Results</h2><ul><li>Metric 1: [improvement]</li><li>Metric 2: [improvement]</li><li>Metric 3: [improvement]</li></ul><p><br></p><h2>Client Testimonial</h2><blockquote>"[Client quote]" - [Name, Title]</blockquote>'
+    content: '<h1>[Client / Company Name]</h1><p>[Project / Service Provided]</p><p>[Date]</p><p>This report highlights the engagement between [Your Name / Business] and [Client / Company], outlining the context, the approach taken, and the outcomes achieved.</p><p><br></p><p>Prior to collaboration, [Client / Company] faced [briefly describe challenge, need, or objective]. The engagement was initiated to address this situation with a clear focus on [main goals].</p><p><br></p><p>The work carried out involved [concise explanation of methods, solutions, or services delivered]. Throughout the process, emphasis was placed on [key qualities such as efficiency, quality, communication, or innovation].</p><p><br></p><p>As a result, [Client / Company] experienced [specific improvements, measurable results, or positive outcomes]. These outcomes contributed directly to [business impact, client satisfaction, or project success].</p><p><br></p><p>In their own words, [Client / Contact Person] stated: "[Insert neutral, professional client quote capturing satisfaction or highlighting the benefit]."</p><p><br></p><p>This case study demonstrates how a tailored and collaborative approach can deliver meaningful value to clients, ensuring both immediate results and long-term benefits.</p><p><br></p><p>Prepared by: [Your Name / Business]</p><p>[Role / Contact Information]</p>'
   },
   {
     id: 'design-brief',
@@ -427,7 +427,7 @@ const Notes = () => {
               <FileText className="h-16 w-16 text-muted-foreground mb-4" />
               <h3 className="text-xl font-semibold mb-2 text-complie-primary">No notes yet</h3>
               <p className="text-muted-foreground text-center mb-8 max-w-md leading-relaxed">
-                Start capturing your thoughts and important information with rich formatting. 
+                Start capturing your thoughts and important information with rich text formatting. 
                 Use templates to get started quickly or create from scratch.
               </p>
               <div className="flex gap-3">
