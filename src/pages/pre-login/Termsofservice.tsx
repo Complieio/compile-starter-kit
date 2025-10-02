@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 export default function TermsOfService(): JSX.Element {
   useEffect(() => {
@@ -336,9 +337,9 @@ footer a{text-decoration:none;color:#000;font-weight:500}
       </div>
 
       <footer>
-        <Link to="privacypolicy.tsx">Privacy Policy</Link>
-        <Link to="refundpolicy.tsx">Refund Policy</Link>
-        <Link to="termsofservice.tsx">Terms of Service</Link>
+        <Link to="/privacypolicy">Privacy Policy</Link>
+        <Link to="/refundpolicy">Refund Policy</Link>
+        <Link to="/termsofservice">Terms of Service</Link>
       </footer>
 
       <div className="popup" id="authModal">
