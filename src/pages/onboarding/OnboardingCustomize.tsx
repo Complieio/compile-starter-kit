@@ -30,6 +30,7 @@ const OnboardingCustomize = () => {
   const [loading, setLoading] = useState(false);
   const [usernameLoading, setUsernameLoading] = useState(false);
   const [usernameError, setUsernameError] = useState('');
+  const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [showOptional, setShowOptional] = useState({
     country: false,
     description: false,
@@ -62,33 +63,62 @@ const OnboardingCustomize = () => {
   }, [user, navigate]);
 
   const validateUsername = async (username: string) => {
-    if (!username) return;
+    if (!username) {
+      setUsernameError('');
+      setUsernameAvailable(false);
+      return;
+    }
     
     const regex = /^[A-Za-z0-9_-]{3,30}$/;
     if (!regex.test(username)) {
       setUsernameError('Username must be 3-30 characters, letters, numbers, _ and - only');
+      setUsernameAvailable(false);
       return;
     }
 
     setUsernameLoading(true);
     setUsernameError('');
+    setUsernameAvailable(false);
 
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('username')
         .eq('username', username)
         .neq('id', user?.id);
       
+      if (error) {
+        console.error('Error validating username:', error);
+        setUsernameError('Error checking username availability');
+        return;
+      }
+      
       if (data && data.length > 0) {
         setUsernameError('Username not available');
+        setUsernameAvailable(false);
+      } else {
+        setUsernameError('');
+        setUsernameAvailable(true);
       }
     } catch (error) {
       console.error('Error validating username:', error);
+      setUsernameError('Error checking username availability');
+      setUsernameAvailable(false);
     } finally {
       setUsernameLoading(false);
     }
   };
+
+  // Debounce username validation
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (formData.username) {
+        validateUsername(formData.username);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [formData.username]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -177,7 +207,6 @@ const OnboardingCustomize = () => {
                   id="username"
                   value={formData.username}
                   onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
-                  onBlur={(e) => validateUsername(e.target.value)}
                   placeholder="Choose a username"
                   required
                   disabled={loading}
@@ -188,8 +217,11 @@ const OnboardingCustomize = () => {
                     Checking availability...
                   </div>
                 )}
-                {usernameError && (
+                {!usernameLoading && usernameError && (
                   <p className="text-sm text-destructive">{usernameError}</p>
+                )}
+                {!usernameLoading && usernameAvailable && !usernameError && (
+                  <p className="text-sm text-green-600">✓ Username is available</p>
                 )}
               </div>
 
