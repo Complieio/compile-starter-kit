@@ -109,9 +109,9 @@ export default function RefundPage(): JSX.Element {
       </div>
 
       <footer>
-        <a href="privacypolicy.tsx">Privacy Policy</a>
-        <a href="refundpolicy.tsx">Refund Policy</a>
-        <a href="termsofservice.tsx">Terms of Service</a>
+        <Link to="privacypolicy.tsx">Privacy Policy</Link>
+        <Link to="refundpolicy.tsx">Refund Policy</Link>
+        <Link to="termsofservice.tsx">Terms of Service</Link>
       </footer>
 
       <div ref={modalRef} className={`popup ${authOpen ? 'show' : ''}`} id="authModal" onClick={onOverlayClick} role="presentation">
