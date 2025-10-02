@@ -114,7 +114,7 @@ const NOTE_TEMPLATES: NoteTemplate[] = [
     icon: ClipboardCheck,
     color: 'bg-green-50 border-green-200 text-green-700',
     category: 'both',
-    content: '<h1>Project Progress Update</h1><p><br></p><h2>Completed This Period</h2><ul><li>Task 1</li><li>Task 2</li><li>Task 3</li></ul><p><br></p><h2>In Progress</h2><ul><li>Current work items...</li></ul><p><br></p><h2>Next Steps</h2><ul><li>Upcoming tasks...</li></ul><p><br></p><h2>Blockers/Issues</h2><p>Any challenges or dependencies...</p>'
+    content: '<h1>[Project Name]</h1><p>[Date]</p><p>[Prepared by: Your Name / Team]</p><p><br></p><h2>Overview</h2><p>[Brief description of the project purpose, current stage, and any notable updates since the last report.]</p><p><br></p><h2>Progress Summary</h2><p>[Outline completed tasks, milestones achieved, or deliverables submitted. Keep this concise and factual.]</p><p><br></p><h2>Current Status</h2><p>[Describe where the project stands now, including percentage completed, current phase, or any visible outcomes.]</p><p><br></p><h2>Upcoming Work</h2><p>[List the next tasks, milestones, or activities planned, along with expected timelines if needed.]</p><p><br></p><h2>Challenges / Risks (optional)</h2><p>[Note any issues, risks, or delays, along with proposed solutions or support needed.]</p><p><br></p><h2>Notes / Comments</h2><p>[Any extra observations, client feedback, or relevant details that give context to the update.]</p><p><br></p><h2>Closing</h2><p>[Short sign-off, invitation for feedback, or confirmation of next check-in/reporting date.]</p><p><br></p><p>[Your Name]</p><p>[Your Title / Business]</p><p>[Contact Information]</p>'
   },
   {
     id: 'testimonial-case-study',
@@ -427,7 +427,7 @@ const Notes = () => {
               <FileText className="h-16 w-16 text-muted-foreground mb-4" />
               <h3 className="text-xl font-semibold mb-2 text-complie-primary">No notes yet</h3>
               <p className="text-muted-foreground text-center mb-8 max-w-md leading-relaxed">
-                Start capturing your thoughts and important information with rich text formatting. 
+                Start capturing your thoughts and important information with rich formatting. 
                 Use templates to get started quickly or create from scratch.
               </p>
               <div className="flex gap-3">
