@@ -557,7 +557,7 @@ const Settings = () => {
                   <div className="flex items-center gap-4">
                     {profile && getPlanBadge(profile.plan)}
                     <span className="text-sm text-muted-foreground">
-                      {profile?.plan === 'basic' ? 'Free plan' : '$29/month'}
+                      {profile?.plan === 'basic' ? 'Free plan' : '$9/month'}
                     </span>
                   </div>
                 </div>
