@@ -5,8 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tabs, TabsContent } from '@/components/ui/tabs';
-import { Plus, Search, Grid, List, FileText, Download, Eye, Edit, Trash2, Sparkles, TrendingUp, Shield } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Plus, Search, Grid, List, FileText, Download, Eye, Edit, Trash2, Sparkles, Globe, TrendingUp, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -42,29 +42,11 @@ const Projects = () => {
     enabled: !!user,
   });
 
-  // Defensive filtering: guard against missing fields so we don't crash the page
-  let filteredProjects = [];
-  try {
-    filteredProjects = (projects || []).filter((project: any) => {
-      const q = (searchQuery || '').toLowerCase();
-      const name = (project?.name || '').toString().toLowerCase();
-      const clientName = (project?.clients?.name || '').toString().toLowerCase();
-      const tagsMatch = Array.isArray(project?.tags)
-        ? project.tags.some((tag: any) => ('' + (tag || '')).toLowerCase().includes(q))
-        : false;
-
-      return (
-        name.includes(q) ||
-        clientName.includes(q) ||
-        tagsMatch
-      );
-    });
-  } catch (err) {
-    // In case of unexpected data shape, fall back to full list (safe)
-    filteredProjects = projects || [];
-    // optional: log to console for debugging
-    // console.error('Error filtering projects:', err);
-  }
+  const filteredProjects = projects.filter(project =>
+    project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    project.clients?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (project.tags && project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())))
+  );
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -82,10 +64,9 @@ const Projects = () => {
   };
 
   const getTaskCounts = (tasks: any[]) => {
-    const list = Array.isArray(tasks) ? tasks : [];
-    const total = list.length;
-    const completed = list.filter(t => t?.status === 'done').length;
-    const overdue = list.filter(t => t?.status === 'overdue').length;
+    const total = tasks.length;
+    const completed = tasks.filter(t => t.status === 'done').length;
+    const overdue = tasks.filter(t => t.status === 'overdue').length;
     return { total, completed, overdue };
   };
 
@@ -112,7 +93,7 @@ const Projects = () => {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error?.message || 'Unknown error',
+        description: error.message,
         variant: "destructive",
       });
     }
@@ -180,7 +161,6 @@ const Projects = () => {
     }
 
     // Navigate to the NewProject page with the editor type as a query parameter
-    // Use absolute path to avoid relative-routing problems
     navigate(`/projects/new?editor=${template.editorType}`);
   };
 
@@ -237,7 +217,6 @@ const Projects = () => {
                       size="sm" 
                       variant="ghost" 
                       className="group-hover:bg-white/80 transition-colors w-full"
-                      onClick={() => navigateToTemplateEditor(template)}
                     >
                       Use Template
                       <Plus className="h-4 w-4 ml-1" />
@@ -331,7 +310,7 @@ const Projects = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredProjects.map((project: any) => {
+                      {filteredProjects.map((project) => {
                         const taskCounts = getTaskCounts(project.tasks || []);
                         return (
                           <TableRow key={project.id}>
@@ -394,7 +373,7 @@ const Projects = () => {
               
               <TabsContent value="cards">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredProjects.map((project: any) => {
+                  {filteredProjects.map((project) => {
                     const taskCounts = getTaskCounts(project.tasks || []);
                     return (
                       <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer">
@@ -464,3 +443,4 @@ const Projects = () => {
 };
 
 export default Projects;
+
