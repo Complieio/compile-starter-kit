@@ -112,7 +112,7 @@ export default function Index(): JSX.Element {
 
   return (
     <div>
-      <style>{`:root{--accent-a:#0000;--accent-b:##3367FF;--accent-grad:linear-gradient(90deg,var(--accent-a),var(--accent-b));--surface:#ffffff;--muted:#f5f5f5;--text:#1a1a1a;--muted-border:#e6e6e6}
+      <style>{`:root{--accent-a:#1b5e20;--accent-b:#4caf50;--accent-grad:linear-gradient(90deg,var(--accent-a),var(--accent-b));--surface:#ffffff;--muted:#f5f5f5;--text:#1a1a1a;--muted-border:#e6e6e6}
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background-color:var(--muted);color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
