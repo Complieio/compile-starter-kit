@@ -173,9 +173,9 @@ const Clients = () => {
     },
   });
 
-  const filteredClients = clients.filter(client =>
-    client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    client.contact_email?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredClients = (clients || []).filter(client =>
+    (client?.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (client?.contact_email || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const resetForm = () => {

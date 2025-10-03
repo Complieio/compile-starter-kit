@@ -217,6 +217,10 @@ const Projects = () => {
                       size="sm" 
                       variant="ghost" 
                       className="group-hover:bg-white/80 transition-colors w-full"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigateToTemplateEditor(template);
+                      }}
                     >
                       Use Template
                       <Plus className="h-4 w-4 ml-1" />
