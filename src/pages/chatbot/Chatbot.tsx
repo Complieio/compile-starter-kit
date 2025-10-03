@@ -17,6 +17,18 @@ interface Message {
   timestamp: Date;
 }
 
+// Utility function to strip markdown formatting
+const stripMarkdown = (text: string): string => {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '$1') // Bold
+    .replace(/\*(.+?)\*/g, '$1') // Italic
+    .replace(/^#+\s+/gm, '') // Headers
+    .replace(/\[(.+?)\]\(.+?\)/g, '$1') // Links
+    .replace(/`(.+?)`/g, '$1') // Inline code
+    .replace(/^[-*]\s+/gm, '• ') // Unordered lists
+    .replace(/^\d+\.\s+/gm, (match) => match); // Keep numbered lists
+};
+
 const Chatbot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -166,13 +178,13 @@ const Chatbot = () => {
                     message.role === 'user' ? 'items-end' : 'items-start'
                   }`}>
                     <div
-                      className={`rounded-lg px-4 py-2 text-sm whitespace-pre-wrap ${
+                      className={`rounded-lg px-4 py-2 text-sm whitespace-pre-wrap break-words ${
                         message.role === 'user'
                           ? 'bg-complie-accent text-white'
                           : 'bg-muted text-foreground'
                       }`}
                     >
-                      {message.content}
+                      {message.role === 'assistant' ? stripMarkdown(message.content) : message.content}
                     </div>
                     <span className="text-xs text-muted-foreground mt-1">
                       {format(message.timestamp, 'h:mm a')}

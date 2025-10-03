@@ -10,6 +10,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
+// Utility function to strip markdown formatting
+const stripMarkdown = (text: string): string => {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '$1') // Bold
+    .replace(/\*(.+?)\*/g, '$1') // Italic
+    .replace(/^#+\s+/gm, '') // Headers
+    .replace(/\[(.+?)\]\(.+?\)/g, '$1') // Links
+    .replace(/`(.+?)`/g, '$1') // Inline code
+    .replace(/^[-*]\s+/gm, '• ') // Unordered lists
+    .replace(/^\d+\.\s+/gm, (match) => match); // Keep numbered lists
+};
+
 interface ProjectChatbotProps {
   projectId: string;
 }
@@ -220,7 +232,7 @@ export function ProjectChatbot({ projectId }: ProjectChatbotProps) {
                         <div className="w-8 h-8 bg-complie-primary rounded-full flex items-center justify-center flex-shrink-0">
                           <User className="h-4 w-4 text-white" />
                         </div>
-                        <div className="flex-1 bg-muted rounded-lg p-3">
+                        <div className="flex-1 bg-muted rounded-lg p-3 break-words">
                           <p className="text-sm">{msg.message}</p>
                           <p className="text-xs text-muted-foreground mt-1">
                             {format(new Date(msg.created_at), 'MMM d, h:mm a')}
@@ -234,8 +246,8 @@ export function ProjectChatbot({ projectId }: ProjectChatbotProps) {
                           <div className="w-8 h-8 bg-gradient-to-r from-complie-accent to-black rounded-full flex items-center justify-center flex-shrink-0">
                             <Bot className="h-4 w-4 text-white" />
                           </div>
-                          <div className="flex-1 bg-blue-50 rounded-lg p-3">
-                            <p className="text-sm whitespace-pre-wrap">{msg.response}</p>
+                          <div className="flex-1 bg-blue-50 rounded-lg p-3 break-words">
+                            <p className="text-sm whitespace-pre-wrap">{stripMarkdown(msg.response)}</p>
                             <div className="flex items-center gap-2 mt-2">
                               <Badge variant="outline" className="text-xs">
                                 <Zap className="h-3 w-3 mr-1" />
