@@ -149,9 +149,9 @@ export default function FAQPage(): JSX.Element {
       </div>
 
       <footer>
-        <Link to="privacypolicy.html">Privacy Policy</Link>
-        <Link to="refundpolicy.html">Refund Policy</Link>
-        <Link to="termsofservice.html">Terms of Service</Link>
+        <Link to="/privacypolicy">Privacy Policy</Link>
+        <Link to="/refundpolicy">Refund Policy</Link>
+        <Link to="/termsofservice">Terms of Service</Link>
       </footer>
 
       <div ref={modalRef} className={`popup ${authOpen ? "show" : ""}`} id="authModal" onClick={onOverlayClick} role="presentation">
@@ -207,7 +207,7 @@ export default function FAQPage(): JSX.Element {
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="google-logo" alt="Google logo" />
                 Continue with Google
               </div>
-              <div className="legal">By creating an account you agree to our <a href="termsofservice.html">Terms</a> and <a href="privacypolicy.html">Privacy Policy</a>.</div>
+              <div className="legal">By creating an account you agree to our <Link to="/termsofservice">Terms</Link> and <Link to="/privacypolicy">Privacy Policy</Link>.</div>
             </form>
           )}
 
