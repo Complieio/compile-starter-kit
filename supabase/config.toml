@@ -1,1 +1,7 @@
 project_id = "gaogwkgdkdwitbfwmsmu"
+
+[functions.chat-assistant]
+verify_jwt = false
+
+[functions.chat-with-ai]
+verify_jwt = true
