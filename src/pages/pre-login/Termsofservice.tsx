@@ -325,7 +325,7 @@ footer a{text-decoration:none;color:#000;font-weight:500}
 
         <h2>Contact Information</h2>
         <p>
-          Email: <a className="contact-link" href="mailto:Liana.digital18@gmail.com">Liana.digital18@gmail.com</a>
+          Email: <a className="contact-link" href="mailto:Complie.app@gmail.com">Complie.app@gmail.com</a>
         </p>
         <p>
           Discord:{" "}
