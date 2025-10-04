@@ -118,7 +118,7 @@ export default function PrivacyPage(): JSX.Element {
         <p style={{ fontWeight: 600 }}>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.</p>
 
         <h2>Contact Us</h2>
-        <p>Email: <a className="contact-link" href="mailto:Liana.digital18@gmail.com">Liana.digital18@gmail.com</a></p>
+        <p>Email: <a className="contact-link" href="mailto:Complie.app@gmail.com">Complie.app@gmail.com</a></p>
         <p>Discord: <a className="contact-link" href="https://discord.gg/9HdmMjbQXW" target="_blank" rel="noreferrer">Complie Discord Server</a></p>
       </div>
 
