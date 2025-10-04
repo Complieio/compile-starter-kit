@@ -85,7 +85,7 @@ export default function CompliePage(): JSX.Element {
     
     if (!error) {
       closeModal();
-      // User will be redirected after email verification
+      navigate('/dashboard'); // immediate redirect after successful signup
     }
   }
 
@@ -103,7 +103,12 @@ export default function CompliePage(): JSX.Element {
   }
 
   async function handleGoogleAuth() {
-    await signInWithGoogle();
+    const res = await signInWithGoogle();
+    const error = (res as any)?.error;
+    if (!error) {
+      closeModal();
+      navigate('/dashboard'); // immediate redirect after successful Google sign-in
+    }
   }
 
   function onOverlayClick(e: React.MouseEvent) {
