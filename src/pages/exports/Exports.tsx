@@ -11,6 +11,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 interface ExportConfig {
   format: 'pdf' | 'csv' | 'excel';
@@ -80,48 +83,215 @@ const Exports = () => {
     },
   });
 
-  const handleExport = async () => {
-    setIsExporting(true);
-    setExportProgress(0);
+  const fetchExportData = async () => {
+    if (!user) return null;
 
-    try {
-      // Simulate export progress
-      const progressInterval = setInterval(() => {
-        setExportProgress(prev => {
-          if (prev >= 90) {
-            clearInterval(progressInterval);
-            return 90;
-          }
-          return prev + 10;
-        });
-      }, 200);
+    const dateFilter = getDateFilter(exportConfig.dateRange);
+    const dataTypes = exportConfig.dataType === 'all' 
+      ? ['projects', 'tasks', 'clients', 'notes'] 
+      : [exportConfig.dataType];
 
-      // In a real app, this would call a Supabase edge function
-      await new Promise(resolve => setTimeout(resolve, 2000));
+    const data: any = {};
 
-      setExportProgress(100);
-      clearInterval(progressInterval);
-
-      // Simulate file download
-      const fileName = `${exportConfig.dataType}-export-${format(new Date(), 'yyyy-MM-dd')}.${exportConfig.format}`;
+    for (const type of dataTypes) {
+      let query = supabase.from(type as any).select('*').eq('user_id', user.id);
       
-      toast({
-        title: "Export completed",
-        description: `Your ${exportConfig.dataType} export has been generated successfully.`,
+      if (dateFilter) {
+        query = query.gte('created_at', dateFilter);
+      }
+
+      const { data: result, error } = await query;
+      if (error) throw error;
+      data[type] = result || [];
+    }
+
+    return data;
+  };
+
+  const getDateFilter = (range: string) => {
+    if (range === 'all') return null;
+    const daysMap: any = { '7days': 7, '30days': 30, '90days': 90 };
+    const days = daysMap[range];
+    const date = new Date();
+    date.setDate(date.getDate() - days);
+    return date.toISOString();
+  };
+
+  const generatePDF = (data: any) => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    doc.setFontSize(20);
+    doc.text('Data Export Report', pageWidth / 2, 20, { align: 'center' });
+    doc.setFontSize(10);
+    doc.text(format(new Date(), 'MMMM d, yyyy'), pageWidth / 2, 28, { align: 'center' });
+
+    let yPosition = 40;
+
+    Object.keys(data).forEach((dataType) => {
+      const items = data[dataType];
+      if (items.length === 0) return;
+
+      doc.setFontSize(14);
+      doc.text(dataType.charAt(0).toUpperCase() + dataType.slice(1), 14, yPosition);
+      yPosition += 8;
+
+      const headers = Object.keys(items[0] || {}).filter(key => 
+        !['user_id', 'id', 'private'].includes(key)
+      );
+      
+      const rows = items.map((item: any) => 
+        headers.map(header => {
+          const value = item[header];
+          if (value instanceof Date || (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2}/))) {
+            return format(new Date(value), 'yyyy-MM-dd');
+          }
+          return String(value || '');
+        })
+      );
+
+      autoTable(doc, {
+        head: [headers.map(h => h.replace(/_/g, ' ').toUpperCase())],
+        body: rows,
+        startY: yPosition,
+        margin: { left: 14, right: 14 },
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [79, 70, 229] },
       });
 
-      // In a real implementation, you would generate and download the actual file here
-      console.log('Export config:', exportConfig);
+      yPosition = (doc as any).lastAutoTable.finalY + 15;
+      
+      if (yPosition > 270) {
+        doc.addPage();
+        yPosition = 20;
+      }
+    });
+
+    return doc;
+  };
+
+  const generateCSV = (data: any) => {
+    let csvContent = '';
+
+    Object.keys(data).forEach((dataType) => {
+      const items = data[dataType];
+      if (items.length === 0) return;
+
+      csvContent += `\n${dataType.toUpperCase()}\n`;
+      
+      const headers = Object.keys(items[0] || {}).filter(key => 
+        !['user_id', 'id', 'private'].includes(key)
+      );
+      
+      csvContent += headers.join(',') + '\n';
+      
+      items.forEach((item: any) => {
+        const row = headers.map(header => {
+          const value = item[header];
+          if (value === null || value === undefined) return '';
+          const stringValue = String(value).replace(/"/g, '""');
+          return stringValue.includes(',') ? `"${stringValue}"` : stringValue;
+        });
+        csvContent += row.join(',') + '\n';
+      });
+      
+      csvContent += '\n';
+    });
+
+    return csvContent;
+  };
+
+  const generateExcel = (data: any) => {
+    const workbook = XLSX.utils.book_new();
+
+    Object.keys(data).forEach((dataType) => {
+      const items = data[dataType];
+      if (items.length === 0) return;
+
+      const cleanedData = items.map((item: any) => {
+        const cleaned: any = {};
+        Object.keys(item).forEach(key => {
+          if (!['user_id', 'id', 'private'].includes(key)) {
+            cleaned[key] = item[key];
+          }
+        });
+        return cleaned;
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(cleanedData);
+      XLSX.utils.book_append_sheet(workbook, worksheet, dataType.substring(0, 31));
+    });
+
+    return workbook;
+  };
+
+  const downloadFile = (content: any, filename: string, type: string) => {
+    let blob: Blob;
+
+    if (type === 'pdf') {
+      blob = content.output('blob');
+    } else if (type === 'csv') {
+      blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+    } else {
+      const excelBuffer = XLSX.write(content, { bookType: 'xlsx', type: 'array' });
+      blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    }
+
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  };
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    setExportProgress(10);
+
+    try {
+      const data = await fetchExportData();
+      if (!data) throw new Error('Failed to fetch data');
+
+      setExportProgress(40);
+
+      let fileContent: any;
+      let extension: string = exportConfig.format;
+
+      if (exportConfig.format === 'pdf') {
+        fileContent = generatePDF(data);
+      } else if (exportConfig.format === 'csv') {
+        fileContent = generateCSV(data);
+      } else {
+        fileContent = generateExcel(data);
+        extension = 'xlsx';
+      }
+
+      setExportProgress(80);
+
+      const fileName = `${exportConfig.dataType}-export-${format(new Date(), 'yyyy-MM-dd')}.${extension}`;
+      downloadFile(fileContent, fileName, exportConfig.format);
+
+      setExportProgress(100);
+
+      toast({
+        title: "Export completed",
+        description: `Your ${exportConfig.dataType} export has been downloaded successfully.`,
+      });
 
     } catch (error: any) {
+      console.error('Export error:', error);
       toast({
         title: "Export failed",
         description: error.message || "Failed to generate export.",
         variant: "destructive",
       });
     } finally {
-      setIsExporting(false);
-      setExportProgress(0);
+      setTimeout(() => {
+        setIsExporting(false);
+        setExportProgress(0);
+      }, 500);
     }
   };
 
