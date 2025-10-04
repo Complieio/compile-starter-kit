@@ -172,8 +172,8 @@ export default function TermsOfService(): JSX.Element {
       />
       <style>{` 
 :root{
-  --accent-start:#1F73FF;
-  --accent-end:#000000;
+  --accent-start:#000000;
+  --accent-end:#5681FF;
   --accent-grad:linear-gradient(90deg,var(--accent-start),var(--accent-end));
   --bg:#ffffff;
   --muted:#ffffff;
