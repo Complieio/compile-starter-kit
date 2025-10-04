@@ -95,7 +95,7 @@ export default function RefundPage(): JSX.Element {
         </ul>
 
         <h2>Contact Information</h2>
-        <p>Email: <a className="contact-link" href="mailto:Liana.digital18@gmail.com">Liana.digital18@gmail.com</a></p>
+        <p>Email: <a className="contact-link" href="mailto:Complie.app@gmail.com">Complie.app@gmail.com</a></p>
         <p>Discord: <a className="contact-link" href="https://discord.gg/9HdmMjbQXW" target="_blank" rel="noreferrer">Complie Discord Server</a></p>
 
         <h2>Amendments</h2>
