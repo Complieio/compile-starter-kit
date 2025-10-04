@@ -175,7 +175,7 @@ export default function Index(): JSX.Element {
       </nav>
 
       <section className="hero">
-        <h1>Stay on top of your freelance<br />projects effortlessly</h1>
+        <h1>Stay on top of your projects effortlessly</h1>
         <p>Your all-in-one tool for staying organized, managing clients and projects, tracking deadlines, and generating reports in a simple platform.</p>
         <button className="cta-btn" onClick={(e) => { e.preventDefault(); openModal(); }}>Start Tracking Today</button>
       </section>
